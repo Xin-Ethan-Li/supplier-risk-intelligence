@@ -14,7 +14,7 @@
     "dev": "concurrently -k -n WEB,API,RISK -c cyan,green,yellow \"pnpm --filter @srm/web dev\" \"pnpm --filter @srm/api dev\" \"python -m uvicorn app.main:app --reload --app-dir services/risk-engine --port 8000\"",
     "format:check": "prettier --check .",
     "lint": "eslint apps/api/src apps/api/tests && pnpm -r --if-present lint && pnpm lint:risk",
-    "lint:risk": "python -m ruff check services/risk-engine pipelines",
+    "lint:risk": "python -m ruff check --config services/risk-engine/pyproject.toml services/risk-engine pipelines",
     "model:train": "python -m pipelines.train_model",
     "model:verify": "python -m pipelines.verify_artifacts",
     "retrieval:build": "python -m pipelines.build_retrieval_index",

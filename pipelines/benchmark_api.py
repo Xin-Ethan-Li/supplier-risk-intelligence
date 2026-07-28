@@ -100,7 +100,9 @@ def run_benchmark(base_url: str, warmup: int, requests: int) -> dict[str, Any]:
     }
     checks = {
         "clientTotalP95": metrics["clientTotalMs"]["p95"] < THRESHOLDS_MS["clientTotalP95"],
-        "modelInferenceP95": metrics["modelInferenceMs"]["p95"] < THRESHOLDS_MS["modelInferenceP95"],
+        "modelInferenceP95": (
+            metrics["modelInferenceMs"]["p95"] < THRESHOLDS_MS["modelInferenceP95"]
+        ),
         "retrievalP95": metrics["retrievalMs"]["p95"] < THRESHOLDS_MS["retrievalP95"],
     }
     return {

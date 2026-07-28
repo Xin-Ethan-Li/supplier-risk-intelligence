@@ -1,6 +1,5 @@
-import pytest
-
 from pipelines.benchmark_api import percentile
+import pytest
 
 
 def test_percentile_uses_nearest_rank() -> None:

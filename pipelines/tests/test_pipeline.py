@@ -49,7 +49,9 @@ def test_document_deduplication_retains_latest_revision() -> None:
             "sections": [
                 {
                     "heading": "Finding",
-                    "text": "repeat dimensional defect corrective action verification remains pending",
+                    "text": (
+                        "repeat dimensional defect corrective action verification remains pending"
+                    ),
                 }
             ],
         },

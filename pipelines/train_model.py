@@ -209,7 +209,9 @@ def train() -> dict[str, object]:
             "numpy": np.__version__,
         },
         "metrics": metrics,
-        "disclaimer": "Metrics are measured on deterministic synthetic data, not production suppliers.",
+        "disclaimer": (
+            "Metrics are measured on deterministic synthetic data, not production suppliers."
+        ),
     }
 
     METADATA_PATH.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
