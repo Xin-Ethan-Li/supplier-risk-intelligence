@@ -21,7 +21,8 @@
 - The service is single-region and has no horizontal-scaling, queue, cache, database or disaster-recovery layer.
 - In-memory rate limiting is per API instance and is not a distributed abuse-control mechanism.
 - The local benchmark is warm and sequential. It does not characterize concurrency, cold starts or internet latency.
-- Hosted availability depends on the selected Render plans and monthly workspace limits. The recommended Blueprint uses non-sleeping backend instances; billing controls remain an account-level responsibility.
+- The hosted profile uses a free Render Web Service. It spins down after inactivity, so the first request can take about one minute; Render can restart it at any time and monthly free-instance, bandwidth and build limits apply.
+- To avoid two sequential free-service cold starts, the hosted image runs Fastify and the Python Risk Engine as separate processes in one container. Local Compose and the source architecture preserve separate service images.
 - Service names in `render.yaml` determine the default `onrender.com` URLs. If Render changes a name because of a collision, both `PUBLIC_API_BASE_URL` and `WEB_ORIGINS` must be updated.
 
 ## Before production use

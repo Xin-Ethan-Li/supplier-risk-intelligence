@@ -20,36 +20,35 @@ Common local issues:
 
 ## Hosted profile
 
-The root `render.yaml` defines:
+The root `render.yaml` defines two zero-cost resources:
 
-1. `srm-risk-engine`: a private Docker service on port 8000;
-2. `srm-risk-api-demo`: a public Docker API on port 10000;
-3. `srm-supplier-risk-demo`: a static Astro site.
+1. `srm-risk-api-demo`: a free public Docker service on port 10000. Its deployment-only image runs Fastify and the Python Risk Engine as separate processes in one container; Risk Engine listens only on container loopback port 8000.
+2. `srm-supplier-risk-demo`: a free static Astro site.
 
-All services use the Frankfurt region where applicable. The API reaches the Risk Engine over Render's private hostname, while the browser calls only the public API. Deploys wait for linked GitHub checks via `autoDeployTrigger: checksPass`.
+The backend uses the Frankfurt region. The browser calls only Fastify; the Risk Engine has no public port. This combined hosted profile avoids chaining two sleeping free services while the local Compose profile keeps three containers. Deploys wait for linked GitHub checks via `autoDeployTrigger: checksPass`.
 
 ### First deployment
 
 1. Push the repository to GitHub and confirm all `CI` jobs pass.
 2. In Render, create a new Blueprint and select this repository. Render reads `render.yaml`.
-3. Review the two backend instance plans before applying the Blueprint. The file intentionally uses `starter` to avoid idle spin-down during interviews.
-4. Wait for the Risk Engine, API and static site deploys to complete.
+3. Confirm both Blueprint resources show a free plan before applying it. Do not approve a paid upgrade.
+4. Wait for the combined backend and static site deploys to complete.
 5. Confirm the generated service names are unchanged. If a collision changes a subdomain, update the static site's `PUBLIC_API_BASE_URL`, the API's `WEB_ORIGINS`, and the static Content Security Policy `connect-src`.
 6. Run the production smoke tests below.
 
 The demo uses no runtime secrets. Do not add employer datasets or provider keys. A future secret must be declared with `sync: false` or added through the hosting dashboard, never committed.
 
-### Account-level cost controls
+### Free-tier controls
 
 Before sharing the link:
 
-- set the workspace spend limit to the smallest acceptable amount;
 - enable billing and deploy-failure email notifications;
 - review Monthly Included Usage and pipeline minutes;
-- keep the service count at the three Blueprint resources;
+- keep the service count at the two Blueprint resources;
+- do not attach a disk, database or paid instance;
 - disable or suspend the Blueprint when the portfolio is not being used.
 
-These controls cannot be committed in `render.yaml`; record their completion in the walkthrough without recording account identifiers or billing details.
+The free backend sleeps after inactivity and can take about one minute to wake. The Demo page displays this before submission. Render's monthly free-instance, bandwidth and build limits still apply; if a dashboard step proposes a charge, stop rather than upgrading.
 
 ### Production smoke test
 

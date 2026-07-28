@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-42e8bd.svg)](LICENSE)
 [![Demo: awaiting account deploy](https://img.shields.io/badge/demo-awaiting_account_deploy-d69e2e.svg)](docs/08_DEPLOYMENT_TROUBLESHOOTING.md)
 
-An explainable supplier-risk portfolio demo that combines an XGBoost risk model, hybrid evidence retrieval and a citation-bound decision workflow. It is intentionally built without employer data, paid AI APIs or hidden external services.
+An explainable supplier-risk portfolio demo that combines an XGBoost risk model, hybrid evidence retrieval and a citation-bound decision workflow. It is intentionally built without employer data, paid AI APIs or hidden external services. The hosted profile uses only free Render resources; after idle time, its first request can take about one minute to start.
 
 ![The desktop demo showing a medium-risk supplier result](docs/assets/demo-desktop.png)
 
@@ -100,6 +100,7 @@ pipelines/                Data, training, retrieval, audit and benchmark jobs
 models/ and indexes/      Versioned public-demo artifacts
 data/                     Synthetic samples and fictional documents
 docs/                     Product, architecture, security and engineering record
+deploy/                   Free-hosting combined backend image
 render.yaml               Hosted-demo infrastructure blueprint
 ```
 
