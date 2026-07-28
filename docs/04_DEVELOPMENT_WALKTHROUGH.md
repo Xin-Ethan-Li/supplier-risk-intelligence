@@ -53,6 +53,14 @@
 
 ## 5. Walkthrough 记录
 
+### 2026-07-28 - Render Static Site 首次部署修复
+
+- Render 免费 Backend 已创建并通过线上 `/ready`、`/version` 与场景接口检查。
+- Static Site 首次构建在 `corepack enable` 阶段失败：Render 文件系统不允许该命令替换 `/usr/bin/pnpm`，返回 `EROFS: read-only file system`。
+- 从 Blueprint 构建命令移除 `corepack enable`，直接使用 Render 已提供的 `pnpm`；仍使用 `--frozen-lockfile` 保证依赖可复现。
+- 本地重新执行相同的依赖安装与 Web 构建步骤，5 个 Astro 静态页面成功生成到 `apps/web/dist`。
+- 待修复提交进入 `main` 并触发 Render 后，执行前端 HTTPS 与三种风险场景生产 Smoke Test。
+
 ## 2026-07-28 - M7 Public Repository and Deployment Preparation
 
 ### 目标

@@ -29,7 +29,7 @@ services:
   - type: web
     name: srm-supplier-risk-demo
     runtime: static
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @srm/web build
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @srm/web build
     staticPublishPath: ./apps/web/dist
     autoDeployTrigger: checksPass
     envVars:
