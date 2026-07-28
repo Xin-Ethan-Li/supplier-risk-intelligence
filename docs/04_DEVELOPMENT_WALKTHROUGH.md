@@ -25,29 +25,29 @@
 
 ## 3. 当前项目状态
 
-| 项目       | 状态                         |
-| ---------- | ---------------------------- |
-| 当前阶段   | M8 Portfolio 进行中          |
-| 当前版本   | 0.7.0                        |
-| Git 仓库   | GitHub 公开仓库，main 已保护 |
-| 应用代码   | 三服务工程骨架已创建         |
-| 本地运行   | Native 与 Compose 已验证     |
-| 在线环境   | Render 已验收；Pages 待发布  |
-| 下一里程碑 | M8 - Portfolio 上线          |
+| 项目       | 状态                          |
+| ---------- | ----------------------------- |
+| 当前阶段   | M8 Portfolio 完成             |
+| 当前版本   | SRM 0.7.0 / Portfolio 0.8.0   |
+| Git 仓库   | GitHub 公开仓库，main 已保护  |
+| 应用代码   | SRM 三服务与 Portfolio 完成   |
+| 本地运行   | Native 与 Compose 已验证      |
+| 在线环境   | Render 与 GitHub Pages 已验收 |
+| 下一里程碑 | 交付完成，进入维护            |
 
 ## 4. 里程碑状态
 
-| 里程碑                | 状态        | 说明                                      |
-| --------------------- | ----------- | ----------------------------------------- |
-| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对          |
-| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证            |
-| M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证      |
-| M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证      |
-| M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证     |
-| M5 Demo UI            | Complete    | 交互、可视化、状态、响应式与 a11y 已验证  |
-| M6 质量与安全         | Complete    | 边界加固、故障测试、审计与性能基线已验证  |
-| M7 GitHub 与上线      | Complete    | 公开仓库、免费部署与生产验收完成          |
-| M8 Portfolio          | In Progress | 站点、Case Study 与 Pages Workflow 已完成 |
+| 里程碑                | 状态     | 说明                                     |
+| --------------------- | -------- | ---------------------------------------- |
+| M0 文档与范围基线     | Complete | 四份基线文档已创建并完成交叉核对         |
+| M1 仓库与工程骨架     | Complete | Web → API → Risk Engine 已验证           |
+| M2 数据与模型         | Complete | 合成数据、XGBoost、解释与 API 已验证     |
+| M3 RAG 检索           | Complete | 虚构语料、混合检索、引用与评估已验证     |
+| M4 API Vertical Slice | Complete | 风险融合、契约 API、追踪与 E2E 已验证    |
+| M5 Demo UI            | Complete | 交互、可视化、状态、响应式与 a11y 已验证 |
+| M6 质量与安全         | Complete | 边界加固、故障测试、审计与性能基线已验证 |
+| M7 GitHub 与上线      | Complete | 公开仓库、免费部署与生产验收完成         |
+| M8 Portfolio          | Complete | 免费站点、Case Study 与线上验收完成      |
 
 ---
 
@@ -78,11 +78,13 @@
 - Playwright 在 1440×1000 与 390×844 两种视口检查全部五个主路由；无水平溢出、每页恰有一个 H1、所有 Case Study 图片加载成功。
 - axe WCAG 2 A/AA 检查在桌面和移动首页均为 0 violations；首次检查发现装饰状态点错误使用 `aria-label`，修正为 `aria-hidden` 后通过。
 - 人工检查桌面与移动全页截图；发现外部 Demo 截图延迟加载不稳定后改为自包含构建资产，复查通过。
+- PR #8 合并后，Portfolio Pages 首次运行因 Pages Source 尚未启用而在 `actions/configure-pages@v5` 失败；将 Source 设置为 GitHub Actions 后重跑成功，Build 16 秒、Deploy 8 秒、总计 33 秒。
+- 生产地址 `https://xin-ethan-li.github.io/supplier-risk-intelligence/` 上的 Home、Projects、SRM Case Study、About、Resume、Sitemap、架构图和 Demo 截图全部返回 HTTP 200。
+- 对生产 URL 重跑 Playwright：桌面与移动五个主路由全部通过，图片正常、无水平溢出，axe WCAG 2 A/AA 均为 0 violations。
 
-#### 未完成事项
+#### 范围外事项
 
-- 合并 M8 PR，在仓库 Settings → Pages 将 Source 设为 GitHub Actions，并验证首次公开 URL。
-- 自定义域名需要购买成本，因此不纳入本轮免费方案；GitHub Pages 默认域名提供 HTTPS。
+- 自定义域名需要购买成本，因此不纳入本轮免费方案；当前 GitHub Pages 默认域名已提供 HTTPS。
 
 ### 2026-07-28 - Render 部署与生产验收
 
