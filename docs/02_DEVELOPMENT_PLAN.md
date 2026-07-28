@@ -230,8 +230,8 @@
 - [x] 编写 SRM Case Study。
 - [x] 连接 Live Demo、GitHub 和 HTML Resume；用户确认 PDF 保持私有并通过邮件索取。
 - [x] 配置 SEO、Open Graph、Sitemap 和可选 Analytics。
-- [ ] 通过 GitHub Pages 部署；Workflow 已完成，等待合并后首次运行。
-- [ ] 配置自定义域名和 HTTPS。
+- [x] 通过 GitHub Pages 部署并完成线上验收。
+- [x] 使用 GitHub Pages 默认域名和 HTTPS；付费自定义域名明确延后。
 
 ### 验收
 
