@@ -42,7 +42,8 @@ jobs:
       - run: python -m pip install --upgrade "pip>=26.1.2"
       - run: python -m pip install -e ".[dev]"
       - run: python -m pip_audit
-      - run: python -m ruff check --config pyproject.toml ../../services/risk-engine ../../pipelines
+      - run: python -m ruff check --config services/risk-engine/pyproject.toml services/risk-engine pipelines
+        working-directory: .
       - run: python -m pytest ../../services/risk-engine/tests ../../pipelines/tests
       - run: python -m pipelines.verify_artifacts
         working-directory: .
