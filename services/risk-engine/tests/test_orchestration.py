@@ -1,5 +1,4 @@
 import pytest
-
 from app.orchestration import (
     build_insight,
     fuse_risk,
