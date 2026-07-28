@@ -445,20 +445,24 @@ Fastify 在 `/docs/` 暴露 Swagger UI，在 `/openapi.json` 暴露机器可读 
 
 ## 13. 部署架构
 
-### MVP 推荐
+### Free Render Public Profile
 
 ```mermaid
 flowchart LR
     GH["GitHub"] --> ACT["GitHub Actions"]
-    ACT --> PAGES["GitHub Pages: Portfolio and Astro"]
-    ACT --> HOST["Railway or Paid Render"]
-    HOST --> API["Fastify API"]
-    HOST --> PY["Python Risk Engine"]
+    ACT --> STATIC["Render Static Site: Astro"]
+    ACT --> API
+    subgraph BACKEND["Render Free Web Service: single container"]
+        API["Fastify API: public port 10000"]
+        PY["Python Risk Engine: loopback 8000"]
+    end
     USER["Public User"] --> CDN["HTTPS Static Site"]
-    CDN --> PAGES
+    CDN --> STATIC
     USER --> API
     API --> PY
 ```
+
+免费托管 Profile 只合并物理调度单元，不合并代码、进程或契约边界。Fastify 与 Python Risk Engine 仍是独立进程，后者只监听容器 loopback。这样避免两个免费 Web Service 依次冷启动，并使整个 Blueprint 只包含一个免费动态服务和一个免费静态站点。Local Compose 继续使用三个独立容器，生产式付费 Profile 仍建议拆分私有 Risk Engine。
 
 ### 后续 AWS Profile
 

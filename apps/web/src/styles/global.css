@@ -293,6 +293,19 @@ h2 {
   align-items: flex-end;
   margin: 0 0 0.4rem;
 }
+.hosting-note {
+  margin-top: -1.4rem;
+  margin-bottom: 1.4rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(255, 190, 79, 0.35);
+  border-radius: 0.75rem;
+  background: rgba(255, 190, 79, 0.08);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.hosting-note strong {
+  color: #ffca6b;
+}
 .demo-workspace {
   display: grid;
   grid-template-columns: minmax(0, 1.07fr) minmax(360px, 0.93fr);

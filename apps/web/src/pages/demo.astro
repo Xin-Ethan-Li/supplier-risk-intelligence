@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000";
+const deploymentProfile = import.meta.env.PUBLIC_DEPLOYMENT_PROFILE ?? "local";
 ---
 
 <BaseLayout title="Live Demo | Supplier Risk Intelligence">
@@ -18,6 +19,12 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
       <a class="text-link" href={`${apiBaseUrl}/docs/`} target="_blank" rel="noreferrer">API docs ↗</a>
     </div>
   </section>
+
+  {deploymentProfile === "render-free" && (
+    <aside class="shell hosting-note" role="note">
+      <strong>Free hosting notice:</strong> after a period of inactivity, the first evaluation can take about one minute while the backend starts. Subsequent requests are fast.
+    </aside>
+  )}
 
   <main class="shell demo-workspace" data-demo-root data-api-base-url={apiBaseUrl} data-state="idle">
     <form class="input-column" data-evaluation-form novalidate>

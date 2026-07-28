@@ -1,19 +1,10 @@
 services:
-  - type: pserv
-    name: srm-risk-engine
-    runtime: docker
-    plan: starter
-    region: frankfurt
-    dockerfilePath: ./services/risk-engine/Dockerfile
-    dockerContext: .
-    autoDeployTrigger: checksPass
-
   - type: web
     name: srm-risk-api-demo
     runtime: docker
-    plan: starter
+    plan: free
     region: frankfurt
-    dockerfilePath: ./apps/api/Dockerfile
+    dockerfilePath: ./deploy/Dockerfile.free-backend
     dockerContext: .
     healthCheckPath: /ready
     autoDeployTrigger: checksPass
@@ -21,7 +12,7 @@ services:
       - key: API_PORT
         value: 10000
       - key: RISK_ENGINE_URL
-        value: http://srm-risk-engine:8000
+        value: http://127.0.0.1:8000
       - key: WEB_ORIGINS
         value: https://srm-supplier-risk-demo.onrender.com
       - key: RISK_ENGINE_TIMEOUT_MS
@@ -44,6 +35,8 @@ services:
     envVars:
       - key: PUBLIC_API_BASE_URL
         value: https://srm-risk-api-demo.onrender.com
+      - key: PUBLIC_DEPLOYMENT_PROFILE
+        value: render-free
     headers:
       - path: /*
         name: X-Content-Type-Options

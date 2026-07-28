@@ -1,0 +1,40 @@
+FROM node:24-bookworm-slim AS api-build
+WORKDIR /workspace
+RUN corepack enable
+COPY package.json pnpm-workspace.yaml tsconfig.base.json pnpm-lock.yaml ./
+COPY packages/api-schema/package.json packages/api-schema/index.js packages/api-schema/index.d.ts ./packages/api-schema/
+COPY apps/api/package.json ./apps/api/
+RUN pnpm install --frozen-lockfile --filter @srm/api...
+COPY apps/api ./apps/api
+RUN pnpm --filter @srm/api build
+
+FROM python:3.12-slim AS runtime
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    API_HOST=0.0.0.0 \
+    API_PORT=10000 \
+    RISK_ENGINE_URL=http://127.0.0.1:8000 \
+    MODEL_PATH=/app/models/srm-xgb-demo-1.0.0.json \
+    MODEL_METADATA_PATH=/app/models/srm-xgb-demo-1.0.0.metadata.json \
+    RETRIEVAL_INDEX_PATH=/app/indexes/srm-retrieval-demo-1.0.0.joblib
+
+COPY --from=api-build /usr/local/bin/node /usr/local/bin/node
+COPY services/risk-engine/pyproject.toml ./
+COPY services/risk-engine/app ./app
+COPY models ./models
+COPY indexes ./indexes
+RUN pip install --no-cache-dir .
+
+COPY --from=api-build /workspace/package.json /workspace/pnpm-workspace.yaml /workspace/
+COPY --from=api-build /workspace/node_modules /workspace/node_modules
+COPY --from=api-build /workspace/packages /workspace/packages
+COPY --from=api-build /workspace/apps/api/package.json /workspace/apps/api/package.json
+COPY --from=api-build /workspace/apps/api/node_modules /workspace/apps/api/node_modules
+COPY --from=api-build /workspace/apps/api/dist /workspace/apps/api/dist
+
+RUN useradd --create-home --uid 10001 appuser
+USER appuser
+EXPOSE 10000
+
+CMD ["sh", "-c", "uvicorn app.main:app --host 127.0.0.1 --port 8000 & exec node /workspace/apps/api/dist/server.js"]

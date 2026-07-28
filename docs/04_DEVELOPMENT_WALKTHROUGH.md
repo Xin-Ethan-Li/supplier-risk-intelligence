@@ -67,7 +67,7 @@
 - 新增独立 Evaluation 文档，明确时间切分、类别不平衡、模型与检索指标、融合策略、性能基线和所有结论边界。
 - 新增 Known Limitations 文档，记录合成数据、非因果解释、小型检索集、单区运行、实例内限流和生产化缺口。
 - 新增 Deployment and Troubleshooting 文档，覆盖 Compose 排障、Render 首次部署、账户级成本控制、生产 Smoke Test 和 GitHub 分支保护目标。
-- 新增 Render Blueprint：Astro 静态站点、公共 Fastify API 和私有 Python Risk Engine；后端使用非休眠 Starter Profile，避免面试访问的空闲冷启动。
+- 新增 Render Blueprint。初始方案为 Astro 静态站点、公共 Fastify API 和私有 Python Risk Engine；用户选择零费用约束后，改为免费静态站点与单一免费双进程 Backend，避免两个免费服务串联冷启动。
 - API 支持托管平台标准 `PORT` 回退，同时保留显式 `API_PORT` 优先级；所有服务版本升级到 `0.7.0 / M7`。
 - 为新增 `PORT` 行为和 M7 API/Risk Engine 版本更新自动化契约测试。
 - 创建公开仓库 `Xin-Ethan-Li/supplier-risk-intelligence`，推送完整 M0–M7 提交历史，并配置机器学习、RAG、XGBoost、FastAPI、Fastify 和 Astro 等仓库主题。
@@ -76,14 +76,15 @@
 
 ### 技术决策
 
-1. **Risk Engine 使用私有服务。** 浏览器只访问公共 Fastify API，模型和索引服务不直接暴露到互联网。
-2. **默认不采用会休眠的免费后端。** Render 免费 Web Service 空闲后可能产生约一分钟首次启动等待，不符合面试官即开即用的目标；实际账单与 Spend Limit 仍须在账户侧确认。
+1. **免费托管合并物理部署，不合并逻辑边界。** Fastify 与 Python Risk Engine 在同一容器内保持独立进程，Risk Engine 只监听 loopback；Local Compose 仍保留三个独立容器。
+2. **接受并明确展示免费层冷启动。** Render 免费 Web Service 空闲后首次启动可能约需一分钟；Demo 页面、README 和部署文档都提前说明，不伪装成正常推理延迟。
 3. **托管配置采用仓库根目录 Blueprint。** 服务类型、区域、构建路径、健康检查、CORS、timeout 和安全 Header 都可审查并随主分支版本化。
 4. **外部状态不提前标记完成。** GitHub 公开仓库、分支保护、Render 资源、HTTPS Smoke Test 和告警仍保持待办，直到真实账户中验证。
 
 ### 验证
 
-- `render.yaml` 可解析并包含 3 个服务；`docker compose config --quiet` 通过。
+- 初始 `render.yaml` 三服务方案已验证；最终免费 Blueprint 改为 2 个资源，并增加专用双进程 Backend Dockerfile。
+- 免费 Backend 镜像从干净 Docker Layer 构建成功；非 root 容器同时启动 Fastify 与 loopback Risk Engine，`/ready` 返回依赖 `ok`，`/version` 返回 `0.7.0 / M7`，Medium 场景返回 `COMPLETE` 和 1 条 Evidence。
 - `pnpm verify` 通过：格式、ESLint、Ruff、Astro Check、TypeScript、17 个 Vitest、19 个 Pytest、模型/检索 Artifact 校验与 5 个 Astro 页面构建全部成功。
 - 三个 M7 Docker 镜像重建成功；API 与 Risk Engine healthy，两个 `/version` 均返回 `0.7.0 / M7`，Demo 页面返回 HTTP 200。
 - GitHub Actions run `30389472308` 通过：Node 33 秒、Python 42 秒、Compose 4 秒，所有安全审计、测试、Artifact 与构建步骤成功。
@@ -94,17 +95,17 @@
 
 - 初次 GitHub 浏览器授权等待 4 分钟后超时；用户随后完成登录，公开仓库创建与推送成功。
 - 首次远程 CI 发现本地未暴露的 Ruff 行长/导入排序问题；修复后又发现 CI 从 `services/risk-engine` 执行导致 `pipelines` 无法导入。把 Lint 和 Test 工作目录统一到仓库根目录后，三项 Job 全部通过。
-- 当前环境仍没有 Render Token 或已登录 CLI；应用 Blueprint 会创建两个持续计费 Starter 后端，因此必须由账户持有人确认费用控制后继续。
+- 当前环境仍没有 Render Token 或已登录 CLI；最终 Blueprint 只声明 `free` Backend 和免费 Static Site，部署时仍需核对 Dashboard 没有付费升级。
 - 全局 Python 不包含项目 ML 依赖，验证命令需要把项目 `.venv` 放入当前 PATH；CI 使用独立 Python 安装，不受此影响。
 
 ### 未完成事项
 
-- 在 Render 账户确认实例费用、Spend Limit 和通知后应用 Blueprint。
+- 在 Render 账户确认两个资源均为免费方案后应用 Blueprint。
 - 验证最终域名、HTTPS、三场景交互、日志与移动布局，并记录生产 Smoke Test。
 
 ### 下一步
 
-获得 Render 账户授权并确认 Starter 费用后，应用 Blueprint、校正平台分配的 URL，并完成匿名 HTTPS 验收。
+获得 Render 账户授权后，确认两个资源均显示免费，应用 Blueprint、校正平台分配的 URL，并完成匿名 HTTPS 验收。
 
 ---
 
