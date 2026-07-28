@@ -105,7 +105,7 @@ describe("M4 evaluation API", () => {
     expect(scenarios.json()).toHaveLength(3);
     expect(openapi.statusCode).toBe(200);
     expect(openapi.json()).toMatchObject({
-      info: { title: "Supplier Risk Intelligence API", version: "0.4.0" },
+      info: { title: "Supplier Risk Intelligence API", version: "0.5.0" },
     });
     expect(openapi.json().paths).toHaveProperty("/v1/evaluations");
     expect(docs.statusCode).toBe(200);

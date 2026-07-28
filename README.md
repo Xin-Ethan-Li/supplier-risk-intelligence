@@ -2,7 +2,7 @@
 
 An explainable supplier-risk technical demonstration combining a TypeScript API, a Python risk engine, and an Astro web experience.
 
-> Status: M4 API vertical slice complete. Live evaluations return a fused overall score, separate quantitative and document risks, cited evidence, deterministic attention items and stage telemetry.
+> Status: M5 interactive Demo UI complete. Recruiters and interviewers can run three fictional scenarios, inspect fused risk, feature contributions, citation evidence and latency, and recover from validation or API errors.
 
 ## Services
 
@@ -77,6 +77,18 @@ combinedRisk = quantitativeRisk * 0.70 + documentRisk * 0.30
 ```
 
 Combined bands use `0.20` for Medium and `0.65` for High. When retrieval returns insufficient evidence, the response becomes `MODEL_ONLY`; the effective document weight is zero and the quantitative signal receives 100% weight. Missing evidence is never treated as evidence of low risk.
+
+## M5 browser experience
+
+The Astro interface supports one-click fictional scenarios, editable structured signals, a combined risk gauge, contribution bars, citation detail dialog and an expandable technical trace. Empty, loading, validation, service-error and model-only states are explicit.
+
+Local browser QA uses installed Chrome with Playwright Core and axe-core:
+
+```bash
+pnpm --filter @srm/web qa:browser
+```
+
+The check exercises desktop and mobile result flows, citation inspection, validation, API failure recovery, horizontal overflow and WCAG 2 A/AA automated rules.
 
 ## Documentation
 

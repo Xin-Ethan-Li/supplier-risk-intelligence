@@ -157,17 +157,17 @@
 
 ### 工作项
 
-- [ ] 建立设计 Token 和响应式 Layout。
-- [ ] 实现场景选择器。
-- [ ] 实现结构化指标表单。
-- [ ] 实现风险问题输入。
-- [ ] 实现结果 Summary 和 Risk Gauge。
-- [ ] 实现特征贡献图。
-- [ ] 实现 Evidence Cards 和 Citation Drawer。
-- [ ] 实现 Latency Trace 和技术详情折叠面板。
-- [ ] 实现 Loading、Empty、Validation 和 Error 状态。
-- [ ] 实现 Architecture 和 Evaluation 页面。
-- [ ] 增加可访问性检查。
+- [x] 建立设计 Token 和响应式 Layout。
+- [x] 实现场景选择器。
+- [x] 实现结构化指标表单。
+- [x] 实现风险问题输入。
+- [x] 实现结果 Summary 和 Risk Gauge。
+- [x] 实现特征贡献图。
+- [x] 实现 Evidence Cards 和 Citation Drawer。
+- [x] 实现 Latency Trace 和技术详情折叠面板。
+- [x] 实现 Loading、Empty、Validation 和 Error 状态。
+- [x] 实现 Architecture 和 Evaluation 页面。
+- [x] 增加可访问性检查。
 
 ### 验收
 

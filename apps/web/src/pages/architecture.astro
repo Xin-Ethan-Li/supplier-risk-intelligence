@@ -4,24 +4,27 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 <BaseLayout title="Architecture | Supplier Risk Intelligence">
   <section class="shell page-heading">
-    <p class="eyebrow">SYSTEM DESIGN</p>
-    <h1>Clear boundaries, prepared assets, observable requests.</h1>
-    <p class="lede">The public API owns validation and orchestration. Python owns model inference and retrieval.</p>
+    <p class="eyebrow">SYSTEM DESIGN · PUBLIC DEMO PROFILE</p>
+    <h1>Small services. Explicit contracts. Inspectable decisions.</h1>
+    <p class="lede">Astro owns the experience, Fastify owns the public contract, and Python owns deterministic model inference, retrieval and policy fusion.</p>
   </section>
-  <section class="shell architecture-flow" aria-label="Architecture components">
-    <div class="architecture-node">Astro Web</div>
-    <span aria-hidden="true">→</span>
-    <div class="architecture-node">Fastify API</div>
-    <span aria-hidden="true">→</span>
-    <div class="architecture-node">Python Risk Engine</div>
-    <span aria-hidden="true">→</span>
-    <div class="architecture-node">Model + Vector Index</div>
+
+  <section class="shell architecture-flow" aria-label="Request architecture">
+    <div class="architecture-node">Astro<br /><small>experience</small></div><span aria-hidden="true">→</span>
+    <div class="architecture-node">Fastify<br /><small>contract + tracing</small></div><span aria-hidden="true">→</span>
+    <div class="architecture-node">FastAPI<br /><small>orchestration</small></div><span aria-hidden="true">→</span>
+    <div class="architecture-node">XGBoost + Hybrid Index<br /><small>prepared artifacts</small></div>
   </section>
+
+  <section class="shell grid three" aria-label="Architecture principles">
+    <article class="card"><span class="step">01</span><h2>Parallel signals</h2><p>Model inference and document retrieval run concurrently, then meet at one versioned fusion policy.</p></article>
+    <article class="card"><span class="step">02</span><h2>Evidence integrity</h2><p>A validator rejects responses with missing, duplicated or unresolved citations before they cross the service boundary.</p></article>
+    <article class="card"><span class="step">03</span><h2>Operational boundary</h2><p>Request and correlation IDs, structured errors, rate limits, health checks and stage latency make the slice observable.</p></article>
+  </section>
+
   <section class="shell card prose">
-    <h2>M1 boundary</h2>
-    <p>
-      This milestone intentionally returns a skeleton result. It proves deployment, validation,
-      correlation IDs and service-to-service communication before model or retrieval complexity is added.
-    </p>
+    <h2>Deliberate demo constraints</h2>
+    <p>The public profile uses a fixed synthetic dataset, fictional documents, a prepared XGBoost artifact and deterministic TF-IDF/LSA retrieval. It needs no company data, cloud secret, paid LLM or runtime model download.</p>
+    <p>This is a portfolio reference implementation—not a claim that the original enterprise system, its data or its production performance has been reproduced.</p>
   </section>
 </BaseLayout>

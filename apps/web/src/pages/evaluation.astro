@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Evaluation | Supplier Risk Intelligence">
+  <section class="shell page-heading">
+    <p class="eyebrow">MODEL & RETRIEVAL EVALUATION</p>
+    <h1>Metrics with their boundaries attached.</h1>
+    <p class="lede">The artifacts are reproducible and regression-tested. Results below describe only the fixed synthetic test period and the small fictional retrieval benchmark.</p>
+  </section>
+
+  <section class="shell metric-cards" aria-label="Model evaluation summary">
+    <article class="card metric-card"><strong>89.2%</strong><span>High-risk recall · 2025 synthetic holdout</span></article>
+    <article class="card metric-card"><strong>0.653</strong><span>PR-AUC · imbalanced synthetic classification</span></article>
+    <article class="card metric-card"><strong>1.000</strong><span>Recall@5 · eight designed fictional queries</span></article>
+  </section>
+
+  <section class="shell grid three" aria-label="Evaluation methodology">
+    <article class="card"><span class="step">MODEL</span><h2>Point-in-time split</h2><p>Training uses 2019–2023, threshold selection uses 2024, and the final untouched synthetic test period is 2025.</p></article>
+    <article class="card"><span class="step">SEARCH</span><h2>Retrieval regression</h2><p>Eight labeled queries verify relevant sources, deduplication, citation resolution and the insufficient-evidence path.</p></article>
+    <article class="card"><span class="step">SYSTEM</span><h2>Contract tests</h2><p>Three end-to-end scenarios must resolve to HIGH, MEDIUM and LOW under fusion policy demo-fusion-1.0.0.</p></article>
+  </section>
+
+  <section class="shell card prose">
+    <h2>How to read these numbers</h2>
+    <p>The model holdout contains 1,687 synthetic records with a 2.19% positive class. Precision is 32.4% at the recall-oriented threshold; this trade-off is visible rather than hidden behind accuracy.</p>
+    <p>The retrieval benchmark is intentionally small and designed around the fictional corpus. A perfect score means its current regression queries pass—it does not establish open-domain or production retrieval quality.</p>
+    <div class="actions"><a class="button primary" href="/demo">Test all three scenarios</a><a class="button secondary" href="/architecture">Inspect architecture</a></div>
+  </section>
+</BaseLayout>

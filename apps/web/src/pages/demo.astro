@@ -5,220 +5,426 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
 ---
 
 <BaseLayout title="Live Demo | Supplier Risk Intelligence">
-  <section class="shell page-heading">
-    <p class="eyebrow">M4 API VERTICAL SLICE</p>
-    <h1>One risk view, with every signal exposed.</h1>
-    <p class="lede">
-      Run a versioned XGBoost model and search a fictional supplier corpus with dense, lexical and domain-aware ranking. Every document conclusion is tied to returned evidence.
-    </p>
-    <div class="actions">
-      <a class="button secondary" href={`${apiBaseUrl}/docs/`} target="_blank" rel="noreferrer">Open API documentation</a>
+  <section class="shell page-heading demo-heading">
+    <div>
+      <p class="eyebrow">INTERACTIVE RISK WORKSPACE · M5</p>
+      <h1>See the signal. Inspect the evidence.</h1>
+      <p class="lede">
+        Choose a fictional supplier, adjust its operating signals, and run an explainable risk assessment. No company data or external AI service is used.
+      </p>
+    </div>
+    <div class="heading-actions">
+      <span class="system-pill"><span aria-hidden="true"></span> deterministic demo</span>
+      <a class="text-link" href={`${apiBaseUrl}/docs/`} target="_blank" rel="noreferrer">API docs ↗</a>
     </div>
   </section>
 
-  <section class="shell demo-grid" data-demo-root data-api-base-url={apiBaseUrl}>
-    <form class="card form-panel" data-evaluation-form>
-      <h2>Supplier signals</h2>
-      <label>
-        Scenario
-        <select name="scenarioId">
-          <option value="high-risk-logistics">High-risk logistics disruption</option>
-          <option value="medium-risk-quality">Medium-risk quality drift</option>
-          <option value="low-risk-stable">Low-risk stable supplier</option>
-        </select>
-      </label>
-      <div class="field-grid">
-        <label>Delay rate <input name="deliveryDelayRate30d" type="number" min="0" max="1" step="0.01" value="0.27" /></label>
-        <label>Defect rate <input name="defectRate90d" type="number" min="0" max="1" step="0.01" value="0.08" /></label>
-        <label>Cancellation rate <input name="cancellationRate90d" type="number" min="0" max="1" step="0.01" value="0.05" /></label>
-        <label>On-time trend <input name="onTimeDeliveryTrend90d" type="number" min="-1" max="1" step="0.01" value="-0.18" /></label>
-        <label>Lead-time variance <input name="leadTimeVarianceDays" type="number" min="0" max="90" step="0.1" value="6.4" /></label>
-        <label>Open disputes <input name="openDisputes" type="number" min="0" max="100" step="1" value="3" /></label>
-        <label>Financial stability <input name="financialStabilityIndex" type="number" min="0" max="1" step="0.01" value="0.31" /></label>
-        <label>Recent incidents <input name="recentIncidents" type="number" min="0" max="100" step="1" value="4" /></label>
-      </div>
-      <label>
-        Risk question
-        <textarea name="question" rows="3">Is this supplier likely to disrupt delivery in the next 14 days?</textarea>
-      </label>
-      <button class="button primary" type="submit">Run risk evaluation</button>
-      <p class="form-status" data-form-status aria-live="polite">Ready to evaluate.</p>
+  <main class="shell demo-workspace" data-demo-root data-api-base-url={apiBaseUrl} data-state="idle">
+    <form class="input-column" data-evaluation-form novalidate>
+      <section class="card scenario-panel" aria-labelledby="scenario-heading">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">01</span>
+            <h2 id="scenario-heading">Choose a scenario</h2>
+          </div>
+          <span class="section-hint">One click fills all inputs</span>
+        </div>
+        <fieldset class="scenario-grid">
+          <legend class="sr-only">Fictional supplier scenario</legend>
+          <label class="scenario-card" data-level="HIGH">
+            <input type="radio" name="scenarioId" value="high-risk-logistics" aria-label="High-risk logistics disruption" checked />
+            <span class="scenario-topline"><span class="band-symbol" aria-hidden="true">▲</span> HIGH SIGNAL</span>
+            <strong>Logistics disruption</strong>
+            <span>Northstar Components</span>
+          </label>
+          <label class="scenario-card" data-level="MEDIUM">
+            <input type="radio" name="scenarioId" value="medium-risk-quality" aria-label="Medium-risk quality drift" />
+            <span class="scenario-topline"><span class="band-symbol" aria-hidden="true">◆</span> MEDIUM SIGNAL</span>
+            <strong>Quality drift</strong>
+            <span>Apex Precision</span>
+          </label>
+          <label class="scenario-card" data-level="LOW">
+            <input type="radio" name="scenarioId" value="low-risk-stable" aria-label="Low-risk stable supplier" />
+            <span class="scenario-topline"><span class="band-symbol" aria-hidden="true">●</span> LOW SIGNAL</span>
+            <strong>Stable supplier</strong>
+            <span>Greenline Materials</span>
+          </label>
+        </fieldset>
+      </section>
+
+      <section class="card signals-panel" aria-labelledby="signals-heading">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">02</span>
+            <h2 id="signals-heading">Review supplier signals</h2>
+          </div>
+          <span class="section-hint" data-supplier-name>Northstar Components</span>
+        </div>
+        <p class="scenario-description" data-scenario-description>
+          Port delays, plant interruption and constrained liquidity.
+        </p>
+        <div class="metric-grid">
+          <label>Delay rate <span><input name="deliveryDelayRate30d" type="number" min="0" max="1" step="0.001" value="0.27" required /><small>30 days · 0–1</small></span></label>
+          <label>Defect rate <span><input name="defectRate90d" type="number" min="0" max="1" step="0.001" value="0.08" required /><small>90 days · 0–1</small></span></label>
+          <label>Cancellation rate <span><input name="cancellationRate90d" type="number" min="0" max="1" step="0.001" value="0.05" required /><small>90 days · 0–1</small></span></label>
+          <label>On-time trend <span><input name="onTimeDeliveryTrend90d" type="number" min="-1" max="1" step="0.001" value="-0.18" required /><small>90 days · -1–1</small></span></label>
+          <label>Lead-time variance <span><input name="leadTimeVarianceDays" type="number" min="0" max="90" step="0.01" value="6.4" required /><small>days</small></span></label>
+          <label>Open disputes <span><input name="openDisputes" type="number" min="0" max="100" step="1" value="3" required /><small>count</small></span></label>
+          <label>Financial stability <span><input name="financialStabilityIndex" type="number" min="0" max="1" step="0.001" value="0.31" required /><small>index · 0–1</small></span></label>
+          <label>Recent incidents <span><input name="recentIncidents" type="number" min="0" max="100" step="1" value="4" required /><small>count</small></span></label>
+        </div>
+        <label class="question-field">
+          <span>Risk question</span>
+          <textarea name="question" rows="3" minlength="10" maxlength="500" required>Are port congestion, plant interruption or liquidity pressure likely to disrupt delivery?</textarea>
+          <small>Retrieved evidence must directly support the answer.</small>
+        </label>
+        <div class="validation-summary" data-validation-summary role="alert" hidden></div>
+        <div class="submit-row">
+          <button class="button primary evaluate-button" type="submit" data-submit-button>
+            <span class="button-label">Evaluate supplier</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+          <p class="form-status" data-form-status aria-live="polite">Ready · usually completes in under a second</p>
+        </div>
+      </section>
     </form>
 
-    <section class="card result-panel" aria-live="polite">
-      <p class="eyebrow">MODEL RESPONSE</p>
-      <div class="risk-heading">
-        <div>
-          <span class="risk-probability" data-risk-probability>—</span>
-          <span class="risk-caption">combined demo risk</span>
+    <section class="card result-panel" aria-labelledby="result-heading" aria-live="polite" aria-busy="false" data-result-panel>
+      <div class="empty-state" data-empty-state>
+        <span class="empty-orbit" aria-hidden="true"><i></i></span>
+        <p class="eyebrow">EXPLAINABLE OUTPUT</p>
+        <h2 id="result-heading">Your assessment will appear here</h2>
+        <p>Run a scenario to see the combined risk, model drivers, document evidence, citations and latency trace.</p>
+        <ol class="empty-flow" aria-label="Evaluation stages">
+          <li>Quantitative model</li><li>Hybrid retrieval</li><li>Policy fusion</li>
+        </ol>
+      </div>
+
+      <div class="loading-state" data-loading-state hidden>
+        <div class="loading-visual" aria-hidden="true"><span></span><span></span><span></span></div>
+        <p class="eyebrow">EVALUATION IN PROGRESS</p>
+        <h2>Following the risk signal…</h2>
+        <ul><li>Running XGBoost inference</li><li>Searching fictional evidence</li><li>Validating citations</li></ul>
+      </div>
+
+      <div class="error-state" data-error-state hidden>
+        <span class="error-icon" aria-hidden="true">!</span>
+        <p class="eyebrow">REQUEST NOT COMPLETED</p>
+        <h2>We couldn’t finish this assessment</h2>
+        <p data-error-message>Check the inputs and try again.</p>
+        <button class="button secondary" type="button" data-retry-button>Try again</button>
+      </div>
+
+      <div class="result-content" data-result-content hidden>
+        <header class="result-header">
+          <div>
+            <p class="eyebrow">COMBINED RISK</p>
+            <h2 id="result-heading-complete" data-result-title>Supplier assessment</h2>
+          </div>
+          <span class="confidence-pill" data-confidence>SUPPORTED</span>
+        </header>
+
+        <div class="risk-overview">
+          <div class="risk-gauge" data-risk-gauge role="img" aria-label="Combined risk score">
+            <div><strong data-risk-probability>—</strong><span>risk score</span></div>
+          </div>
+          <div class="risk-narrative">
+            <span class="risk-badge" data-risk-band><span aria-hidden="true" data-band-symbol>●</span> WAITING</span>
+            <p data-result-summary></p>
+          </div>
         </div>
-        <span class="risk-badge" data-risk-band>WAITING</span>
+
+        <section class="signal-comparison" aria-labelledby="signal-comparison-heading">
+          <h3 id="signal-comparison-heading">Signal comparison</h3>
+          <div class="signal-bars">
+            <div><span>Quantitative model</span><div class="signal-track"><i data-model-bar></i></div><strong data-model-risk>—</strong></div>
+            <div><span>Document evidence</span><div class="signal-track"><i data-document-bar></i></div><strong data-document-risk>—</strong></div>
+          </div>
+        </section>
+
+        <section class="drivers" data-drivers>
+          <div class="subsection-heading"><h3>Leading model drivers</h3><span>local contribution</span></div>
+          <ol data-driver-list></ol>
+        </section>
+
+        <section class="attention" data-attention>
+          <h3>Suggested attention</h3>
+          <ul data-attention-list></ul>
+        </section>
+
+        <section class="evidence" data-evidence>
+          <div class="subsection-heading"><h3>Fictional evidence</h3><span data-evidence-count>0 sources</span></div>
+          <div class="evidence-list" data-evidence-list></div>
+        </section>
+
+        <details class="technical-details">
+          <summary>Technical trace and versions <span>inspect</span></summary>
+          <div class="latency-trace" data-latency-trace>
+            <div><span>Model</span><i><b data-inference-bar></b></i><strong data-inference-ms>—</strong></div>
+            <div><span>Retrieval</span><i><b data-retrieval-bar></b></i><strong data-retrieval-ms>—</strong></div>
+            <div><span>Fusion</span><i><b data-fusion-bar></b></i><strong data-fusion-ms>—</strong></div>
+          </div>
+          <dl class="result-meta">
+            <div><dt>Total latency</dt><dd data-total-ms>—</dd></div>
+            <div><dt>Fusion policy</dt><dd data-fusion-policy>—</dd></div>
+            <div><dt>Model</dt><dd data-model-version>—</dd></div>
+            <div><dt>Evidence index</dt><dd data-index-version>—</dd></div>
+            <div><dt>Request ID</dt><dd class="mono" data-request-id>—</dd></div>
+            <div><dt>Correlation ID</dt><dd class="mono" data-correlation-id>—</dd></div>
+          </dl>
+        </details>
       </div>
-      <h2 data-result-title>Waiting for an evaluation</h2>
-      <p data-result-summary>The request will travel through Astro → Fastify → FastAPI → XGBoost.</p>
-      <div class="drivers" data-drivers hidden>
-        <h3>Leading model drivers</h3>
-        <ol data-driver-list></ol>
-      </div>
-      <div class="evidence" data-evidence hidden>
-        <h3>Fictional document evidence</h3>
-        <div class="evidence-list" data-evidence-list></div>
-      </div>
-      <div class="attention" data-attention hidden>
-        <h3>Suggested attention</h3>
-        <ul data-attention-list></ul>
-      </div>
-      <dl class="result-meta">
-        <div><dt>Quantitative risk</dt><dd data-model-risk>—</dd></div>
-        <div><dt>Document risk</dt><dd data-document-risk>—</dd></div>
-        <div><dt>Fusion policy</dt><dd data-fusion-policy>—</dd></div>
-        <div><dt>Model</dt><dd data-model-version>—</dd></div>
-        <div><dt>Evidence index</dt><dd data-index-version>—</dd></div>
-        <div><dt>Model inference</dt><dd data-inference-ms>—</dd></div>
-        <div><dt>Retrieval</dt><dd data-retrieval-ms>—</dd></div>
-        <div><dt>Fusion</dt><dd data-fusion-ms>—</dd></div>
-        <div><dt>Total latency</dt><dd data-total-ms>—</dd></div>
-        <div><dt>Correlation ID</dt><dd class="mono" data-correlation-id>—</dd></div>
-      </dl>
     </section>
-  </section>
+  </main>
+
+  <dialog class="citation-dialog" data-citation-dialog aria-labelledby="citation-title">
+    <div class="dialog-topline"><span class="eyebrow">SOURCE DETAIL</span><button type="button" data-dialog-close aria-label="Close citation detail">×</button></div>
+    <h2 id="citation-title" data-dialog-title>Citation</h2>
+    <p class="evidence-meta" data-dialog-meta></p>
+    <blockquote data-dialog-excerpt></blockquote>
+    <dl><div><dt>Risk category</dt><dd data-dialog-category></dd></div><div><dt>Retrieval relevance</dt><dd data-dialog-score></dd></div></dl>
+  </dialog>
 
   <script>
-    const root = document.querySelector<HTMLElement>("[data-demo-root]");
-    const form = document.querySelector<HTMLFormElement>("[data-evaluation-form]");
-    const presets: Record<string, Record<string, number>> = {
-      "high-risk-logistics": {
-        deliveryDelayRate30d: 0.27, defectRate90d: 0.08, cancellationRate90d: 0.05,
-        onTimeDeliveryTrend90d: -0.18, leadTimeVarianceDays: 6.4, openDisputes: 3,
-        financialStabilityIndex: 0.31, recentIncidents: 4
-      },
-      "medium-risk-quality": {
-        deliveryDelayRate30d: 0.335, defectRate90d: 0.181, cancellationRate90d: 0.045,
-        onTimeDeliveryTrend90d: -0.041, leadTimeVarianceDays: 5.26, openDisputes: 0,
-        financialStabilityIndex: 0.658, recentIncidents: 1
-      },
-      "low-risk-stable": {
-        deliveryDelayRate30d: 0.02, defectRate90d: 0.01, cancellationRate90d: 0.005,
-        onTimeDeliveryTrend90d: 0.08, leadTimeVarianceDays: 1.2, openDisputes: 0,
-        financialStabilityIndex: 0.88, recentIncidents: 0
-      }
-    };
-    const questions: Record<string, string> = {
-      "high-risk-logistics": "Are port congestion, plant interruption or liquidity pressure likely to disrupt delivery?",
-      "medium-risk-quality": "Were the repeat dimensional defects fully corrected and verified?",
-      "low-risk-stable": "Is this supplier delivering consistently with adequate continuity and financial stability?"
+    type Scenario = {
+      id: string;
+      supplierName: string;
+      description: string;
+      defaultQuestion: string;
+      supplierMetrics: Record<string, number>;
     };
 
-    const scenarioSelect = form?.elements.namedItem("scenarioId") as HTMLSelectElement | null;
-    scenarioSelect?.addEventListener("change", (event: Event) => {
+    type Evidence = {
+      citationId: string;
+      title: string;
+      sourceType: string;
+      publishedAt: string;
+      section: string;
+      excerpt: string;
+      score: number;
+      riskCategory: string;
+    };
+
+    const fallbackScenarios: Scenario[] = [
+      { id: "high-risk-logistics", supplierName: "Northstar Components", description: "Port delays, plant interruption and constrained liquidity.", defaultQuestion: "Are port congestion, plant interruption or liquidity pressure likely to disrupt delivery?", supplierMetrics: { deliveryDelayRate30d: 0.27, defectRate90d: 0.08, cancellationRate90d: 0.05, onTimeDeliveryTrend90d: -0.18, leadTimeVarianceDays: 6.4, openDisputes: 3, financialStabilityIndex: 0.31, recentIncidents: 4 } },
+      { id: "medium-risk-quality", supplierName: "Apex Precision", description: "Contained dimensional defects with corrective action still under review.", defaultQuestion: "Were the repeat dimensional defects fully corrected and verified?", supplierMetrics: { deliveryDelayRate30d: 0.335, defectRate90d: 0.181, cancellationRate90d: 0.045, onTimeDeliveryTrend90d: -0.041, leadTimeVarianceDays: 5.26, openDisputes: 0, financialStabilityIndex: 0.658, recentIncidents: 1 } },
+      { id: "low-risk-stable", supplierName: "Greenline Materials", description: "Stable delivery, low defects and tested continuity arrangements.", defaultQuestion: "Is this supplier delivering consistently with adequate continuity and financial stability?", supplierMetrics: { deliveryDelayRate30d: 0.02, defectRate90d: 0.01, cancellationRate90d: 0.005, onTimeDeliveryTrend90d: 0.08, leadTimeVarianceDays: 1.2, openDisputes: 0, financialStabilityIndex: 0.88, recentIncidents: 0 } }
+    ];
+
+    const root = document.querySelector<HTMLElement>("[data-demo-root]");
+    const form = document.querySelector<HTMLFormElement>("[data-evaluation-form]");
+    const resultPanel = document.querySelector<HTMLElement>("[data-result-panel]");
+    const dialog = document.querySelector<HTMLDialogElement>("[data-citation-dialog]");
+    let scenarios = fallbackScenarios;
+
+    function select<T extends HTMLElement>(selector: string): T {
+      const element = document.querySelector<T>(selector);
+      if (!element) throw new Error(`Missing UI element: ${selector}`);
+      return element;
+    }
+
+    function setState(state: "idle" | "loading" | "success" | "error") {
+      if (!root || !resultPanel) return;
+      root.dataset.state = state;
+      resultPanel.setAttribute("aria-busy", String(state === "loading"));
+      select<HTMLElement>("[data-empty-state]").hidden = state !== "idle";
+      select<HTMLElement>("[data-loading-state]").hidden = state !== "loading";
+      select<HTMLElement>("[data-error-state]").hidden = state !== "error";
+      select<HTMLElement>("[data-result-content]").hidden = state !== "success";
+      const button = select<HTMLButtonElement>("[data-submit-button]");
+      button.disabled = state === "loading";
+      button.querySelector(".button-label")!.textContent = state === "loading" ? "Evaluating…" : "Evaluate supplier";
+    }
+
+    function applyScenario(id: string) {
       if (!form) return;
-      const preset = presets[(event.target as HTMLSelectElement).value];
-      if (!preset) return;
-      Object.entries(preset).forEach(([name, value]) => {
+      const scenario = scenarios.find((item) => item.id === id) ?? fallbackScenarios.find((item) => item.id === id);
+      if (!scenario) return;
+      Object.entries(scenario.supplierMetrics).forEach(([name, value]) => {
         const input = form.elements.namedItem(name) as HTMLInputElement | null;
         if (input) input.value = String(value);
       });
       const question = form.elements.namedItem("question") as HTMLTextAreaElement | null;
-      if (question) question.value = questions[(event.target as HTMLSelectElement).value];
+      if (question) question.value = scenario.defaultQuestion;
+      select<HTMLElement>("[data-supplier-name]").textContent = scenario.supplierName;
+      select<HTMLElement>("[data-scenario-description]").textContent = scenario.description;
+      select<HTMLElement>("[data-validation-summary]").hidden = true;
+    }
+
+    form?.querySelectorAll<HTMLInputElement>('input[name="scenarioId"]').forEach((input) => {
+      input.addEventListener("change", () => applyScenario(input.value));
     });
+
+    async function hydrateScenarios() {
+      if (!root) return;
+      try {
+        const response = await fetch(`${root.dataset.apiBaseUrl}/v1/scenarios`);
+        if (response.ok) scenarios = await response.json();
+      } catch {
+        // The embedded fictional presets keep the page usable during API recovery.
+      }
+      const selected = form?.querySelector<HTMLInputElement>('input[name="scenarioId"]:checked');
+      if (selected) applyScenario(selected.value);
+    }
+
+    function showValidation() {
+      if (!form) return false;
+      const summary = select<HTMLElement>("[data-validation-summary]");
+      if (form.checkValidity()) {
+        summary.hidden = true;
+        return true;
+      }
+      const invalid = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(":invalid");
+      summary.textContent = invalid?.validationMessage ?? "Review the highlighted inputs.";
+      summary.hidden = false;
+      invalid?.focus();
+      return false;
+    }
+
+    function setText(selector: string, value: string) {
+      select<HTMLElement>(selector).textContent = value;
+    }
+
+    function renderEvidence(items: Evidence[]) {
+      const list = select<HTMLElement>("[data-evidence-list]");
+      const nodes = items.map((evidence) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "evidence-card";
+        button.setAttribute("aria-label", `Open citation ${evidence.citationId}: ${evidence.title}`);
+        const marker = document.createElement("span");
+        marker.className = "citation-marker";
+        marker.textContent = evidence.citationId;
+        const body = document.createElement("span");
+        body.className = "evidence-body";
+        const title = document.createElement("strong");
+        title.textContent = evidence.title;
+        const meta = document.createElement("small");
+        meta.textContent = `${evidence.sourceType.replaceAll("_", " ")} · ${evidence.publishedAt}`;
+        const excerpt = document.createElement("span");
+        excerpt.textContent = evidence.excerpt;
+        const action = document.createElement("i");
+        action.textContent = "Inspect source →";
+        body.append(title, meta, excerpt, action);
+        button.append(marker, body);
+        button.addEventListener("click", () => {
+          setText("[data-dialog-title]", `[${evidence.citationId}] ${evidence.title}`);
+          setText("[data-dialog-meta]", `${evidence.sourceType.replaceAll("_", " ")} · ${evidence.publishedAt} · ${evidence.section}`);
+          setText("[data-dialog-excerpt]", evidence.excerpt);
+          setText("[data-dialog-category]", evidence.riskCategory.replaceAll("_", " "));
+          setText("[data-dialog-score]", evidence.score.toFixed(3));
+          dialog?.showModal();
+        });
+        return button;
+      });
+      if (!nodes.length) {
+        const empty = document.createElement("p");
+        empty.className = "evidence-empty";
+        empty.textContent = "No relevant fictional source was found. The result uses the quantitative model only.";
+        nodes.push(empty as unknown as HTMLButtonElement);
+      }
+      list.replaceChildren(...nodes);
+      setText("[data-evidence-count]", `${items.length} ${items.length === 1 ? "source" : "sources"}`);
+    }
+
+    function renderResult(result: any) {
+      const risk = result.risk;
+      const quantitative = result.quantitative;
+      const documentRisk = result.document;
+      const score = Math.max(0, Math.min(1, risk.combinedScore));
+      const color = risk.riskBand === "HIGH" ? "#ff716b" : risk.riskBand === "MEDIUM" ? "#f3bd55" : "#46d7b2";
+      const symbol = risk.riskBand === "HIGH" ? "▲" : risk.riskBand === "MEDIUM" ? "◆" : "●";
+      const gauge = select<HTMLElement>("[data-risk-gauge]");
+      gauge.style.setProperty("--score", String(score * 360));
+      gauge.style.setProperty("--risk-color", color);
+      gauge.setAttribute("aria-label", `${risk.riskBand} combined risk, ${(score * 100).toFixed(1)} percent`);
+      setText("[data-risk-probability]", `${(score * 100).toFixed(1)}%`);
+      setText("[data-result-title]", `${risk.riskBand.toLowerCase()} overall demo risk`);
+      setText("[data-result-summary]", result.insight.summary);
+      setText("[data-band-symbol]", symbol);
+      const band = select<HTMLElement>("[data-risk-band]");
+      band.dataset.band = risk.riskBand;
+      band.lastChild!.textContent = ` ${risk.riskBand}`;
+      setText("[data-confidence]", risk.confidence.replaceAll("_", " "));
+      setText("[data-model-risk]", `${quantitative.riskBand} · ${(quantitative.riskProbability * 100).toFixed(1)}%`);
+      setText("[data-document-risk]", documentRisk.status === "INSUFFICIENT_EVIDENCE" ? "No evidence" : `${documentRisk.riskBand} · ${(documentRisk.riskScore * 100).toFixed(1)}%`);
+      select<HTMLElement>("[data-model-bar]").style.width = `${quantitative.riskProbability * 100}%`;
+      select<HTMLElement>("[data-document-bar]").style.width = `${documentRisk.riskScore * 100}%`;
+
+      const maxContribution = Math.max(...quantitative.drivers.map((driver: any) => Math.abs(driver.contribution)), 0.001);
+      const driverNodes = quantitative.drivers.map((driver: any) => {
+        const item = document.createElement("li");
+        item.dataset.direction = driver.direction;
+        const label = document.createElement("div");
+        const name = document.createElement("span");
+        name.textContent = driver.displayName;
+        const value = document.createElement("strong");
+        value.textContent = `${driver.direction === "INCREASES_RISK" ? "+" : "−"}${Math.abs(driver.contribution).toFixed(3)}`;
+        label.append(name, value);
+        const track = document.createElement("i");
+        const bar = document.createElement("b");
+        bar.style.width = `${Math.max(4, Math.abs(driver.contribution) / maxContribution * 100)}%`;
+        track.append(bar);
+        item.append(label, track);
+        return item;
+      });
+      select<HTMLOListElement>("[data-driver-list]").replaceChildren(...driverNodes);
+
+      const attentionNodes = result.insight.attentionItems.map((text: string) => {
+        const item = document.createElement("li");
+        item.textContent = text;
+        return item;
+      });
+      select<HTMLUListElement>("[data-attention-list]").replaceChildren(...attentionNodes);
+      renderEvidence(result.evidence);
+
+      const timings = [quantitative.inferenceMs, documentRisk.retrievalMs, result.telemetry.fusionMs];
+      const maxTiming = Math.max(...timings, 0.01);
+      ["inference", "retrieval", "fusion"].forEach((name, index) => {
+        setText(`[data-${name}-ms]`, `${timings[index].toFixed(2)} ms`);
+        select<HTMLElement>(`[data-${name}-bar]`).style.width = `${Math.max(3, timings[index] / maxTiming * 100)}%`;
+      });
+      setText("[data-total-ms]", `${result.telemetry.totalMs.toFixed(2)} ms`);
+      setText("[data-fusion-policy]", `${risk.policyVersion} · ${(risk.effectiveWeights.quantitative * 100).toFixed(0)}/${(risk.effectiveWeights.document * 100).toFixed(0)}`);
+      setText("[data-model-version]", quantitative.modelVersion);
+      setText("[data-index-version]", documentRisk.indexVersion);
+      setText("[data-request-id]", result.requestId);
+      setText("[data-correlation-id]", result.correlationId);
+      setState("success");
+    }
 
     form?.addEventListener("submit", async (event) => {
       event.preventDefault();
-      if (!root) return;
-
-      const status = document.querySelector<HTMLElement>("[data-form-status]");
+      if (!root || !form || !showValidation()) return;
       const data = new FormData(form);
       const value = (name: string) => Number(data.get(name));
       const payload = {
         scenarioId: String(data.get("scenarioId")),
-        supplierMetrics: {
-          deliveryDelayRate30d: value("deliveryDelayRate30d"),
-          defectRate90d: value("defectRate90d"),
-          cancellationRate90d: value("cancellationRate90d"),
-          onTimeDeliveryTrend90d: value("onTimeDeliveryTrend90d"),
-          leadTimeVarianceDays: value("leadTimeVarianceDays"),
-          openDisputes: value("openDisputes"),
-          financialStabilityIndex: value("financialStabilityIndex"),
-          recentIncidents: value("recentIncidents")
-        },
+        supplierMetrics: { deliveryDelayRate30d: value("deliveryDelayRate30d"), defectRate90d: value("defectRate90d"), cancellationRate90d: value("cancellationRate90d"), onTimeDeliveryTrend90d: value("onTimeDeliveryTrend90d"), leadTimeVarianceDays: value("leadTimeVarianceDays"), openDisputes: value("openDisputes"), financialStabilityIndex: value("financialStabilityIndex"), recentIncidents: value("recentIncidents") },
         question: String(data.get("question"))
       };
-
-      if (status) status.textContent = "Running model inference…";
-
+      setState("loading");
+      setText("[data-form-status]", "Model and retrieval are running in parallel…");
       try {
-        const response = await fetch(`${root.dataset.apiBaseUrl}/v1/evaluations`, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(payload)
-        });
+        const response = await fetch(`${root.dataset.apiBaseUrl}/v1/evaluations`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
         const result = await response.json();
-        if (!response.ok) throw new Error(result.error?.message ?? "Request failed");
-
-        const quantitative = result.quantitative;
-        const risk = result.risk;
-        document.querySelector<HTMLElement>("[data-result-title]")!.textContent = `${risk.riskBand.toLowerCase()} overall demo risk`;
-        document.querySelector<HTMLElement>("[data-result-summary]")!.textContent = result.insight.summary;
-        document.querySelector<HTMLElement>("[data-risk-probability]")!.textContent = `${(risk.combinedScore * 100).toFixed(1)}%`;
-        const band = document.querySelector<HTMLElement>("[data-risk-band]")!;
-        band.textContent = risk.riskBand;
-        band.dataset.band = risk.riskBand;
-        document.querySelector<HTMLElement>("[data-model-risk]")!.textContent = `${quantitative.riskBand} · ${(quantitative.riskProbability * 100).toFixed(1)}%`;
-        document.querySelector<HTMLElement>("[data-model-version]")!.textContent = quantitative.modelVersion;
-        document.querySelector<HTMLElement>("[data-index-version]")!.textContent = result.document.indexVersion;
-        document.querySelector<HTMLElement>("[data-document-risk]")!.textContent = `${result.document.riskBand} · ${(result.document.riskScore * 100).toFixed(1)}%`;
-        document.querySelector<HTMLElement>("[data-fusion-policy]")!.textContent = `${risk.policyVersion} · ${(risk.effectiveWeights.quantitative * 100).toFixed(0)}/${(risk.effectiveWeights.document * 100).toFixed(0)}`;
-        document.querySelector<HTMLElement>("[data-inference-ms]")!.textContent = `${quantitative.inferenceMs.toFixed(2)} ms`;
-        document.querySelector<HTMLElement>("[data-retrieval-ms]")!.textContent = `${result.document.retrievalMs.toFixed(2)} ms`;
-        document.querySelector<HTMLElement>("[data-fusion-ms]")!.textContent = `${result.telemetry.fusionMs.toFixed(2)} ms`;
-        document.querySelector<HTMLElement>("[data-total-ms]")!.textContent = `${result.telemetry.totalMs.toFixed(2)} ms`;
-        document.querySelector<HTMLElement>("[data-correlation-id]")!.textContent = result.correlationId;
-
-        const driverList = document.querySelector<HTMLOListElement>("[data-driver-list]")!;
-        driverList.replaceChildren(...quantitative.drivers.map((driver: { displayName: string; contribution: number; direction: string }) => {
-          const item = document.createElement("li");
-          const direction = driver.direction === "INCREASES_RISK" ? "raises" : "reduces";
-          item.innerHTML = `<span>${driver.displayName}</span><strong>${direction} risk · ${Math.abs(driver.contribution).toFixed(3)}</strong>`;
-          item.dataset.direction = driver.direction;
-          return item;
-        }));
-        document.querySelector<HTMLElement>("[data-drivers]")!.hidden = false;
-
-        const evidenceList = document.querySelector<HTMLElement>("[data-evidence-list]")!;
-        evidenceList.replaceChildren(...result.evidence.map((evidence: { citationId: string; title: string; sourceType: string; publishedAt: string; section: string; excerpt: string; score: number }) => {
-          const card = document.createElement("article");
-          card.className = "evidence-card";
-          const heading = document.createElement("h4");
-          heading.textContent = `[${evidence.citationId}] ${evidence.title}`;
-          const metadata = document.createElement("p");
-          metadata.className = "evidence-meta";
-          metadata.textContent = `${evidence.sourceType.replaceAll("_", " ")} · ${evidence.publishedAt} · ${evidence.section}`;
-          const excerpt = document.createElement("p");
-          excerpt.textContent = evidence.excerpt;
-          const score = document.createElement("span");
-          score.className = "evidence-score";
-          score.textContent = `relevance ${evidence.score.toFixed(3)}`;
-          card.append(heading, metadata, excerpt, score);
-          return card;
-        }));
-        if (!result.evidence.length) {
-          const empty = document.createElement("p");
-          empty.textContent = "Insufficient evidence — no citation was generated.";
-          evidenceList.append(empty);
+        if (!response.ok) {
+          const detail = result.error?.details?.[0];
+          throw new Error(detail ? `${result.error.message} ${detail.field} ${detail.message}` : result.error?.message ?? "Request failed.");
         }
-        document.querySelector<HTMLElement>("[data-evidence]")!.hidden = false;
-
-        const attentionList = document.querySelector<HTMLUListElement>("[data-attention-list]")!;
-        attentionList.replaceChildren(...result.insight.attentionItems.map((text: string) => {
-          const item = document.createElement("li");
-          item.textContent = text;
-          return item;
-        }));
-        document.querySelector<HTMLElement>("[data-attention]")!.hidden = false;
-        if (status) status.textContent = "Evaluation completed successfully.";
+        renderResult(result);
+        setText("[data-form-status]", `Complete · ${result.status === "MODEL_ONLY" ? "model-only fallback" : `${result.evidence.length} evidence sources`}`);
+        if (window.matchMedia("(max-width: 900px)").matches) resultPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
       } catch (error) {
-        if (status) status.textContent = error instanceof Error ? error.message : "The request failed.";
+        setText("[data-error-message]", error instanceof Error ? error.message : "The request failed. Check the API and try again.");
+        setText("[data-form-status]", "Evaluation failed · retry when ready");
+        setState("error");
       }
     });
+
+    select<HTMLButtonElement>("[data-retry-button]").addEventListener("click", () => form?.requestSubmit());
+    select<HTMLButtonElement>("[data-dialog-close]").addEventListener("click", () => dialog?.close());
+    dialog?.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+    void hydrateScenarios();
   </script>
 </BaseLayout>

@@ -93,6 +93,10 @@ flowchart TB
 - 不包含任何服务端 Secret。
 - 前端校验只改善体验，服务端仍进行完整校验。
 
+M5 Web 使用原生 Astro Client Script 和语义化 HTML，不引入 React。三个场景卡在一次点击后填充 API 定义的指标与默认问题；结果区通过显式状态机展示 Empty、Loading、Success 和 Error。综合风险使用文本、符号、颜色及可访问名称共同表达，Evidence Card 通过原生 `dialog` 展开 Citation 详情，延迟与版本信息通过 `details` 按需显示。
+
+浏览器质量检查使用 Playwright Core 调用本机 Chrome，并注入 axe-core 执行 WCAG 2 A/AA 自动化规则；同时验证桌面与手机视口、场景填充、评估结果、字段校验、API 错误恢复、Citation Dialog 和横向溢出。
+
 ### 5.2 Fastify API
 
 职责：

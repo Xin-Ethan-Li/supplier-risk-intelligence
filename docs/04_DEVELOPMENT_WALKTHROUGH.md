@@ -25,33 +25,96 @@
 
 ## 3. 当前项目状态
 
-| 项目       | 状态                         |
-| ---------- | ---------------------------- |
-| 当前阶段   | M4 API Vertical Slice 已完成 |
-| 当前版本   | 0.4.0                        |
-| Git 仓库   | 已初始化，分支为 main        |
-| 应用代码   | 三服务工程骨架已创建         |
-| 本地运行   | Native 与 Compose 已验证     |
-| 在线环境   | 尚未创建                     |
-| 下一里程碑 | M5 - Demo UI                 |
+| 项目       | 状态                     |
+| ---------- | ------------------------ |
+| 当前阶段   | M5 Demo UI 已完成        |
+| 当前版本   | 0.5.0                    |
+| Git 仓库   | 已初始化，分支为 main    |
+| 应用代码   | 三服务工程骨架已创建     |
+| 本地运行   | Native 与 Compose 已验证 |
+| 在线环境   | 尚未创建                 |
+| 下一里程碑 | M6 - 质量与安全          |
 
 ## 4. 里程碑状态
 
-| 里程碑                | 状态        | 说明                                  |
-| --------------------- | ----------- | ------------------------------------- |
-| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对      |
-| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证        |
-| M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证  |
-| M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证  |
-| M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证 |
-| M5 Demo UI            | Not Started | —                                     |
-| M6 质量与安全         | Not Started | —                                     |
-| M7 GitHub 与上线      | Not Started | —                                     |
-| M8 Portfolio          | Not Started | —                                     |
+| 里程碑                | 状态        | 说明                                     |
+| --------------------- | ----------- | ---------------------------------------- |
+| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对         |
+| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证           |
+| M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证     |
+| M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证     |
+| M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证    |
+| M5 Demo UI            | Complete    | 交互、可视化、状态、响应式与 a11y 已验证 |
+| M6 质量与安全         | Not Started | —                                        |
+| M7 GitHub 与上线      | Not Started | —                                        |
+| M8 Portfolio          | Not Started | —                                        |
 
 ---
 
 ## 5. Walkthrough 记录
+
+## 2026-07-28 - M5 Interactive Demo UI
+
+### 目标
+
+把 M4 的完整 API 能力转化为招聘者和技术面试官可以在三次主要点击内理解并操作的演示体验，同时保留输入、模型、检索、融合和引用的技术透明度。
+
+### 完成内容
+
+- 建立统一颜色、间距、圆角、阴影和风险状态 Design Tokens，重构桌面与手机响应式 Layout。
+- 将三个虚构场景设计为可点击卡片；一次点击同步供应商名称、说明、八项指标和默认风险问题。
+- 保留结构化指标编辑能力，并使数值精度与 API Schema 及预设数据一致。
+- 为结果区建立 `idle`、`loading`、`success` 和 `error` 状态，提供表单 Validation Summary 与 API 失败重试按钮。
+- 使用环形 Risk Gauge、风险文本、符号和颜色共同展示综合风险，避免只依赖颜色。
+- 使用归一化条形图展示五项局部模型贡献及风险方向。
+- 对比量化模型与文档风险，并明确显示 `SUPPORTED` 或 `MODEL ONLY` 置信状态。
+- 将 Evidence 渲染为可键盘操作的按钮卡片，点击后通过原生 Dialog 查看完整 Citation、来源、类别和相关度。
+- 使用可折叠 Technical Trace 展示模型、检索、融合延迟，以及策略、模型、索引、Request ID 和 Correlation ID。
+- 更新首页和 Architecture 页面；新增 Evaluation 页面，公开模型与检索指标的口径和局限。
+- 增加 Playwright Core + axe-core 浏览器 QA，使用本机 Chrome 验证真实交互与可访问性。
+
+### 浏览器验收
+
+- 桌面视口 1440×1000：Medium 场景完成评估并返回 MEDIUM，Citation Dialog 可打开和关闭，无横向溢出。
+- 手机视口 390×844：Low 场景完成评估并返回 LOW，结果区自动进入视口，无横向溢出。
+- Validation：问题少于 10 个字符时显示可聚焦的原生错误摘要，不发送 API 请求。
+- Error Recovery：模拟 API 503 后显示解释和 `Try again` 操作。
+- axe-core：桌面空态、桌面结果态和手机结果态的 WCAG 2 A/AA 自动化扫描均为 0 个 violation。
+- 首页、Architecture、Evaluation 和 Demo 在手机视口均通过横向溢出检查。
+- 浏览器截图生成于被 Git 忽略的 `apps/web/tmp/m5-browser-qa/`，用于本地视觉核对。
+
+### 验证
+
+- `pnpm --filter @srm/web typecheck`：7 个 Astro 文件，0 errors、0 warnings、0 hints。
+- `pnpm --filter @srm/web build`：4 个静态页面构建成功。
+- `pnpm --filter @srm/web qa:browser`：场景、成功结果、Citation、Validation、错误恢复、响应式和 a11y 全部通过。
+- Docker Web 镜像重建成功；真实浏览器通过 `http://localhost:8080/demo/` 调用容器 API。
+
+### 技术决策
+
+1. **继续使用原生 Astro Client Script。** M5 交互仍可由一个页面级状态机清晰维护，无需为展示型 Portfolio 引入 React 运行时。
+2. **招聘者主路径与技术细节分层。** 综合风险、结论和关注项优先显示；延迟、版本及追踪 ID 收入原生折叠面板。
+3. **风险不能只用颜色表达。** HIGH、MEDIUM、LOW 同时具有文字、几何符号、颜色和 Gauge 的可访问名称。
+4. **场景接口优先，内嵌预设降级。** 页面启动时从 `/v1/scenarios` 同步权威场景；API 暂时不可用时，固定虚构预设仍允许用户查看和编辑输入。
+5. **浏览器 QA 使用现有 Chrome。** `playwright-core` 不下载额外浏览器，降低仓库和 CI 负担；运行环境可通过 `CHROME_PATH` 指定 Chromium。
+
+### 遇到的问题
+
+- 初次浏览器测试直接点击视觉隐藏的 radio，受到外层卡片拦截；测试改为点击真实用户操作的整张卡片。
+- Medium 场景包含三位小数与 5.26 天，但初始 HTML `step` 精度较低，导致浏览器在 API 调用前阻止提交；对齐 Schema 数据精度后修复，并增加预设表单有效性断言。
+- 静态 fallback 供应商名称一度与 `/v1/scenarios` 返回值不一致；视觉核对发现后统一为共享场景定义中的名称和说明。
+
+### 未完成事项
+
+- 浏览器 QA 当前依赖本机已安装的 Chrome/Chromium，尚未作为 CI 必跑项下载和管理浏览器。
+- M6 仍需系统化执行依赖漏洞、Secret、超时、性能、日志字段和安全说明检查。
+- GitHub 远程仓库、公开托管环境和 Portfolio 集成尚未执行。
+
+### 下一步
+
+进入 M6：完成可靠性、安全、性能基线、依赖与 Secret 审计，并扩展故障注入和端到端测试。
+
+---
 
 ## 2026-07-28 - M4 API Vertical Slice
 

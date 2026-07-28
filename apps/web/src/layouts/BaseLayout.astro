@@ -10,6 +10,7 @@ const {
   title,
   description = "Explainable supplier-risk scoring with observable ML and retrieval boundaries."
 } = Astro.props;
+const pathname = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -24,8 +25,9 @@ const {
     <header class="site-header">
       <a class="brand" href="/">Supplier Risk Intelligence</a>
       <nav aria-label="Primary navigation">
-        <a href="/demo">Demo</a>
-        <a href="/architecture">Architecture</a>
+        <a href="/demo" aria-current={pathname.startsWith("/demo") ? "page" : undefined}>Demo</a>
+        <a href="/evaluation" aria-current={pathname.startsWith("/evaluation") ? "page" : undefined}>Evaluation</a>
+        <a href="/architecture" aria-current={pathname.startsWith("/architecture") ? "page" : undefined}>Architecture</a>
         <a href="https://github.com/Xin-Ethan-Li" rel="noreferrer">GitHub</a>
       </nav>
     </header>

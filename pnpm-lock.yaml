@@ -69,9 +69,15 @@ importers:
       "@astrojs/check":
         specifier: ^0.9.4
         version: 0.9.10(prettier-plugin-astro@0.14.1)(prettier@3.9.6)(typescript@5.9.3)
+      axe-core:
+        specifier: ^4.12.1
+        version: 4.12.1
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
+      playwright-core:
+        specifier: ^1.62.0
+        version: 1.62.0
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
@@ -2045,6 +2051,13 @@ packages:
         integrity: sha512-g2tQ7LE7oOSqDfwEm3M+ZCMTJc7KiZCdJ4UwyZJb5ckTKyYu50OYmvv0mCFXPuYXoM4zkSt8zM9XQ9KCvxA74A==,
       }
 
+  axe-core@4.12.1:
+    resolution:
+      {
+        integrity: sha512-s7iGf5GaVMxEG0ENN9x+xTr7GFZCb1ZP/1uATUpCEK2X78nDB3RwbtFCo9pGAf9ru+VwoQ464DkaLEeRM08wJA==,
+      }
+    engines: { node: ">=4" }
+
   axobject-query@4.1.0:
     resolution:
       {
@@ -3762,6 +3775,14 @@ packages:
       {
         integrity: sha512-r34yH/GlQpKZbU1BvFFqOjhISRo1MNx1tWYsYvmj6KIRHSPMT2+yHOEb1SG6NMvRoHRF0a07kCOox/9yakl1vg==,
       }
+    hasBin: true
+
+  playwright-core@1.62.0:
+    resolution:
+      {
+        integrity: sha512-nsNRyq0r2zsG8AcRHWknc9QRA5XCueC7gWMrs+Gx2tlZn9hcl8zudfh00lhJPY1DE7NmZ6bDsT9g2yey8mXljA==,
+      }
+    engines: { node: ">=20" }
     hasBin: true
 
   postcss@8.5.23:
@@ -6216,6 +6237,8 @@ snapshots:
       "@fastify/error": 4.2.0
       fastq: 1.20.1
 
+  axe-core@4.12.1: {}
+
   axobject-query@4.1.0: {}
 
   bail@2.0.2: {}
@@ -7421,6 +7444,8 @@ snapshots:
       safe-stable-stringify: 2.5.0
       sonic-boom: 4.2.1
       thread-stream: 4.2.0
+
+  playwright-core@1.62.0: {}
 
   postcss@8.5.23:
     dependencies:
