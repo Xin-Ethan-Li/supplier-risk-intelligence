@@ -25,6 +25,12 @@ The root `render.yaml` defines two zero-cost resources:
 1. `srm-risk-api-demo`: a free public Docker service on port 10000. Its deployment-only image runs Fastify and the Python Risk Engine as separate processes in one container; Risk Engine listens only on container loopback port 8000.
 2. `srm-supplier-risk-demo`: a free static Astro site.
 
+Live endpoints:
+
+- Demo: https://srm-supplier-risk-demo.onrender.com/demo/
+- API readiness: https://srm-risk-api-demo.onrender.com/ready
+- API documentation: https://srm-risk-api-demo.onrender.com/docs/
+
 The backend uses the Frankfurt region. The browser calls only Fastify; the Risk Engine has no public port. This combined hosted profile avoids chaining two sleeping free services while the local Compose profile keeps three containers. Deploys wait for linked GitHub checks via `autoDeployTrigger: checksPass`.
 
 ### First deployment

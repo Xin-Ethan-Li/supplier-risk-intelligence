@@ -27,13 +27,13 @@
 
 | 项目       | 状态                         |
 | ---------- | ---------------------------- |
-| 当前阶段   | M7 GitHub 与上线进行中       |
+| 当前阶段   | M7 GitHub 与上线完成         |
 | 当前版本   | 0.7.0                        |
 | Git 仓库   | GitHub 公开仓库，main 已保护 |
 | 应用代码   | 三服务工程骨架已创建         |
 | 本地运行   | Native 与 Compose 已验证     |
-| 在线环境   | 尚未创建                     |
-| 下一里程碑 | M7 - GitHub 与上线           |
+| 在线环境   | Render 免费环境已验收        |
+| 下一里程碑 | M8 - Portfolio               |
 
 ## 4. 里程碑状态
 
@@ -46,20 +46,24 @@
 | M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证    |
 | M5 Demo UI            | Complete    | 交互、可视化、状态、响应式与 a11y 已验证 |
 | M6 质量与安全         | Complete    | 边界加固、故障测试、审计与性能基线已验证 |
-| M7 GitHub 与上线      | In Progress | 公开资产与部署蓝图完成，等待外部账户授权 |
+| M7 GitHub 与上线      | Complete    | 公开仓库、免费部署与生产验收完成         |
 | M8 Portfolio          | Not Started | —                                        |
 
 ---
 
 ## 5. Walkthrough 记录
 
-### 2026-07-28 - Render Static Site 首次部署修复
+### 2026-07-28 - Render 部署与生产验收
 
 - Render 免费 Backend 已创建并通过线上 `/ready`、`/version` 与场景接口检查。
 - Static Site 首次构建在 `corepack enable` 阶段失败：Render 文件系统不允许该命令替换 `/usr/bin/pnpm`，返回 `EROFS: read-only file system`。
 - 从 Blueprint 构建命令移除 `corepack enable`，直接使用 Render 已提供的 `pnpm`；仍使用 `--frozen-lockfile` 保证依赖可复现。
 - 本地重新执行相同的依赖安装与 Web 构建步骤，5 个 Astro 静态页面成功生成到 `apps/web/dist`。
-- 待修复提交进入 `main` 并触发 Render 后，执行前端 HTTPS 与三种风险场景生产 Smoke Test。
+- 修复通过 PR #7 合并到 `main` 后，Render Static Site 与 Backend 均成功部署到免费方案。
+- 线上主页与 `/demo/` 均返回 HTTP 200；Backend `/ready` 显示 Risk Engine 依赖 `ok`，`/version` 返回 `0.7.0 / M7`。
+- CORS 预检返回 204，仅允许线上前端 origin，并允许 Demo 所需的 GET、POST 与请求追踪 Header。
+- High、Medium、Low 三套合成场景均返回 `COMPLETE / SUPPORTED`，风险分层分别为 HIGH 93.7%、MEDIUM 27.9% 和 LOW 2.6%；响应包含 Evidence、模型 Drivers、Request ID 与 Correlation ID。
+- M7 GitHub 与上线完成，下一阶段为 M8 Portfolio。
 
 ## 2026-07-28 - M7 Public Repository and Deployment Preparation
 
