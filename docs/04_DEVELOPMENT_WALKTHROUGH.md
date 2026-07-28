@@ -25,15 +25,15 @@
 
 ## 3. 当前项目状态
 
-| 项目       | 状态                     |
-| ---------- | ------------------------ |
-| 当前阶段   | M7 GitHub 与上线进行中   |
-| 当前版本   | 0.7.0                    |
-| Git 仓库   | 已初始化，分支为 main    |
-| 应用代码   | 三服务工程骨架已创建     |
-| 本地运行   | Native 与 Compose 已验证 |
-| 在线环境   | 尚未创建                 |
-| 下一里程碑 | M7 - GitHub 与上线       |
+| 项目       | 状态                         |
+| ---------- | ---------------------------- |
+| 当前阶段   | M7 GitHub 与上线进行中       |
+| 当前版本   | 0.7.0                        |
+| Git 仓库   | GitHub 公开仓库，main 已保护 |
+| 应用代码   | 三服务工程骨架已创建         |
+| 本地运行   | Native 与 Compose 已验证     |
+| 在线环境   | 尚未创建                     |
+| 下一里程碑 | M7 - GitHub 与上线           |
 
 ## 4. 里程碑状态
 
@@ -70,6 +70,9 @@
 - 新增 Render Blueprint：Astro 静态站点、公共 Fastify API 和私有 Python Risk Engine；后端使用非休眠 Starter Profile，避免面试访问的空闲冷启动。
 - API 支持托管平台标准 `PORT` 回退，同时保留显式 `API_PORT` 优先级；所有服务版本升级到 `0.7.0 / M7`。
 - 为新增 `PORT` 行为和 M7 API/Risk Engine 版本更新自动化契约测试。
+- 创建公开仓库 `Xin-Ethan-Li/supplier-risk-intelligence`，推送完整 M0–M7 提交历史，并配置机器学习、RAG、XGBoost、FastAPI、Fastify 和 Astro 等仓库主题。
+- 首次 GitHub Actions 暴露 Python Lint/Test 工作目录差异；将 Ruff 和 Pytest 统一固定在仓库根目录执行，并增加 Prettier 忽略目录后，本地 `pnpm verify` 与远程 CI 同时通过。
+- 对 `main` 启用严格的 `node`、`python`、`compose` 必需检查、PR 流程、线性历史与讨论解决要求，并禁止强推和删除；单人仓库审批数设为 0，管理员保留紧急绕过能力。
 
 ### 技术决策
 
@@ -83,25 +86,25 @@
 - `render.yaml` 可解析并包含 3 个服务；`docker compose config --quiet` 通过。
 - `pnpm verify` 通过：格式、ESLint、Ruff、Astro Check、TypeScript、17 个 Vitest、19 个 Pytest、模型/检索 Artifact 校验与 5 个 Astro 页面构建全部成功。
 - 三个 M7 Docker 镜像重建成功；API 与 Risk Engine healthy，两个 `/version` 均返回 `0.7.0 / M7`，Demo 页面返回 HTTP 200。
+- GitHub Actions run `30389472308` 通过：Node 33 秒、Python 42 秒、Compose 4 秒，所有安全审计、测试、Artifact 与构建步骤成功。
 - Pytest 仍有 21 条已知 Joblib/NumPy 反序列化弃用警告，不影响测试结果；已保留为依赖升级观察项。
 - README 使用的桌面截图来自真实 Compose 浏览器 E2E；页面此前已通过桌面、移动和 axe 自动检查。
 
 ### 遇到的问题
 
-- 本机没有 GitHub、Render、Railway、Vercel 或 Fly CLI，仓库也没有 remote；因此无法在未获得账户授权的情况下创建远程资源或执行线上 Smoke Test。
-- 已安装 GitHub CLI 2.96.0 并启动浏览器授权，但等待 4 分钟后超时，`gh auth status` 确认尚未登录；未创建任何远程仓库。
+- 初次 GitHub 浏览器授权等待 4 分钟后超时；用户随后完成登录，公开仓库创建与推送成功。
+- 首次远程 CI 发现本地未暴露的 Ruff 行长/导入排序问题；修复后又发现 CI 从 `services/risk-engine` 执行导致 `pipelines` 无法导入。把 Lint 和 Test 工作目录统一到仓库根目录后，三项 Job 全部通过。
+- 当前环境仍没有 Render Token 或已登录 CLI；应用 Blueprint 会创建两个持续计费 Starter 后端，因此必须由账户持有人确认费用控制后继续。
 - 全局 Python 不包含项目 ML 依赖，验证命令需要把项目 `.venv` 放入当前 PATH；CI 使用独立 Python 安装，不受此影响。
 
 ### 未完成事项
 
-- 创建并推送公开 GitHub 仓库；根据真实仓库 URL更新 Demo/CI 链接。
-- 在 GitHub 启用 `node`、`python`、`compose` 必需检查和 main 分支保护。
 - 在 Render 账户确认实例费用、Spend Limit 和通知后应用 Blueprint。
 - 验证最终域名、HTTPS、三场景交互、日志与移动布局，并记录生产 Smoke Test。
 
 ### 下一步
 
-获得 GitHub 与托管账户授权后，推送 main、等待 CI、应用 Blueprint、校正平台分配的 URL，并完成匿名 HTTPS 验收。
+获得 Render 账户授权并确认 Starter 费用后，应用 Blueprint、校正平台分配的 URL，并完成匿名 HTTPS 验收。
 
 ---
 
