@@ -1,0 +1,55 @@
+services:
+  risk-engine:
+    build:
+      context: ./services/risk-engine
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready')",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: 3000
+      RISK_ENGINE_URL: http://risk-engine:8000
+      WEB_ORIGIN: http://localhost:8080
+    ports:
+      - "3100:3000"
+    depends_on:
+      risk-engine:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:3000/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        PUBLIC_API_BASE_URL: http://localhost:3100
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy

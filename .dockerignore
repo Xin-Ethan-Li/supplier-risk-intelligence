@@ -1,0 +1,13 @@
+.git
+.github
+node_modules
+**/node_modules
+**/dist
+**/.astro
+.venv
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+tmp
+*.pdf
+*.log

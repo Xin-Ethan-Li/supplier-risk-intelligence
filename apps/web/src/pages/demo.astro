@@ -1,0 +1,103 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000";
+---
+
+<BaseLayout title="Live Demo | Supplier Risk Intelligence">
+  <section class="shell page-heading">
+    <p class="eyebrow">M1 VERTICAL SLICE</p>
+    <h1>Validate the system boundary.</h1>
+    <p class="lede">
+      The current response is an explicit engineering placeholder. It does not pretend that the M2 model or M3 retrieval index already exists.
+    </p>
+  </section>
+
+  <section class="shell demo-grid" data-demo-root data-api-base-url={apiBaseUrl}>
+    <form class="card form-panel" data-evaluation-form>
+      <h2>Supplier signals</h2>
+      <label>
+        Scenario
+        <select name="scenarioId">
+          <option value="high-risk-logistics">High-risk logistics disruption</option>
+          <option value="medium-risk-quality">Medium-risk quality drift</option>
+          <option value="low-risk-stable">Low-risk stable supplier</option>
+        </select>
+      </label>
+      <div class="field-grid">
+        <label>Delay rate <input name="deliveryDelayRate30d" type="number" min="0" max="1" step="0.01" value="0.27" /></label>
+        <label>Defect rate <input name="defectRate90d" type="number" min="0" max="1" step="0.01" value="0.08" /></label>
+        <label>Cancellation rate <input name="cancellationRate90d" type="number" min="0" max="1" step="0.01" value="0.05" /></label>
+        <label>Lead-time variance <input name="leadTimeVarianceDays" type="number" min="0" max="90" step="0.1" value="6.4" /></label>
+        <label>Open disputes <input name="openDisputes" type="number" min="0" max="100" step="1" value="3" /></label>
+        <label>Recent incidents <input name="recentIncidents" type="number" min="0" max="100" step="1" value="4" /></label>
+      </div>
+      <label>
+        Risk question
+        <textarea name="question" rows="3">Is this supplier likely to disrupt delivery in the next 14 days?</textarea>
+      </label>
+      <button class="button primary" type="submit">Evaluate service boundary</button>
+      <p class="form-status" data-form-status aria-live="polite">Ready to call the local API.</p>
+    </form>
+
+    <section class="card result-panel" aria-live="polite">
+      <p class="eyebrow">RESPONSE</p>
+      <h2 data-result-title>Waiting for an evaluation</h2>
+      <p data-result-summary>The first request will travel through Astro → Fastify → FastAPI.</p>
+      <dl class="result-meta">
+        <div><dt>Model</dt><dd data-model-version>—</dd></div>
+        <div><dt>Index</dt><dd data-index-version>—</dd></div>
+        <div><dt>Total latency</dt><dd data-total-ms>—</dd></div>
+        <div><dt>Correlation ID</dt><dd class="mono" data-correlation-id>—</dd></div>
+      </dl>
+    </section>
+  </section>
+
+  <script>
+    const root = document.querySelector<HTMLElement>("[data-demo-root]");
+    const form = document.querySelector<HTMLFormElement>("[data-evaluation-form]");
+
+    form?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!root) return;
+
+      const status = document.querySelector<HTMLElement>("[data-form-status]");
+      const data = new FormData(form);
+      const value = (name: string) => Number(data.get(name));
+      const payload = {
+        scenarioId: String(data.get("scenarioId")),
+        supplierMetrics: {
+          deliveryDelayRate30d: value("deliveryDelayRate30d"),
+          defectRate90d: value("defectRate90d"),
+          cancellationRate90d: value("cancellationRate90d"),
+          leadTimeVarianceDays: value("leadTimeVarianceDays"),
+          openDisputes: value("openDisputes"),
+          recentIncidents: value("recentIncidents")
+        },
+        question: String(data.get("question"))
+      };
+
+      if (status) status.textContent = "Calling the API and risk-engine boundary…";
+
+      try {
+        const response = await fetch(`${root.dataset.apiBaseUrl}/v1/evaluations`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error?.message ?? "Request failed");
+
+        document.querySelector<HTMLElement>("[data-result-title]")!.textContent = "M1 vertical slice connected";
+        document.querySelector<HTMLElement>("[data-result-summary]")!.textContent = result.insight.summary;
+        document.querySelector<HTMLElement>("[data-model-version]")!.textContent = result.quantitative.modelVersion;
+        document.querySelector<HTMLElement>("[data-index-version]")!.textContent = result.document.indexVersion;
+        document.querySelector<HTMLElement>("[data-total-ms]")!.textContent = `${result.telemetry.totalMs.toFixed(2)} ms`;
+        document.querySelector<HTMLElement>("[data-correlation-id]")!.textContent = result.correlationId;
+        if (status) status.textContent = "Request completed successfully.";
+      } catch (error) {
+        if (status) status.textContent = error instanceof Error ? error.message : "The request failed.";
+      }
+    });
+  </script>
+</BaseLayout>

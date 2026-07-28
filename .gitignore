@@ -1,0 +1,25 @@
+node_modules/
+.pnpm-store/
+dist/
+.astro/
+coverage/
+
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+.env
+.env.*
+!.env.example
+
+tmp/
+*.log
+.DS_Store
+Thumbs.db
+
+# Private source materials are not part of the public demo repository.
+Xin_Ethan_Li_AI_Engineer_CV_0726.pdf
+03_AI_ML_RAG与SRM项目深挖.md

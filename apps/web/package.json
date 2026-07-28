@@ -1,0 +1,21 @@
+{
+  "name": "@srm/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "dev": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "lint": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "preview": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro preview",
+    "typecheck": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro check"
+  },
+  "dependencies": {
+    "astro": "^5.13.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "cross-env": "^10.1.0",
+    "typescript": "^5.9.2"
+  }
+}

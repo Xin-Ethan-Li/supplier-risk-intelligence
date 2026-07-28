@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Architecture | Supplier Risk Intelligence">
+  <section class="shell page-heading">
+    <p class="eyebrow">SYSTEM DESIGN</p>
+    <h1>Clear boundaries, prepared assets, observable requests.</h1>
+    <p class="lede">The public API owns validation and orchestration. Python owns model inference and retrieval.</p>
+  </section>
+  <section class="shell architecture-flow" aria-label="Architecture components">
+    <div class="architecture-node">Astro Web</div>
+    <span aria-hidden="true">→</span>
+    <div class="architecture-node">Fastify API</div>
+    <span aria-hidden="true">→</span>
+    <div class="architecture-node">Python Risk Engine</div>
+    <span aria-hidden="true">→</span>
+    <div class="architecture-node">Model + Vector Index</div>
+  </section>
+  <section class="shell card prose">
+    <h2>M1 boundary</h2>
+    <p>
+      This milestone intentionally returns a skeleton result. It proves deployment, validation,
+      correlation IDs and service-to-service communication before model or retrieval complexity is added.
+    </p>
+  </section>
+</BaseLayout>

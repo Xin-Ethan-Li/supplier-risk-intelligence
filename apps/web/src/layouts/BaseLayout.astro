@@ -1,0 +1,39 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "Explainable supplier-risk scoring with observable ML and retrieval boundaries."
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">Supplier Risk Intelligence</a>
+      <nav aria-label="Primary navigation">
+        <a href="/demo">Demo</a>
+        <a href="/architecture">Architecture</a>
+        <a href="https://github.com/Xin-Ethan-Li" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>Synthetic-data technical demonstration. Not procurement or financial advice.</p>
+    </footer>
+  </body>
+</html>
