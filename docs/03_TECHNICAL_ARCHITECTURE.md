@@ -338,6 +338,8 @@ combinedRisk = structuredRisk * 0.70 + documentRisk * 0.30
 - 该公式明确标记为 Demo Policy。
 - 无文档证据时，不应把“无证据”自动等价为“无风险”；应降低文档分量置信度并显示说明。
 
+M4 固化为版本 `demo-fusion-1.0.0`。综合风险阈值为 Medium `0.20`、High `0.65`。有证据时响应状态为 `COMPLETE`；无证据时使用模型原始概率、有效权重调整为 `1.0/0.0`，响应状态为 `MODEL_ONLY`。配置权重与实际生效权重会同时返回。
+
 ## 11. API 设计
 
 ### 11.1 端点
@@ -361,8 +363,10 @@ combinedRisk = structuredRisk * 0.70 + documentRisk * 0.30
     "deliveryDelayRate30d": 0.27,
     "defectRate90d": 0.08,
     "cancellationRate90d": 0.05,
+    "onTimeDeliveryTrend90d": -0.18,
     "leadTimeVarianceDays": 6.4,
     "openDisputes": 3,
+    "financialStabilityIndex": 0.31,
     "recentIncidents": 4
   },
   "question": "Is this supplier likely to disrupt delivery in the next 14 days?"
@@ -374,9 +378,16 @@ combinedRisk = structuredRisk * 0.70 + documentRisk * 0.30
 ```json
 {
   "evaluationId": "eval_...",
+  "requestId": "req_...",
   "correlationId": "corr_...",
   "createdAt": "2026-07-28T12:00:00Z",
-  "risk": {},
+  "status": "COMPLETE",
+  "risk": {
+    "combinedScore": 0.87,
+    "riskBand": "HIGH",
+    "confidence": "SUPPORTED",
+    "policyVersion": "demo-fusion-1.0.0"
+  },
   "quantitative": {},
   "document": {},
   "insight": {},
@@ -393,11 +404,16 @@ combinedRisk = structuredRisk * 0.70 + documentRisk * 0.30
   "error": {
     "code": "VALIDATION_ERROR",
     "message": "One or more fields are invalid.",
-    "details": [],
+    "details": [
+      { "field": "/supplierMetrics/openDisputes", "message": "must be >= 0" }
+    ],
+    "requestId": "req_...",
     "correlationId": "corr_..."
   }
 }
 ```
+
+Fastify 在 `/docs/` 暴露 Swagger UI，在 `/openapi.json` 暴露机器可读 OpenAPI。`x-request-id` 与 `x-correlation-id` 均可由调用方传入或由 API 生成，并通过响应 Header 和评估响应返回。
 
 ## 12. 数据存储 Profile
 

@@ -319,6 +319,25 @@ textarea:focus {
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 0.72rem;
 }
+.attention {
+  margin-top: 1.8rem;
+  border: 1px solid rgba(242, 190, 97, 0.3);
+  border-radius: 0.8rem;
+  padding: 0.9rem;
+  background: rgba(242, 190, 97, 0.05);
+}
+.attention h3 {
+  margin: 0 0 0.6rem;
+  color: #ffd78f;
+  font-size: 0.9rem;
+}
+.attention ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
 .result-meta {
   display: grid;
   gap: 1rem;

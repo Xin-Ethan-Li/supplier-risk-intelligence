@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -17,6 +19,6 @@ class SupplierMetrics(BaseModel):
 class EvaluationRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    scenarioId: str = Field(min_length=1, max_length=80)
+    scenarioId: Literal["high-risk-logistics", "medium-risk-quality", "low-risk-stable"]
     supplierMetrics: SupplierMetrics
     question: str = Field(min_length=5, max_length=500)

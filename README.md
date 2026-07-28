@@ -2,7 +2,7 @@
 
 An explainable supplier-risk technical demonstration combining a TypeScript API, a Python risk engine, and an Astro web experience.
 
-> Status: M3 hybrid retrieval complete. Live evaluations combine the M2 model with cited evidence from a fully fictional supplier corpus. Score fusion remains a separate M4 milestone.
+> Status: M4 API vertical slice complete. Live evaluations return a fused overall score, separate quantitative and document risks, cited evidence, deterministic attention items and stage telemetry.
 
 ## Services
 
@@ -21,6 +21,8 @@ docker compose up --build
 ```
 
 Open `http://localhost:8080/demo`.
+
+Interactive API documentation is available at `http://localhost:3100/docs/` in the Docker profile and `http://localhost:3000/docs/` during native development.
 
 The Docker profile publishes the API at `http://localhost:3100`; native development uses port `3000`.
 
@@ -65,6 +67,16 @@ The committed `srm-retrieval-demo-1.0.0` index uses section-aware chunks, exact 
 | Indexed chunks     |     17 |
 
 This is a small, intentionally designed fictional evaluation set. Perfect results do not imply general retrieval performance.
+
+## M4 fusion policy
+
+The public demo uses the explicit policy `demo-fusion-1.0.0`:
+
+```text
+combinedRisk = quantitativeRisk * 0.70 + documentRisk * 0.30
+```
+
+Combined bands use `0.20` for Medium and `0.65` for High. When retrieval returns insufficient evidence, the response becomes `MODEL_ONLY`; the effective document weight is zero and the quantitative signal receives 100% weight. Missing evidence is never treated as evidence of low risk.
 
 ## Documentation
 

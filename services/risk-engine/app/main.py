@@ -5,6 +5,7 @@ from fastapi import FastAPI, Header
 
 from .model_service import RiskModel
 from .models import EvaluationRequest
+from .orchestration import build_insight, fuse_risk, validate_evaluation
 from .retrieval_service import RetrievalIndex
 
 risk_model = RiskModel()
@@ -13,8 +14,8 @@ executor = ThreadPoolExecutor(max_workers=2)
 
 app = FastAPI(
     title="Supplier Risk Engine",
-    version="0.3.0",
-    description="M3 supplier risk inference with hybrid retrieval and cited evidence.",
+    version="0.4.0",
+    description="M4 end-to-end supplier risk evaluation with fusion and citations.",
 )
 
 
@@ -37,8 +38,8 @@ def ready() -> dict[str, str]:
 def version() -> dict[str, str]:
     return {
         "service": "srm-risk-engine",
-        "version": "0.3.0",
-        "milestone": "M3",
+        "version": "0.4.0",
+        "milestone": "M4",
         "modelVersion": risk_model.version,
         "indexVersion": retrieval_index.version,
     }
@@ -56,35 +57,24 @@ def evaluate_supplier(
     quantitative = model_future.result()
     retrieval = retrieval_future.result()
     evidence = retrieval.pop("evidence")
-
-    if evidence:
-        citation_ids = [evidence[0]["citationId"]]
-        summary = (
-            f"The synthetic-data model classified 14-day disruption risk as "
-            f"{quantitative['riskBand'].lower()} at "
-            f"{float(quantitative['riskProbability']):.1%}. Fictional document evidence "
-            f"indicates {retrieval['riskBand'].lower()} risk, led by "
-            f"{evidence[0]['title']} [{evidence[0]['citationId']}]."
-        )
-    else:
-        citation_ids = []
-        summary = (
-            f"The synthetic-data model classified 14-day disruption risk as "
-            f"{quantitative['riskBand'].lower()} at "
-            f"{float(quantitative['riskProbability']):.1%}. "
-            "Insufficient fictional document evidence was found for this question."
-        )
+    fusion_started_at = perf_counter()
+    risk = fuse_risk(quantitative, retrieval)
+    insight = build_insight(risk, quantitative, retrieval, evidence)
+    validate_evaluation(risk, retrieval, insight, evidence)
+    fusion_ms = (perf_counter() - fusion_started_at) * 1000
 
     elapsed_ms = (perf_counter() - started_at) * 1000
     return {
-        "status": "PARTIAL",
+        "status": "COMPLETE" if retrieval["status"] == "READY" else "MODEL_ONLY",
+        "risk": risk,
         "quantitative": quantitative,
         "document": retrieval,
-        "insight": {"summary": summary, "citationIds": citation_ids},
+        "insight": insight,
         "evidence": evidence,
         "telemetry": {
             "modelInferenceMs": quantitative["inferenceMs"],
             "retrievalMs": retrieval["retrievalMs"],
+            "fusionMs": fusion_ms,
             "riskEngineMs": elapsed_ms,
         },
     }

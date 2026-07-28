@@ -135,16 +135,16 @@
 
 ### 工作项
 
-- [ ] 定义 `POST /v1/evaluations` 请求和响应。
-- [ ] Fastify 实现输入校验、限流和错误映射。
-- [ ] Fastify 调用 Python Risk Engine。
-- [ ] Python 服务并行执行模型推理和检索。
-- [ ] 实现结构化风险与文档风险融合。
-- [ ] 实现 Evidence-bound Deterministic Summary。
-- [ ] 实现 Schema 和 Citation Validation。
-- [ ] 返回阶段级 Telemetry。
-- [ ] 增加幂等 Request ID 和 Correlation ID。
-- [ ] 生成 OpenAPI 文档。
+- [x] 定义 `POST /v1/evaluations` 请求和响应。
+- [x] Fastify 实现输入校验、限流和错误映射。
+- [x] Fastify 调用 Python Risk Engine。
+- [x] Python 服务并行执行模型推理和检索。
+- [x] 实现结构化风险与文档风险融合。
+- [x] 实现 Evidence-bound Deterministic Summary。
+- [x] 实现 Schema 和 Citation Validation。
+- [x] 返回阶段级 Telemetry。
+- [x] 增加稳定 Request ID 和 Correlation ID。
+- [x] 生成 OpenAPI 文档和 Swagger UI。
 
 ### 验收
 

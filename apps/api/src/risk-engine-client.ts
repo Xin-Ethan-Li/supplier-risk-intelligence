@@ -1,7 +1,8 @@
 import type { EvaluationRequest, EvaluationResponse } from "@srm/api-schema";
 
 export interface RiskEngineEvaluation {
-  status: "PARTIAL";
+  status: EvaluationResponse["status"];
+  risk: EvaluationResponse["risk"];
   quantitative: EvaluationResponse["quantitative"];
   document: EvaluationResponse["document"];
   insight: EvaluationResponse["insight"];
@@ -9,6 +10,7 @@ export interface RiskEngineEvaluation {
   telemetry: {
     modelInferenceMs: number;
     retrievalMs: number;
+    fusionMs: number;
     riskEngineMs: number;
   };
 }

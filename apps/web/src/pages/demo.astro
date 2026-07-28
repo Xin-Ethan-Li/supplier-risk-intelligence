@@ -6,11 +6,14 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
 
 <BaseLayout title="Live Demo | Supplier Risk Intelligence">
   <section class="shell page-heading">
-    <p class="eyebrow">M3 HYBRID RAG</p>
-    <h1>Combine model risk with cited evidence.</h1>
+    <p class="eyebrow">M4 API VERTICAL SLICE</p>
+    <h1>One risk view, with every signal exposed.</h1>
     <p class="lede">
       Run a versioned XGBoost model and search a fictional supplier corpus with dense, lexical and domain-aware ranking. Every document conclusion is tied to returned evidence.
     </p>
+    <div class="actions">
+      <a class="button secondary" href={`${apiBaseUrl}/docs/`} target="_blank" rel="noreferrer">Open API documentation</a>
+    </div>
   </section>
 
   <section class="shell demo-grid" data-demo-root data-api-base-url={apiBaseUrl}>
@@ -47,7 +50,7 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
       <div class="risk-heading">
         <div>
           <span class="risk-probability" data-risk-probability>—</span>
-          <span class="risk-caption">disruption probability</span>
+          <span class="risk-caption">combined demo risk</span>
         </div>
         <span class="risk-badge" data-risk-band>WAITING</span>
       </div>
@@ -61,12 +64,19 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
         <h3>Fictional document evidence</h3>
         <div class="evidence-list" data-evidence-list></div>
       </div>
+      <div class="attention" data-attention hidden>
+        <h3>Suggested attention</h3>
+        <ul data-attention-list></ul>
+      </div>
       <dl class="result-meta">
+        <div><dt>Quantitative risk</dt><dd data-model-risk>—</dd></div>
+        <div><dt>Document risk</dt><dd data-document-risk>—</dd></div>
+        <div><dt>Fusion policy</dt><dd data-fusion-policy>—</dd></div>
         <div><dt>Model</dt><dd data-model-version>—</dd></div>
         <div><dt>Evidence index</dt><dd data-index-version>—</dd></div>
-        <div><dt>Document risk</dt><dd data-document-risk>—</dd></div>
         <div><dt>Model inference</dt><dd data-inference-ms>—</dd></div>
         <div><dt>Retrieval</dt><dd data-retrieval-ms>—</dd></div>
+        <div><dt>Fusion</dt><dd data-fusion-ms>—</dd></div>
         <div><dt>Total latency</dt><dd data-total-ms>—</dd></div>
         <div><dt>Correlation ID</dt><dd class="mono" data-correlation-id>—</dd></div>
       </dl>
@@ -146,17 +156,21 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
         if (!response.ok) throw new Error(result.error?.message ?? "Request failed");
 
         const quantitative = result.quantitative;
-        document.querySelector<HTMLElement>("[data-result-title]")!.textContent = `${quantitative.riskBand.toLowerCase()} risk over 14 days`;
+        const risk = result.risk;
+        document.querySelector<HTMLElement>("[data-result-title]")!.textContent = `${risk.riskBand.toLowerCase()} overall demo risk`;
         document.querySelector<HTMLElement>("[data-result-summary]")!.textContent = result.insight.summary;
-        document.querySelector<HTMLElement>("[data-risk-probability]")!.textContent = `${(quantitative.riskProbability * 100).toFixed(1)}%`;
+        document.querySelector<HTMLElement>("[data-risk-probability]")!.textContent = `${(risk.combinedScore * 100).toFixed(1)}%`;
         const band = document.querySelector<HTMLElement>("[data-risk-band]")!;
-        band.textContent = quantitative.riskBand;
-        band.dataset.band = quantitative.riskBand;
+        band.textContent = risk.riskBand;
+        band.dataset.band = risk.riskBand;
+        document.querySelector<HTMLElement>("[data-model-risk]")!.textContent = `${quantitative.riskBand} · ${(quantitative.riskProbability * 100).toFixed(1)}%`;
         document.querySelector<HTMLElement>("[data-model-version]")!.textContent = quantitative.modelVersion;
         document.querySelector<HTMLElement>("[data-index-version]")!.textContent = result.document.indexVersion;
         document.querySelector<HTMLElement>("[data-document-risk]")!.textContent = `${result.document.riskBand} · ${(result.document.riskScore * 100).toFixed(1)}%`;
+        document.querySelector<HTMLElement>("[data-fusion-policy]")!.textContent = `${risk.policyVersion} · ${(risk.effectiveWeights.quantitative * 100).toFixed(0)}/${(risk.effectiveWeights.document * 100).toFixed(0)}`;
         document.querySelector<HTMLElement>("[data-inference-ms]")!.textContent = `${quantitative.inferenceMs.toFixed(2)} ms`;
         document.querySelector<HTMLElement>("[data-retrieval-ms]")!.textContent = `${result.document.retrievalMs.toFixed(2)} ms`;
+        document.querySelector<HTMLElement>("[data-fusion-ms]")!.textContent = `${result.telemetry.fusionMs.toFixed(2)} ms`;
         document.querySelector<HTMLElement>("[data-total-ms]")!.textContent = `${result.telemetry.totalMs.toFixed(2)} ms`;
         document.querySelector<HTMLElement>("[data-correlation-id]")!.textContent = result.correlationId;
 
@@ -193,6 +207,14 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
           evidenceList.append(empty);
         }
         document.querySelector<HTMLElement>("[data-evidence]")!.hidden = false;
+
+        const attentionList = document.querySelector<HTMLUListElement>("[data-attention-list]")!;
+        attentionList.replaceChildren(...result.insight.attentionItems.map((text: string) => {
+          const item = document.createElement("li");
+          item.textContent = text;
+          return item;
+        }));
+        document.querySelector<HTMLElement>("[data-attention]")!.hidden = false;
         if (status) status.textContent = "Evaluation completed successfully.";
       } catch (error) {
         if (status) status.textContent = error instanceof Error ? error.message : "The request failed.";

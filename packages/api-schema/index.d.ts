@@ -15,6 +15,15 @@ export interface EvaluationRequest {
   question: string;
 }
 
+export interface Scenario {
+  id: string;
+  name: string;
+  supplierName: string;
+  description: string;
+  defaultQuestion: string;
+  supplierMetrics: SupplierMetrics;
+}
+
 export interface RiskDriver {
   feature: string;
   displayName: string;
@@ -39,9 +48,20 @@ export interface Evidence {
 
 export interface EvaluationResponse {
   evaluationId: string;
+  requestId: string;
   correlationId: string;
   createdAt: string;
-  status: "PARTIAL";
+  status: "COMPLETE" | "MODEL_ONLY";
+  risk: {
+    status: "READY";
+    combinedScore: number;
+    riskBand: "LOW" | "MEDIUM" | "HIGH";
+    confidence: "SUPPORTED" | "MODEL_ONLY";
+    policyVersion: string;
+    configuredWeights: { quantitative: 0.7; document: 0.3 };
+    effectiveWeights: { quantitative: number; document: number };
+    thresholds: { medium: 0.2; high: 0.65 };
+  };
   quantitative: {
     status: "READY";
     modelVersion: string;
@@ -60,12 +80,19 @@ export interface EvaluationResponse {
     evidenceCount: number;
     retrievalMs: number;
   };
-  insight: { summary: string; citationIds: string[] };
+  insight: {
+    conclusion: "LOW_RISK" | "MEDIUM_RISK" | "HIGH_RISK";
+    riskCategories: string[];
+    summary: string;
+    citationIds: string[];
+    attentionItems: string[];
+  };
   evidence: Evidence[];
   telemetry: {
     apiMs: number;
     modelInferenceMs: number;
     retrievalMs: number;
+    fusionMs: number;
     riskEngineMs: number;
     totalMs: number;
   };
@@ -75,3 +102,5 @@ export interface EvaluationResponse {
 export const supplierMetricsSchema: Record<string, unknown>;
 export const evaluationRequestSchema: Record<string, unknown>;
 export const evaluationResponseSchema: Record<string, unknown>;
+export const errorResponseSchema: Record<string, unknown>;
+export const scenarios: Scenario[];

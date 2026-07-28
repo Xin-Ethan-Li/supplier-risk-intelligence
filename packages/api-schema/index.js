@@ -1,3 +1,62 @@
+export const scenarios = [
+  {
+    id: "high-risk-logistics",
+    name: "High-risk logistics disruption",
+    supplierName: "Northstar Components",
+    description: "Port delays, plant interruption and constrained liquidity.",
+    defaultQuestion:
+      "Are port congestion, plant interruption or liquidity pressure likely to disrupt delivery?",
+    supplierMetrics: {
+      deliveryDelayRate30d: 0.27,
+      defectRate90d: 0.08,
+      cancellationRate90d: 0.05,
+      onTimeDeliveryTrend90d: -0.18,
+      leadTimeVarianceDays: 6.4,
+      openDisputes: 3,
+      financialStabilityIndex: 0.31,
+      recentIncidents: 4,
+    },
+  },
+  {
+    id: "medium-risk-quality",
+    name: "Medium-risk quality drift",
+    supplierName: "Apex Precision",
+    description:
+      "Contained dimensional defects with corrective action still under review.",
+    defaultQuestion:
+      "Were the repeat dimensional defects fully corrected and verified?",
+    supplierMetrics: {
+      deliveryDelayRate30d: 0.335,
+      defectRate90d: 0.181,
+      cancellationRate90d: 0.045,
+      onTimeDeliveryTrend90d: -0.041,
+      leadTimeVarianceDays: 5.26,
+      openDisputes: 0,
+      financialStabilityIndex: 0.658,
+      recentIncidents: 1,
+    },
+  },
+  {
+    id: "low-risk-stable",
+    name: "Low-risk stable supplier",
+    supplierName: "Greenline Materials",
+    description:
+      "Stable delivery, low defects and tested continuity arrangements.",
+    defaultQuestion:
+      "Is this supplier delivering consistently with adequate continuity and financial stability?",
+    supplierMetrics: {
+      deliveryDelayRate30d: 0.02,
+      defectRate90d: 0.01,
+      cancellationRate90d: 0.005,
+      onTimeDeliveryTrend90d: 0.08,
+      leadTimeVarianceDays: 1.2,
+      openDisputes: 0,
+      financialStabilityIndex: 0.88,
+      recentIncidents: 0,
+    },
+  },
+];
+
 export const supplierMetricsSchema = {
   type: "object",
   additionalProperties: false,
@@ -29,7 +88,10 @@ export const evaluationRequestSchema = {
   additionalProperties: false,
   required: ["scenarioId", "supplierMetrics", "question"],
   properties: {
-    scenarioId: { type: "string", minLength: 1, maxLength: 80 },
+    scenarioId: {
+      type: "string",
+      enum: scenarios.map((scenario) => scenario.id),
+    },
     supplierMetrics: supplierMetricsSchema,
     question: { type: "string", minLength: 5, maxLength: 500 },
   },
@@ -41,9 +103,11 @@ export const evaluationResponseSchema = {
   additionalProperties: false,
   required: [
     "evaluationId",
+    "requestId",
     "correlationId",
     "createdAt",
     "status",
+    "risk",
     "quantitative",
     "document",
     "insight",
@@ -53,9 +117,55 @@ export const evaluationResponseSchema = {
   ],
   properties: {
     evaluationId: { type: "string" },
+    requestId: { type: "string" },
     correlationId: { type: "string" },
     createdAt: { type: "string" },
-    status: { type: "string", enum: ["PARTIAL"] },
+    status: { type: "string", enum: ["COMPLETE", "MODEL_ONLY"] },
+    risk: {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "status",
+        "combinedScore",
+        "riskBand",
+        "confidence",
+        "policyVersion",
+        "configuredWeights",
+        "effectiveWeights",
+        "thresholds",
+      ],
+      properties: {
+        status: { const: "READY" },
+        combinedScore: { type: "number", minimum: 0, maximum: 1 },
+        riskBand: { type: "string", enum: ["LOW", "MEDIUM", "HIGH"] },
+        confidence: { type: "string", enum: ["SUPPORTED", "MODEL_ONLY"] },
+        policyVersion: { type: "string" },
+        configuredWeights: {
+          type: "object",
+          additionalProperties: false,
+          required: ["quantitative", "document"],
+          properties: {
+            quantitative: { const: 0.7 },
+            document: { const: 0.3 },
+          },
+        },
+        effectiveWeights: {
+          type: "object",
+          additionalProperties: false,
+          required: ["quantitative", "document"],
+          properties: {
+            quantitative: { type: "number", minimum: 0, maximum: 1 },
+            document: { type: "number", minimum: 0, maximum: 1 },
+          },
+        },
+        thresholds: {
+          type: "object",
+          additionalProperties: false,
+          required: ["medium", "high"],
+          properties: { medium: { const: 0.2 }, high: { const: 0.65 } },
+        },
+      },
+    },
     quantitative: {
       type: "object",
       additionalProperties: false,
@@ -138,13 +248,34 @@ export const evaluationResponseSchema = {
     insight: {
       type: "object",
       additionalProperties: false,
-      required: ["summary", "citationIds"],
+      required: [
+        "conclusion",
+        "riskCategories",
+        "summary",
+        "citationIds",
+        "attentionItems",
+      ],
       properties: {
+        conclusion: {
+          type: "string",
+          enum: ["LOW_RISK", "MEDIUM_RISK", "HIGH_RISK"],
+        },
+        riskCategories: {
+          type: "array",
+          maxItems: 3,
+          items: { type: "string" },
+        },
         summary: { type: "string" },
         citationIds: {
           type: "array",
           maxItems: 5,
           items: { type: "string", pattern: "^E[1-5]$" },
+        },
+        attentionItems: {
+          type: "array",
+          minItems: 1,
+          maxItems: 3,
+          items: { type: "string" },
         },
       },
     },
@@ -189,6 +320,7 @@ export const evaluationResponseSchema = {
         "apiMs",
         "modelInferenceMs",
         "retrievalMs",
+        "fusionMs",
         "riskEngineMs",
         "totalMs",
       ],
@@ -196,10 +328,42 @@ export const evaluationResponseSchema = {
         apiMs: { type: "number", minimum: 0 },
         modelInferenceMs: { type: "number", minimum: 0 },
         retrievalMs: { type: "number", minimum: 0 },
+        fusionMs: { type: "number", minimum: 0 },
         riskEngineMs: { type: "number", minimum: 0 },
         totalMs: { type: "number", minimum: 0 },
       },
     },
     disclaimer: { type: "string" },
+  },
+};
+
+export const errorResponseSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["error"],
+  properties: {
+    error: {
+      type: "object",
+      additionalProperties: false,
+      required: ["code", "message", "details", "requestId", "correlationId"],
+      properties: {
+        code: { type: "string" },
+        message: { type: "string" },
+        details: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: ["field", "message"],
+            properties: {
+              field: { type: "string" },
+              message: { type: "string" },
+            },
+          },
+        },
+        requestId: { type: "string" },
+        correlationId: { type: "string" },
+      },
+    },
   },
 };

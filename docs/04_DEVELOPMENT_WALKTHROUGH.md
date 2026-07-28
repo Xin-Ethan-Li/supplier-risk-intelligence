@@ -25,33 +25,99 @@
 
 ## 3. 当前项目状态
 
-| 项目       | 状态                     |
-| ---------- | ------------------------ |
-| 当前阶段   | M3 Hybrid RAG 已完成     |
-| 当前版本   | 0.3.0                    |
-| Git 仓库   | 已初始化，分支为 main    |
-| 应用代码   | 三服务工程骨架已创建     |
-| 本地运行   | Native 与 Compose 已验证 |
-| 在线环境   | 尚未创建                 |
-| 下一里程碑 | M4 - API Vertical Slice  |
+| 项目       | 状态                         |
+| ---------- | ---------------------------- |
+| 当前阶段   | M4 API Vertical Slice 已完成 |
+| 当前版本   | 0.4.0                        |
+| Git 仓库   | 已初始化，分支为 main        |
+| 应用代码   | 三服务工程骨架已创建         |
+| 本地运行   | Native 与 Compose 已验证     |
+| 在线环境   | 尚未创建                     |
+| 下一里程碑 | M5 - Demo UI                 |
 
 ## 4. 里程碑状态
 
-| 里程碑                | 状态        | 说明                                 |
-| --------------------- | ----------- | ------------------------------------ |
-| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对     |
-| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证       |
-| M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证 |
-| M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证 |
-| M4 API Vertical Slice | Not Started | —                                    |
-| M5 Demo UI            | Not Started | —                                    |
-| M6 质量与安全         | Not Started | —                                    |
-| M7 GitHub 与上线      | Not Started | —                                    |
-| M8 Portfolio          | Not Started | —                                    |
+| 里程碑                | 状态        | 说明                                  |
+| --------------------- | ----------- | ------------------------------------- |
+| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对      |
+| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证        |
+| M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证  |
+| M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证  |
+| M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证 |
+| M5 Demo UI            | Not Started | —                                     |
+| M6 质量与安全         | Not Started | —                                     |
+| M7 GitHub 与上线      | Not Started | —                                     |
+| M8 Portfolio          | Not Started | —                                     |
 
 ---
 
 ## 5. Walkthrough 记录
+
+## 2026-07-28 - M4 API Vertical Slice
+
+### 目标
+
+把 M2 的量化模型与 M3 的文档证据合并成一个可供 UI 和第三方客户端稳定调用的完整评估流程，并确保风险结论、Evidence 与 Citation 始终一致。
+
+### 完成内容
+
+- 新增版本化融合策略 `demo-fusion-1.0.0`：证据充分时使用 70% 量化风险与 30% 文档风险，综合分数以 0.20 和 0.65 划分 LOW、MEDIUM、HIGH。
+- 当检索结果为 `INSUFFICIENT_EVIDENCE` 时，不把“缺少证据”误算为零文档风险；改为 `MODEL_ONLY`，有效权重自动调整为 100% 量化、0% 文档。
+- 生成确定性的综合结论、风险类别、关注项和 Citation ID，不引入付费 LLM 或不可复现文本生成。
+- 新增响应校验器，检查 Evidence 数量、Citation 唯一性、Citation 可解析性、摘要与结构化 Citation 一致性及综合分数范围。
+- 升级共享 JSON Schema 和 TypeScript 类型，统一 `COMPLETE`、`MODEL_ONLY`、综合风险、融合权重和阶段延迟字段。
+- 新增 `GET /v1/scenarios`，集中提供三个虚构场景、默认问题和指标，避免 UI 复制业务数据。
+- 新增 OpenAPI JSON 与 Swagger UI；公开 API 文档分别位于 `/openapi.json` 和 `/docs/`。
+- 接受或生成 Request ID 与 Correlation ID，在成功和错误响应中回传；不可信格式会被安全 UUID 替换。
+- 统一字段级输入错误、畸形 JSON、限流和内部错误响应；客户端不接收堆栈信息。
+- Astro 页面以综合风险作为主结果，同时展示量化风险、文档风险、有效权重、融合耗时、关注项和 Evidence。
+
+### 端到端场景结果
+
+| 场景                   | 状态       | 综合风险 | 综合分数 | Evidence |
+| ---------------------- | ---------- | -------- | -------: | -------: |
+| high-risk-logistics    | COMPLETE   | HIGH     | 0.936884 |        3 |
+| medium-risk-quality    | COMPLETE   | MEDIUM   | 0.278667 |        1 |
+| low-risk-stable        | COMPLETE   | LOW      | 0.026175 |        3 |
+| 无关问题（低风险场景） | MODEL_ONLY | LOW      | 0.000101 |        0 |
+
+以上为固定模型、虚构语料和当前融合策略下的确定性回归结果，不代表真实供应商风险或生产性能。
+
+### 验证
+
+- Pytest：15 项通过，覆盖模型、检索、三种综合风险、无证据降级、融合策略和 Citation Validator。
+- Vitest：5 项通过，覆盖 API 契约、场景列表、OpenAPI、追踪 ID、字段校验与畸形 JSON 安全响应。
+- Docker Compose：Risk Engine 与 API 均为 healthy，Web 正常运行。
+- 容器 E2E：三个预设场景分别返回 HIGH、MEDIUM、LOW，Request ID 正确透传。
+- 无关问题 E2E：返回 `MODEL_ONLY`、有效权重 1.0/0.0、0 条 Evidence 和 0 个 Citation。
+- 错误路径 E2E：非法 `scenarioId` 返回 HTTP 400、字段级 `VALIDATION_ERROR`、Request ID 和 Correlation ID，不包含堆栈。
+- OpenAPI Smoke Test：版本为 0.4.0，包含 `/v1/evaluations`；Swagger UI 返回 HTTP 200；场景接口返回 3 项。
+
+### 技术决策
+
+1. **缺失证据不是低风险证据。** 直接按 70/30 计算会把空检索当成 0 分并稀释模型风险，因此降级为 `MODEL_ONLY` 并公开有效权重。
+2. **融合策略显式版本化。** 权重和阈值属于可审计业务策略；响应返回策略版本、配置权重和有效权重，便于复现结论。
+3. **先校验后返回。** Risk Engine 在响应越过服务边界前验证 Citation 与 Evidence 的引用完整性，避免 UI 展示无法解析的结论。
+4. **确定性解释优先。** M4 使用规则化结论与关注项，确保演示无需 Secret、外部网络或按次付费服务。
+5. **追踪 ID 不等于业务幂等。** 当前实现用于跨服务排错和请求定位，没有声明请求去重或结果缓存能力。
+
+### 遇到的问题
+
+- 第一次全量格式检查发现 4 个新文件不符合 Prettier；统一格式化后纳入最终回归。
+- 原始畸形 JSON 最初被归类为通用内部错误；新增 Fastify 解析错误识别后，改为安全的 `INVALID_JSON` 400 响应。
+- Joblib 在当前 NumPy 版本加载数组时仍产生弃用警告，但不影响模型结果；保留为后续依赖升级观察项。
+
+### 未完成事项
+
+- API 当前无数据库、队列、缓存和请求幂等存储；这些不是 Public Demo M4 的能力。
+- M5 仍需完成面向面试官的交互体验、响应式视觉验收、Loading/Empty/Error 状态和无障碍检查。
+- GitHub 远程仓库、托管环境、监控和 Portfolio 集成尚未执行。
+
+### 下一步
+
+进入 M5：完善 Demo UI 的场景选择、结果信息层级、状态反馈、移动端体验和视觉验收。
+
+---
 
 ## 2026-07-28 - M3 Hybrid Retrieval 与 Citation
 
