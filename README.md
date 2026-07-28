@@ -38,7 +38,7 @@ The public API validates and traces each request, then delegates model inference
 Requirements: Docker Desktop with Compose v2, Git, and roughly 4 GB of free memory.
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Xin-Ethan-Li/supplier-risk-intelligence.git
 cd supplier-risk-intelligence
 docker compose up --build
 ```
