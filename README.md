@@ -8,6 +8,8 @@ An explainable supplier-risk portfolio demo that combines an XGBoost risk model,
 
 **Live demo:** https://srm-supplier-risk-demo.onrender.com/demo/
 
+**Engineering portfolio:** https://xin-ethan-li.github.io/supplier-risk-intelligence/
+
 ![The desktop demo showing a medium-risk supplier result](docs/assets/demo-desktop.png)
 
 <details>

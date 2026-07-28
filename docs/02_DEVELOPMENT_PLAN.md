@@ -207,11 +207,11 @@
 - [x] 编写 Evaluation、Security 和 Limitations 文档。
 - [x] 创建公开 GitHub 仓库。
 - [x] 配置分支保护和 CI 状态检查。
-- [ ] 部署 API 和 Risk Engine。
-- [ ] 部署 Astro Demo。
-- [ ] 配置域名、HTTPS 和环境变量。
+- [x] 部署 API 和 Risk Engine。
+- [x] 部署 Astro Demo。
+- [x] 配置域名、HTTPS 和环境变量。
 - [ ] 设置用量告警和消费上限。
-- [ ] 执行生产 Smoke Test。
+- [x] 执行生产 Smoke Test。
 
 ### 验收
 
@@ -224,13 +224,13 @@
 
 ### 工作项
 
-- [ ] 基于 Astro 官方 Portfolio Starter 创建独立站点。
-- [ ] 替换默认视觉风格和示例内容。
-- [ ] 添加 Home、Projects、About 和 Resume。
-- [ ] 编写 SRM Case Study。
-- [ ] 连接 Live Demo、GitHub 和 PDF CV。
-- [ ] 配置 SEO、Open Graph、Sitemap 和 Analytics。
-- [ ] 通过 GitHub Pages 部署。
+- [x] 基于 Astro 静态模式创建独立站点。
+- [x] 建立独立视觉风格和真实内容。
+- [x] 添加 Home、Projects、About 和 Resume。
+- [x] 编写 SRM Case Study。
+- [ ] 连接 Live Demo、GitHub 和 PDF CV；前两项完成，PDF 等待公开隐私确认。
+- [x] 配置 SEO、Open Graph、Sitemap 和可选 Analytics。
+- [ ] 通过 GitHub Pages 部署；Workflow 已完成，等待合并后首次运行。
 - [ ] 配置自定义域名和 HTTPS。
 
 ### 验收

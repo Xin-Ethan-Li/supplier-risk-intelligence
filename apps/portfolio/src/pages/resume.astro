@@ -1,0 +1,38 @@
+---
+import { profile } from "../data/portfolio";
+import PortfolioLayout from "../layouts/PortfolioLayout.astro";
+---
+
+<PortfolioLayout title="Resume" description="Resume and career summary for Xin (Ethan) Li, AI Software Engineer.">
+  <section class="shell page-hero">
+    <p class="kicker">RESUME · LAST REVIEWED JULY 2026</p>
+    <h1>AI engineering,<br />grounded in backend systems.</h1>
+    <p class="lede">A concise view of my experience building APIs, data workflows and applied AI capabilities.</p>
+  </section>
+
+  <section class="shell page-section">
+    <p class="kicker">PROFILE</p>
+    <div class="prose">
+      <h2>{profile.name}</h2>
+      <p>AI Software Engineer based in {profile.location}, with 5+ years of software engineering experience and full-time work authorisation in Ireland.</p>
+      <div class="resume-banner">
+        <div><h2>Need the PDF version?</h2><p>Request the current two-page PDF directly by email.</p></div>
+        <a class="button primary" href={profile.resumeRequest}>Request PDF ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell page-section">
+    <p class="kicker">CORE SKILLS</p>
+    <div class="prose">
+      <h3>AI, ML & data</h3><p>RAG, LLM API integration, vector retrieval, XGBoost, LangChain and OCR workflows.</p>
+      <h3>Backend & platform</h3><p>TypeScript, Node.js, Python, Fastify, FastAPI, PostgreSQL, Redis, RabbitMQ and REST/OpenAPI.</p>
+      <h3>Cloud & quality</h3><p>AWS, Docker, Terraform, GitHub Actions, unit/integration testing, ELK and production diagnostics.</p>
+    </div>
+  </section>
+
+  <section class="shell page-section">
+    <p class="kicker">CONTACT</p>
+    <div class="prose"><h2>Let’s build something useful.</h2><p>Email is the fastest way to reach me about AI software engineering and backend opportunities.</p><div class="button-row"><a class="button primary" href={`mailto:${profile.email}`}>{profile.email} ↗</a><a class="button secondary" href={profile.github} target="_blank" rel="noreferrer">GitHub</a></div></div>
+  </section>
+</PortfolioLayout>

@@ -1,0 +1,33 @@
+---
+interface Props {
+  project: {
+    number: string;
+    title: string;
+    category: string;
+    description: string;
+    tags: readonly string[];
+    caseStudy: boolean;
+    slug: string;
+    code: string;
+  };
+}
+
+const { project } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const destination = project.caseStudy ? `${base}projects/${project.slug}/` : project.code;
+---
+
+<article class="project-card">
+  <div class="project-number">{project.number}</div>
+  <div class="project-copy">
+    <p class="kicker">{project.category}</p>
+    <h3>{project.title}</h3>
+    <p>{project.description}</p>
+    <ul class="tag-list" aria-label={`${project.title} technologies`}>
+      {project.tags.map((tag) => <li>{tag}</li>)}
+    </ul>
+  </div>
+  <a class="project-link" href={destination} target={project.caseStudy ? undefined : "_blank"} rel={project.caseStudy ? undefined : "noreferrer"} aria-label={`View ${project.title}`}>
+    <span>{project.caseStudy ? "Case study" : "Repository"}</span><b aria-hidden="true">↗</b>
+  </a>
+</article>

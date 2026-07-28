@@ -1,0 +1,18 @@
+---
+import ProjectCard from "../../components/ProjectCard.astro";
+import { projects } from "../../data/portfolio";
+import PortfolioLayout from "../../layouts/PortfolioLayout.astro";
+---
+
+<PortfolioLayout title="Projects" description="Selected AI engineering, distributed backend and transaction-system projects by Xin (Ethan) Li.">
+  <section class="shell page-hero">
+    <p class="kicker">PROJECT INDEX · 2026</p>
+    <h1>Selected<br />engineering work.</h1>
+    <p class="lede">Three projects, three different system pressures: explainable AI, asynchronous state and reliable payments.</p>
+  </section>
+  <section class="shell section">
+    <div class="project-list">
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </section>
+</PortfolioLayout>

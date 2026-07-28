@@ -1,0 +1,68 @@
+---
+import ProjectCard from "../components/ProjectCard.astro";
+import { capabilities, profile, projects } from "../data/portfolio";
+import PortfolioLayout from "../layouts/PortfolioLayout.astro";
+
+const base = import.meta.env.BASE_URL;
+---
+
+<PortfolioLayout title={profile.name} description="AI Software Engineer in Cork, Ireland, building explainable AI products, scalable APIs and reliable data workflows.">
+  <section class="shell hero">
+    <div>
+      <p class="kicker">AI SOFTWARE ENGINEER · CORK, IRELAND</p>
+      <h1>Backend depth.<br /><em>AI leverage.</em></h1>
+      <p class="hero-intro">I build production-minded AI systems where models, retrieval, APIs and observability work as one coherent product.</p>
+      <div class="hero-actions">
+        <a class="button primary" href={`${base}projects/`}>Explore my work ↗</a>
+        <a class="button secondary" href={`mailto:${profile.email}`}>Start a conversation</a>
+      </div>
+    </div>
+    <aside class="hero-aside">
+      <div class="availability-card">
+        <p class="kicker">CURRENT STATUS</p>
+        <span aria-hidden="true"></span>
+        <strong>Available for full-time roles</strong>
+        <p>Stamp 1G · Eligible to work full-time in Ireland</p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="shell section" aria-labelledby="selected-work">
+    <div class="section-head">
+      <div>
+        <p class="kicker">SELECTED WORK</p>
+        <h2 id="selected-work">Systems with a point of view.</h2>
+      </div>
+      <p>Projects chosen to show how I reason about AI boundaries, distributed state and the engineering required to make software dependable.</p>
+    </div>
+    <div class="project-list">
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </section>
+
+  <section class="shell section" aria-labelledby="capabilities">
+    <div class="section-head">
+      <div>
+        <p class="kicker">HOW I CONTRIBUTE</p>
+        <h2 id="capabilities">Across the whole path to production.</h2>
+      </div>
+      <p>My strongest work sits at the seam between backend engineering and applied AI: clear contracts, measurable quality and honest failure modes.</p>
+    </div>
+    <div class="capability-grid">
+      {capabilities.map((item) => (
+        <article class="capability-card">
+          <span>{item.index}</span>
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="proof-strip" aria-label="Career snapshot">
+    <div><p class="kicker">EXPERIENCE</p><strong>5+ yrs</strong><span>Backend and software delivery</span></div>
+    <div><p class="kicker">FOCUS</p><strong>AI + API</strong><span>Applied intelligence in workflows</span></div>
+    <div><p class="kicker">EDUCATION</p><strong>MSc CS</strong><span>University College Cork</span></div>
+    <div><p class="kicker">LOCATION</p><strong>Cork</strong><span>Available across Ireland</span></div>
+  </section>
+</PortfolioLayout>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f4f0e7"/>
+  <circle cx="1080" cy="70" r="260" fill="#4f72ff" opacity=".16"/>
+  <rect x="72" y="72" width="92" height="92" rx="46" fill="#101b26"/>
+  <text x="118" y="130" text-anchor="middle" fill="#c7f36b" font-family="monospace" font-size="26">XL</text>
+  <text x="72" y="265" fill="#101b26" font-family="Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="5">XIN (ETHAN) LI</text>
+  <text x="72" y="385" fill="#101b26" font-family="Arial, sans-serif" font-size="88" font-weight="800">Backend depth.</text>
+  <text x="72" y="480" fill="#4f72ff" font-family="Arial, sans-serif" font-size="88" font-weight="800">AI leverage.</text>
+  <text x="76" y="555" fill="#34414d" font-family="monospace" font-size="24">AI SOFTWARE ENGINEER · CORK, IRELAND</text>
+</svg>

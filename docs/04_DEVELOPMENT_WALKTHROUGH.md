@@ -27,31 +27,62 @@
 
 | 项目       | 状态                         |
 | ---------- | ---------------------------- |
-| 当前阶段   | M7 GitHub 与上线完成         |
+| 当前阶段   | M8 Portfolio 进行中          |
 | 当前版本   | 0.7.0                        |
 | Git 仓库   | GitHub 公开仓库，main 已保护 |
 | 应用代码   | 三服务工程骨架已创建         |
 | 本地运行   | Native 与 Compose 已验证     |
-| 在线环境   | Render 免费环境已验收        |
-| 下一里程碑 | M8 - Portfolio               |
+| 在线环境   | Render 已验收；Pages 待发布  |
+| 下一里程碑 | M8 - Portfolio 上线          |
 
 ## 4. 里程碑状态
 
-| 里程碑                | 状态        | 说明                                     |
-| --------------------- | ----------- | ---------------------------------------- |
-| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对         |
-| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证           |
-| M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证     |
-| M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证     |
-| M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证    |
-| M5 Demo UI            | Complete    | 交互、可视化、状态、响应式与 a11y 已验证 |
-| M6 质量与安全         | Complete    | 边界加固、故障测试、审计与性能基线已验证 |
-| M7 GitHub 与上线      | Complete    | 公开仓库、免费部署与生产验收完成         |
-| M8 Portfolio          | Not Started | —                                        |
+| 里程碑                | 状态        | 说明                                      |
+| --------------------- | ----------- | ----------------------------------------- |
+| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对          |
+| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证            |
+| M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证      |
+| M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证      |
+| M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证     |
+| M5 Demo UI            | Complete    | 交互、可视化、状态、响应式与 a11y 已验证  |
+| M6 质量与安全         | Complete    | 边界加固、故障测试、审计与性能基线已验证  |
+| M7 GitHub 与上线      | Complete    | 公开仓库、免费部署与生产验收完成          |
+| M8 Portfolio          | In Progress | 站点、Case Study 与 Pages Workflow 已完成 |
 
 ---
 
 ## 5. Walkthrough 记录
+
+### 2026-07-28 - M8 Portfolio 免费方案实现
+
+#### 目标
+
+创建面向招聘人员和技术面试官的独立个人 Portfolio，快速展示候选人定位、项目深度、在线 Demo、代码与简历信息，同时保持零托管成本和纯静态运行。
+
+#### 完成内容
+
+- 在 Monorepo 新增独立 `apps/portfolio` Astro 应用，提供 Home、Projects、About、Resume、SRM Case Study 和 404 页面。
+- 建立无头像的编辑型视觉系统：纸张底色、深蓝主体、荧光绿和蓝色强调，使用响应式网格而不引入 UI 框架。
+- 首页明确展示 AI Software Engineer 定位、爱尔兰工作资格、三项代表项目、三类能力和联系方式。
+- SRM Case Study 覆盖问题、公开边界、逻辑架构、关键工程决策、可复现实验结果、界面与复盘，并连接 Live Demo、GitHub 和架构文档。
+- 从当前 PDF CV 提取公开求职信息并完成两页视觉核对；由于源 PDF 包含电话号码且被 `.gitignore` 排除，未擅自提交 PDF，改为 HTML Resume 与邮件索取入口。
+- 配置 Canonical、Open Graph、Twitter Card、SVG Social Image、`robots.txt`、`sitemap.xml`、404 和可选 `PUBLIC_GA_ID` Analytics。
+- 新增 GitHub Pages Workflow，使用 Node 24、pnpm 11.9、冻结 Lockfile 和 Pages Artifact；项目站路径为 `/supplier-risk-intelligence/`。
+- Case Study 图片由构建后脚本复制到站点产物，消除运行时 GitHub Raw 依赖。
+
+#### 验证
+
+- Astro Check：14 个文件，0 errors、0 warnings、0 hints。
+- GitHub Pages Profile 构建成功：6 个 HTML 页面，以及 `robots.txt`、`sitemap.xml`、favicon、Open Graph 和 Case Study 图片资产。
+- Playwright 在 1440×1000 与 390×844 两种视口检查全部五个主路由；无水平溢出、每页恰有一个 H1、所有 Case Study 图片加载成功。
+- axe WCAG 2 A/AA 检查在桌面和移动首页均为 0 violations；首次检查发现装饰状态点错误使用 `aria-label`，修正为 `aria-hidden` 后通过。
+- 人工检查桌面与移动全页截图；发现外部 Demo 截图延迟加载不稳定后改为自包含构建资产，复查通过。
+
+#### 未完成事项
+
+- 合并 M8 PR，在仓库 Settings → Pages 将 Source 设为 GitHub Actions，并验证首次公开 URL。
+- 由用户决定是否公开包含电话号码的 PDF CV；默认继续保持私有。
+- 自定义域名需要购买成本，因此不纳入本轮免费方案；GitHub Pages 默认域名提供 HTTPS。
 
 ### 2026-07-28 - Render 部署与生产验收
 
