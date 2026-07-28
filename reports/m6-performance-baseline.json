@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-07-28T18:10:18.574125+00:00",
+  "profile": "single-user warmed sequential Docker baseline",
+  "baseUrl": "http://localhost:3100",
+  "serviceVersion": "0.6.0",
+  "milestone": "M6",
+  "warmupRequests": 3,
+  "measuredRequests": 18,
+  "scenarioBands": {
+    "HIGH": 6,
+    "MEDIUM": 6,
+    "LOW": 6
+  },
+  "metrics": {
+    "clientTotalMs": {
+      "p50": 15.8293999847956,
+      "p95": 34.082200028933585,
+      "max": 34.082200028933585
+    },
+    "apiReportedTotalMs": {
+      "p50": 9.20294100000001,
+      "p95": 11.99376499999994,
+      "max": 11.99376499999994
+    },
+    "modelInferenceMs": {
+      "p95": 6.44032299896935,
+      "max": 6.44032299896935
+    },
+    "retrievalMs": {
+      "p95": 2.097478001815034,
+      "max": 2.097478001815034
+    },
+    "fusionMs": {
+      "p95": 0.0610959978075698,
+      "max": 0.0610959978075698
+    }
+  },
+  "thresholdsMs": {
+    "clientTotalP95": 1500.0,
+    "modelInferenceP95": 50.0,
+    "retrievalP95": 200.0
+  },
+  "checks": {
+    "clientTotalP95": true,
+    "modelInferenceP95": true,
+    "retrievalP95": true
+  },
+  "status": "passed"
+}

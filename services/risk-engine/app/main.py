@@ -14,7 +14,7 @@ executor = ThreadPoolExecutor(max_workers=2)
 
 app = FastAPI(
     title="Supplier Risk Engine",
-    version="0.5.0",
+    version="0.6.0",
     description="M4 end-to-end supplier risk evaluation with fusion and citations.",
 )
 
@@ -38,8 +38,8 @@ def ready() -> dict[str, str]:
 def version() -> dict[str, str]:
     return {
         "service": "srm-risk-engine",
-        "version": "0.5.0",
-        "milestone": "M5",
+        "version": "0.6.0",
+        "milestone": "M6",
         "modelVersion": risk_model.version,
         "indexVersion": retrieval_index.version,
     }

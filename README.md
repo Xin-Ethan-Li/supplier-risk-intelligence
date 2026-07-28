@@ -2,7 +2,7 @@
 
 An explainable supplier-risk technical demonstration combining a TypeScript API, a Python risk engine, and an Astro web experience.
 
-> Status: M5 interactive Demo UI complete. Recruiters and interviewers can run three fictional scenarios, inspect fused risk, feature contributions, citation evidence and latency, and recover from validation or API errors.
+> Status: M6 reliability and security complete. The interactive demo now has bounded runtime controls, classified dependency failures, hardened containers, automated Secret and dependency audits, browser fault injection and a reproducible performance baseline.
 
 ## Services
 
@@ -90,12 +90,27 @@ pnpm --filter @srm/web qa:browser
 
 The check exercises desktop and mobile result flows, citation inspection, validation, API failure recovery, horizontal overflow and WCAG 2 A/AA automated rules.
 
+## M6 reliability and security
+
+Public API defaults are a 64 KiB body limit, 30 requests per minute, a 3-second request timeout and a 2-second Risk Engine deadline. CORS uses an explicit origin allowlist, common secret-bearing headers are redacted, and dependency failures are separated into 502, 503 and 504 responses.
+
+API and Risk Engine containers run as non-root users with read-only filesystems, dropped capabilities and `no-new-privileges`. Security checks are reproducible:
+
+```bash
+python -m pipelines.security_audit
+pnpm audit --audit-level high
+python -m pip_audit
+```
+
+The warmed single-user Docker baseline uses three warmup and 18 measured requests across all scenarios. Client-observed P95 was 34.08 ms, model inference P95 was 6.44 ms and retrieval P95 was 2.10 ms on the recorded local run. These values are a regression baseline, not a production capacity claim. Re-run with `pnpm benchmark:api`.
+
 ## Documentation
 
 - [Product requirements](docs/01_PRD.md)
 - [Development plan](docs/02_DEVELOPMENT_PLAN.md)
 - [Technical architecture](docs/03_TECHNICAL_ARCHITECTURE.md)
 - [Development walkthrough](docs/04_DEVELOPMENT_WALKTHROUGH.md)
+- [Security and privacy](docs/05_SECURITY_PRIVACY.md)
 
 ## Data and claims
 

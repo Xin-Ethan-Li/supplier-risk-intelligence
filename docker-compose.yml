@@ -5,6 +5,14 @@ services:
       dockerfile: services/risk-engine/Dockerfile
     ports:
       - "8000:8000"
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     healthcheck:
       test:
         [
@@ -25,9 +33,22 @@ services:
       API_HOST: 0.0.0.0
       API_PORT: 3000
       RISK_ENGINE_URL: http://risk-engine:8000
-      WEB_ORIGIN: http://localhost:8080
+      WEB_ORIGINS: http://localhost:8080
+      RISK_ENGINE_TIMEOUT_MS: 2000
+      API_REQUEST_TIMEOUT_MS: 3000
+      API_BODY_LIMIT_BYTES: 65536
+      API_RATE_LIMIT_MAX: 30
+      API_RATE_LIMIT_WINDOW_MS: 60000
     ports:
       - "3100:3000"
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     depends_on:
       risk-engine:
         condition: service_healthy

@@ -1,13 +1,36 @@
 import type { EvaluationRequest } from "@srm/api-schema";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildApp } from "../src/app.js";
-import type { RiskEngineClient } from "../src/risk-engine-client.js";
+import {
+  RiskEngineClientError,
+  type RiskEngineClient,
+} from "../src/risk-engine-client.js";
 
 const config = {
   host: "127.0.0.1",
   port: 3000,
   riskEngineUrl: "http://risk-engine.invalid",
-  webOrigin: "http://localhost:4321",
+  webOrigins: ["http://localhost:4321"],
+  riskEngineTimeoutMs: 2_000,
+  requestTimeoutMs: 3_000,
+  bodyLimitBytes: 65_536,
+  rateLimitMax: 30,
+  rateLimitWindowMs: 60_000,
+};
+
+const validBody: EvaluationRequest = {
+  scenarioId: "high-risk-logistics",
+  supplierMetrics: {
+    deliveryDelayRate30d: 0.27,
+    defectRate90d: 0.08,
+    cancellationRate90d: 0.05,
+    onTimeDeliveryTrend90d: -0.18,
+    leadTimeVarianceDays: 6.4,
+    openDisputes: 3,
+    financialStabilityIndex: 0.31,
+    recentIncidents: 4,
+  },
+  question: "Is this supplier likely to disrupt delivery?",
 };
 
 const client: RiskEngineClient = {
@@ -79,7 +102,7 @@ afterEach(async () => {
   await Promise.all(apps.splice(0).map((app) => app.close()));
 });
 
-describe("M4 evaluation API", () => {
+describe("M6 evaluation API", () => {
   it("reports health and readiness", async () => {
     const app = await buildApp({ config, riskEngineClient: client });
     apps.push(app);
@@ -105,7 +128,7 @@ describe("M4 evaluation API", () => {
     expect(scenarios.json()).toHaveLength(3);
     expect(openapi.statusCode).toBe(200);
     expect(openapi.json()).toMatchObject({
-      info: { title: "Supplier Risk Intelligence API", version: "0.5.0" },
+      info: { title: "Supplier Risk Intelligence API", version: "0.6.0" },
     });
     expect(openapi.json().paths).toHaveProperty("/v1/evaluations");
     expect(docs.statusCode).toBe(200);
@@ -114,21 +137,6 @@ describe("M4 evaluation API", () => {
   it("passes a validated model result through the vertical slice", async () => {
     const app = await buildApp({ config, riskEngineClient: client });
     apps.push(app);
-    const body: EvaluationRequest = {
-      scenarioId: "high-risk-logistics",
-      supplierMetrics: {
-        deliveryDelayRate30d: 0.27,
-        defectRate90d: 0.08,
-        cancellationRate90d: 0.05,
-        onTimeDeliveryTrend90d: -0.18,
-        leadTimeVarianceDays: 6.4,
-        openDisputes: 3,
-        financialStabilityIndex: 0.31,
-        recentIncidents: 4,
-      },
-      question: "Is this supplier likely to disrupt delivery?",
-    };
-
     const response = await app.inject({
       method: "POST",
       url: "/v1/evaluations",
@@ -136,7 +144,7 @@ describe("M4 evaluation API", () => {
         "x-request-id": "test-request-id",
         "x-correlation-id": "test-correlation-id",
       },
-      payload: body,
+      payload: validBody,
     });
 
     expect(response.statusCode).toBe(200);
@@ -211,4 +219,99 @@ describe("M4 evaluation API", () => {
     });
     expect(response.body).not.toContain("stack");
   });
+
+  it("enforces the CORS allowlist and standard security headers", async () => {
+    const app = await buildApp({ config, riskEngineClient: client });
+    apps.push(app);
+
+    const allowed = await app.inject({
+      method: "GET",
+      url: "/health",
+      headers: { origin: "http://localhost:4321" },
+    });
+    const denied = await app.inject({
+      method: "GET",
+      url: "/health",
+      headers: { origin: "https://untrusted.example" },
+    });
+
+    expect(allowed.headers["access-control-allow-origin"]).toBe(
+      "http://localhost:4321",
+    );
+    expect(denied.headers["access-control-allow-origin"]).toBeUndefined();
+    expect(allowed.headers["x-content-type-options"]).toBe("nosniff");
+    expect(allowed.headers["x-frame-options"]).toBe("SAMEORIGIN");
+  });
+
+  it("enforces the configured request body limit", async () => {
+    const app = await buildApp({
+      config: { ...config, bodyLimitBytes: 1_024 },
+      riskEngineClient: client,
+    });
+    apps.push(app);
+
+    const response = await app.inject({
+      method: "POST",
+      url: "/v1/evaluations",
+      payload: { ...validBody, question: "x".repeat(2_000) },
+    });
+
+    expect(response.statusCode).toBe(413);
+    expect(response.json().error.code).toBe("PAYLOAD_TOO_LARGE");
+    expect(response.body).not.toContain("stack");
+  });
+
+  it("enforces the configured rate limit", async () => {
+    const app = await buildApp({
+      config: { ...config, rateLimitMax: 1 },
+      riskEngineClient: client,
+    });
+    apps.push(app);
+
+    const first = await app.inject({ method: "GET", url: "/health" });
+    const second = await app.inject({ method: "GET", url: "/health" });
+
+    expect(first.statusCode).toBe(200);
+    expect(second.statusCode).toBe(429);
+    expect(second.json().error.code).toBe("RATE_LIMITED");
+  });
+
+  it.each([
+    ["DEPENDENCY_TIMEOUT", 504],
+    ["DEPENDENCY_UNAVAILABLE", 503],
+    ["DEPENDENCY_RESPONSE_ERROR", 502],
+  ] as const)(
+    "maps %s to a safe gateway response",
+    async (code, statusCode) => {
+      const failingClient: RiskEngineClient = {
+        ...client,
+        evaluate: async () => {
+          throw new RiskEngineClientError(
+            code,
+            statusCode,
+            "Safe dependency message.",
+          );
+        },
+      };
+      const app = await buildApp({ config, riskEngineClient: failingClient });
+      apps.push(app);
+
+      const response = await app.inject({
+        method: "POST",
+        url: "/v1/evaluations",
+        payload: validBody,
+      });
+
+      expect(response.statusCode).toBe(statusCode);
+      expect(response.json()).toMatchObject({
+        error: {
+          code,
+          message: "Safe dependency message.",
+          requestId: expect.any(String),
+          correlationId: expect.any(String),
+        },
+      });
+      expect(response.body).not.toContain("stack");
+    },
+  );
 });

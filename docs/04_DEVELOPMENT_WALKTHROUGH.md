@@ -27,13 +27,13 @@
 
 | 项目       | 状态                     |
 | ---------- | ------------------------ |
-| 当前阶段   | M5 Demo UI 已完成        |
-| 当前版本   | 0.5.0                    |
+| 当前阶段   | M6 质量与安全已完成      |
+| 当前版本   | 0.6.0                    |
 | Git 仓库   | 已初始化，分支为 main    |
 | 应用代码   | 三服务工程骨架已创建     |
 | 本地运行   | Native 与 Compose 已验证 |
 | 在线环境   | 尚未创建                 |
-| 下一里程碑 | M6 - 质量与安全          |
+| 下一里程碑 | M7 - GitHub 与上线       |
 
 ## 4. 里程碑状态
 
@@ -45,13 +45,95 @@
 | M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证     |
 | M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证    |
 | M5 Demo UI            | Complete    | 交互、可视化、状态、响应式与 a11y 已验证 |
-| M6 质量与安全         | Not Started | —                                        |
+| M6 质量与安全         | Complete    | 边界加固、故障测试、审计与性能基线已验证 |
 | M7 GitHub 与上线      | Not Started | —                                        |
 | M8 Portfolio          | Not Started | —                                        |
 
 ---
 
 ## 5. Walkthrough 记录
+
+## 2026-07-28 - M6 Reliability, Security and Test Hardening
+
+### 目标
+
+将公开 Demo 从“功能可运行”提升为“边界可验证”：限制资源消耗，分类依赖故障，避免敏感数据进入日志与仓库，消除已知高风险依赖漏洞，并建立可重复的性能与故障回归方法。
+
+### 完成内容
+
+- 将 CORS 改为逗号分隔的显式 origin allowlist，只允许 GET、POST、OPTIONS 及必要请求头。
+- 将 64 KiB Payload、30 次/分钟限流、3 秒 API timeout、2 秒 Risk Engine deadline 和限流窗口全部改为有界启动配置；非法值使服务启动失败。
+- 使用 `AbortController` 中止超时的内部 HTTP 等待，并将 timeout、unavailable 和 non-success response 分别映射为安全的 504、503 和 502。
+- 增加 Helmet 标准安全响应头；明确关闭会破坏 Swagger UI 的默认 CSP，并保留其他 Header。
+- 配置 Pino 对 Authorization、Cookie、X-API-Key 和 Set-Cookie Header 脱敏；请求体与完整问题不进入访问日志。
+- 将畸形 JSON、超大 Payload、限流、字段校验和内部错误统一为无堆栈结构化响应。
+- API 容器使用 UID 1000，Risk Engine 使用专用 UID 10001；两者启用只读 root filesystem、临时 `/tmp`、`cap_drop: ALL` 与 `no-new-privileges`。
+- 新增 API 配置测试、真实 Abort timeout 测试、CORS、Helmet、Payload、限流及 502/503/504 故障注入测试。
+- 新增仓库 Secret Scanner，检查敏感文件名、私钥和常见云 Provider Token；扫描包含已跟踪及未忽略的新文件。
+- 将 `pnpm audit`、`pip-audit` 和 Secret Scanner 接入 CI。
+- 新增公开 Security and Privacy 文档与 Web Privacy 页面，说明数据生命周期、已实现控制、威胁和限制。
+- 新增顺序 Docker 性能基线脚本、单元测试和原始 JSON 报告。
+
+### 安全审计
+
+- 初次 Node 审计发现 5 个 High：Astro 两项、sharp、`@fastify/static` 和 brace-expansion。
+- 升级 Astro 与 Swagger UI，并使用 pnpm 生成的精确 overrides 固定已修复传递依赖；复查结果为 `No known vulnerabilities found`。
+- 初次 Python 审计发现 pip 与 pytest 共 7 条已知漏洞；升级到 pip 26.1.2 和 pytest 9.1.1 后，复查为 `No known vulnerabilities found`。
+- `python -m pipelines.security_audit`：最终扫描 83 个仓库文件，0 findings。
+- Secret Scanner 自身 2 项测试通过，覆盖高置信凭据命中与 `.env.example` 占位符放行。
+
+### 性能基线
+
+环境为本地 Docker Desktop、单用户、顺序请求。3 次 warmup 后，三个场景各执行 6 次，共 18 次测量：
+
+| 指标                  |      P50 |      P95 | PRD 阈值 |
+| --------------------- | -------: | -------: | -------: |
+| Client-observed total | 15.83 ms | 34.08 ms |  1500 ms |
+| API-reported total    |  9.20 ms | 11.99 ms |        — |
+| Model inference       |        — |  6.44 ms |    50 ms |
+| Retrieval             |        — |  2.10 ms |   200 ms |
+| Fusion                |        — |  0.06 ms |        — |
+
+全部阈值通过。该基线用于固定本地环境的回归，不表示并发容量、互联网延迟或生产 SLO。原始结果位于 `reports/m6-performance-baseline.json`。
+
+### 验证
+
+- Vitest：3 个文件、16 项测试通过，包含 5 个真实客户端与依赖故障类别相关测试。
+- Pytest 使用 pytest 9.1.1 运行，新增性能百分位与 Secret Scanner 测试。
+- `pnpm verify`：产物校验、Prettier、ESLint、Ruff、Typecheck、全部测试与五页面 Build 全部通过。
+- 容器运行身份：API UID 1000、Risk Engine UID 10001；对应用目录的写入探针均返回 `read-only-ok`。
+- Docker Compose：Risk Engine 与 API healthy，Web 正常运行。
+- Chrome 浏览器回归：High、Medium、Low、MODEL_ONLY、Validation、503 recovery、Citation 和 Privacy 路由通过。
+- axe-core：桌面空态、桌面结果态、手机结果态的 WCAG 2 A/AA 自动扫描均为 0 violation。
+
+### 技术决策
+
+1. **配置必须有界且 fail-fast。** 公开环境可以覆盖限流和 timeout，但不能通过负值、无限值或非法 origin 意外关闭保护。
+2. **依赖失败不伪装为内部 500。** 502 表示依赖响应错误，503 表示不可达，504 表示 deadline，使客户端恢复策略和日志排障更明确。
+3. **CSP 暂不在 Fastify Swagger UI 强制。** Helmet 其他 Header 已启用；Swagger UI 需要内联脚本，后续可使用独立文档域或 nonce CSP，而不是部署一个不可用的文档页。
+4. **Public Profile 不声明分布式限流。** 当前 limiter 为进程内实现；多实例托管必须切换 Redis store。
+5. **安全扫描是门槛而不是证明。** 结果只能说明当前规则和漏洞数据库无发现，不能证明系统绝对安全。
+6. **性能采用小型单用户回归。** 在限流为 30 次/分钟的公开默认配置下使用 18 次测量，避免为了跑分修改生产形态参数。
+
+### 遇到的问题
+
+- `pnpm audit --fix` 在 pnpm 11 需要显式模式，首次使用布尔参数被拒绝；改用 `--fix=override` 后生成精确修复版本。
+- 安全升级改变虚拟依赖图后，非 TTY 的 pnpm 拒绝清理 `node_modules`；使用 `CI=true` 与 frozen lockfile 重建后恢复可重复状态。
+- 全栈镜像构建超过工具的单次 60 秒窗口，但镜像与后端容器实际已完成；检查 Compose 状态后启动剩余 Web 服务，没有重复或破坏其他项目容器。
+- 初次 Python 审计同时扫描工具链自身的旧 pip；将 CI 和本地 pip 升级到已修复版本，而不是忽略工具链漏洞。
+
+### 未完成事项
+
+- 当前限流不跨实例共享，也没有 WAF、托管 DDoS 防护或集中式 SIEM。
+- Deadline 会停止 API 等待，但不能强制终止 Python 进程内已经运行的 CPU 任务。
+- 本地浏览器命令仍提示宿主 Node 22 低于项目声明的 Node 24；Docker 与 CI 使用 Node 24，M7 发布说明需要明确本地前置条件。
+- GitHub 远程仓库、公开 HTTPS 托管、生产 CORS origin 和用量告警属于 M7。
+
+### 下一步
+
+进入 M7：准备公开 GitHub 展示资产、完善部署与 Troubleshooting 文档、创建远程仓库、配置托管环境并执行生产 Smoke Test。
+
+---
 
 ## 2026-07-28 - M5 Interactive Demo UI
 

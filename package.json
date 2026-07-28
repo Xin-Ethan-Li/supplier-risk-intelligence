@@ -1,6 +1,6 @@
 {
   "name": "supplier-risk-intelligence-demo",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "An explainable supplier-risk demo combining XGBoost, evidence retrieval and observable APIs.",
   "packageManager": "pnpm@11.9.0",
@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "pnpm -r --if-present build",
+    "benchmark:api": "python -m pipelines.benchmark_api",
     "data:generate": "python -m pipelines.generate_synthetic_data",
     "dev": "concurrently -k -n WEB,API,RISK -c cyan,green,yellow \"pnpm --filter @srm/web dev\" \"pnpm --filter @srm/api dev\" \"python -m uvicorn app.main:app --reload --app-dir services/risk-engine --port 8000\"",
     "format:check": "prettier --check .",
@@ -19,6 +20,9 @@
     "retrieval:build": "python -m pipelines.build_retrieval_index",
     "retrieval:evaluate": "python -m pipelines.evaluate_retrieval",
     "retrieval:verify": "python -m pipelines.verify_retrieval_artifacts",
+    "security:audit:node": "pnpm audit --audit-level high",
+    "security:audit:python": "python -m pip_audit",
+    "security:secrets": "python -m pipelines.security_audit",
     "test": "pnpm -r --if-present test && pnpm test:risk",
     "test:risk": "python -m pytest services/risk-engine/tests pipelines/tests",
     "typecheck": "pnpm -r --if-present typecheck",

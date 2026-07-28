@@ -327,6 +327,8 @@ interface InsightProvider {
 
 MVP 的公共默认路径不依赖 Cloud LLM，因此 Provider 编排属于 P1；接口和错误模型在 P0 预留。
 
+M6 已为当前 Fastify → Risk Engine 边界实现 `AbortController` deadline，默认 2 秒且可通过有界环境变量配置。超时返回 504，不可达返回 503，内部依赖非成功响应返回 502。当前请求无数据库写入，因此不声明任务幂等或 Circuit Breaker 已完成；上方完整 Provider 状态机仍属于未来 Cloud LLM 路径。
+
 ## 10. 风险融合
 
 MVP 默认：
@@ -520,12 +522,17 @@ AWS Profile 是增强目标，不阻塞首次公开上线。
 - MVP 不持久化用户上传内容。
 - PDF 功能启用时必须使用隔离进程、文件类型检查、页数限制和超时。
 
+M6 Public Profile 已实现：显式 CORS origin allowlist、64 KiB Payload、30 次/分钟限流、3 秒 API request timeout、2 秒内部 deadline、Helmet Header、Secret Header 脱敏和结构化安全错误。API 与 Risk Engine 容器使用不同的非 root UID、只读 root filesystem、临时 `/tmp`、`cap_drop: ALL` 和 `no-new-privileges`。仓库与 CI 执行高置信 Secret 扫描、`pnpm audit` 和 `pip-audit`。完整控制、数据生命周期和局限见 `docs/05_SECURITY_PRIVACY.md`。
+
 ## 16. 性能与可靠性
 
 ### 性能策略
 
 - 模型在服务启动时加载。
 - 文档 Embedding 和索引离线准备。
+
+M6 记录单用户、预热、顺序 Docker 基线：3 次 warmup 后跨三个场景执行 18 次测量。客户端总耗时 P95 34.08 ms、模型推理 P95 6.44 ms、检索 P95 2.10 ms，均低于 PRD 阈值。该结果只用于固定本地环境回归，不表示并发容量或托管生产 SLO；原始报告位于 `reports/m6-performance-baseline.json`，可通过 `python -m pipelines.benchmark_api` 重跑。
+
 - 结构化推理与文档检索并行执行。
 - 对预置场景缓存最终结果。
 - 外部 LLM 不进入默认公共关键路径。

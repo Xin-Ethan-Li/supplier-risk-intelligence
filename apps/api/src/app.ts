@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
@@ -16,6 +17,7 @@ import Fastify, { type FastifyInstance } from "fastify";
 import type { ApiConfig } from "./config.js";
 import {
   createRiskEngineClient,
+  RiskEngineClientError,
   type RiskEngineClient,
 } from "./risk-engine-client.js";
 
@@ -36,12 +38,29 @@ export async function buildApp(
   options: BuildOptions,
 ): Promise<FastifyInstance> {
   const app = Fastify({
-    logger: process.env.NODE_ENV !== "test",
-    bodyLimit: 64 * 1024,
+    logger:
+      process.env.NODE_ENV === "test"
+        ? false
+        : {
+            redact: {
+              paths: [
+                "req.headers.authorization",
+                "req.headers.cookie",
+                'req.headers["x-api-key"]',
+                'res.headers["set-cookie"]',
+              ],
+              censor: "[REDACTED]",
+            },
+          },
+    bodyLimit: options.config.bodyLimitBytes,
+    requestTimeout: options.config.requestTimeoutMs,
   });
   const riskEngine =
     options.riskEngineClient ??
-    createRiskEngineClient(options.config.riskEngineUrl);
+    createRiskEngineClient(
+      options.config.riskEngineUrl,
+      options.config.riskEngineTimeoutMs,
+    );
 
   await app.register(swagger, {
     openapi: {
@@ -49,7 +68,7 @@ export async function buildApp(
         title: "Supplier Risk Intelligence API",
         description:
           "Portfolio demo API using synthetic metrics and fictional supplier documents.",
-        version: "0.5.0",
+        version: "0.6.0",
       },
       tags: [
         {
@@ -67,8 +86,16 @@ export async function buildApp(
     routePrefix: "/docs",
     uiConfig: { docExpansion: "list", deepLinking: true },
   });
-  await app.register(cors, { origin: options.config.webOrigin });
-  await app.register(rateLimit, { max: 30, timeWindow: "1 minute" });
+  await app.register(helmet, { contentSecurityPolicy: false });
+  await app.register(cors, {
+    origin: options.config.webOrigins,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["content-type", "x-request-id", "x-correlation-id"],
+  });
+  await app.register(rateLimit, {
+    max: options.config.rateLimitMax,
+    timeWindow: options.config.rateLimitWindowMs,
+  });
 
   app.addHook("onRequest", async (request, reply) => {
     const correlationId = trustedTraceId(request.headers["x-correlation-id"]);
@@ -105,8 +132,8 @@ export async function buildApp(
 
   app.get("/version", { schema: { tags: ["system"] } }, async () => ({
     service: "srm-api",
-    version: "0.5.0",
-    milestone: "M5",
+    version: "0.6.0",
+    milestone: "M6",
   }));
 
   app.get(
@@ -159,8 +186,12 @@ export async function buildApp(
         response: {
           200: evaluationResponseSchema,
           400: errorResponseSchema,
+          413: errorResponseSchema,
           429: errorResponseSchema,
           500: errorResponseSchema,
+          502: errorResponseSchema,
+          503: errorResponseSchema,
+          504: errorResponseSchema,
         },
       },
     },
@@ -207,26 +238,39 @@ export async function buildApp(
     };
     const validation = fastifyError.validation;
     const malformedJson = fastifyError.code === "FST_ERR_CTP_INVALID_JSON_BODY";
-    const statusCode = validation
-      ? 400
-      : fastifyError.statusCode && fastifyError.statusCode < 500
-        ? fastifyError.statusCode
-        : 500;
+    const payloadTooLarge = fastifyError.code === "FST_ERR_CTP_BODY_TOO_LARGE";
+    const dependencyError =
+      error instanceof RiskEngineClientError ? error : undefined;
+    const statusCode = dependencyError
+      ? dependencyError.statusCode
+      : validation
+        ? 400
+        : fastifyError.statusCode && fastifyError.statusCode < 500
+          ? fastifyError.statusCode
+          : 500;
 
     reply.code(statusCode).send({
       error: {
-        code: validation
-          ? "VALIDATION_ERROR"
-          : malformedJson
-            ? "INVALID_JSON"
-            : statusCode === 429
-              ? "RATE_LIMITED"
-              : "INTERNAL_ERROR",
-        message: validation
-          ? "One or more fields are invalid."
-          : malformedJson
-            ? "The request body must contain valid JSON."
-            : "The request could not be completed.",
+        code: dependencyError
+          ? dependencyError.code
+          : validation
+            ? "VALIDATION_ERROR"
+            : malformedJson
+              ? "INVALID_JSON"
+              : payloadTooLarge
+                ? "PAYLOAD_TOO_LARGE"
+                : statusCode === 429
+                  ? "RATE_LIMITED"
+                  : "INTERNAL_ERROR",
+        message: dependencyError
+          ? dependencyError.message
+          : validation
+            ? "One or more fields are invalid."
+            : malformedJson
+              ? "The request body must contain valid JSON."
+              : payloadTooLarge
+                ? "The request body exceeds the configured size limit."
+                : "The request could not be completed.",
         details: validation
           ? validation.map((item) => ({
               field: item.instancePath || "request",

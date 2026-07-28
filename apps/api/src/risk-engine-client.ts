@@ -23,10 +23,27 @@ export interface RiskEngineClient {
   ): Promise<RiskEngineEvaluation>;
 }
 
-export function createRiskEngineClient(baseUrl: string): RiskEngineClient {
+export type DependencyErrorCode =
+  "DEPENDENCY_TIMEOUT" | "DEPENDENCY_UNAVAILABLE" | "DEPENDENCY_RESPONSE_ERROR";
+
+export class RiskEngineClientError extends Error {
+  constructor(
+    public readonly code: DependencyErrorCode,
+    public readonly statusCode: 502 | 503 | 504,
+    message: string,
+  ) {
+    super(message);
+    this.name = "RiskEngineClientError";
+  }
+}
+
+export function createRiskEngineClient(
+  baseUrl: string,
+  timeoutMs = 2_000,
+): RiskEngineClient {
   const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2_000);
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
       const response = await fetch(`${baseUrl}${path}`, {
@@ -36,10 +53,28 @@ export function createRiskEngineClient(baseUrl: string): RiskEngineClient {
       });
 
       if (!response.ok) {
-        throw new Error(`Risk engine returned ${response.status}`);
+        throw new RiskEngineClientError(
+          "DEPENDENCY_RESPONSE_ERROR",
+          502,
+          `Risk engine returned HTTP ${response.status}.`,
+        );
       }
 
       return (await response.json()) as T;
+    } catch (error) {
+      if (error instanceof RiskEngineClientError) throw error;
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new RiskEngineClientError(
+          "DEPENDENCY_TIMEOUT",
+          504,
+          `Risk engine exceeded the ${timeoutMs} ms deadline.`,
+        );
+      }
+      throw new RiskEngineClientError(
+        "DEPENDENCY_UNAVAILABLE",
+        503,
+        "Risk engine could not be reached.",
+      );
     } finally {
       clearTimeout(timeout);
     }

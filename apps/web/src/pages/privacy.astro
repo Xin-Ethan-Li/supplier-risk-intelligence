@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Privacy & Security | Supplier Risk Intelligence">
+  <section class="shell page-heading">
+    <p class="eyebrow">PUBLIC DEMO DATA BOUNDARY</p>
+    <h1>Synthetic in. Ephemeral through. Nothing persisted.</h1>
+    <p class="lede">This portfolio demo uses generated metrics and fictional documents. Evaluation inputs stay in memory and should never contain real supplier, employer or personal information.</p>
+  </section>
+  <section class="shell grid three" aria-label="Privacy principles">
+    <article class="card"><span class="step">DATA</span><h2>No enterprise assets</h2><p>No employer data, source code, production model, document or credential is included.</p></article>
+    <article class="card"><span class="step">LIFECYCLE</span><h2>No persistence</h2><p>Inputs are processed for one response. The public profile has no database, user account or upload flow.</p></article>
+    <article class="card"><span class="step">LOGGING</span><h2>Metadata only</h2><p>Request bodies are not logged. Common secret-bearing headers are explicitly redacted.</p></article>
+  </section>
+  <section class="shell card prose">
+    <h2>Safe use</h2>
+    <p>Use only the three supplied fictional scenarios or similarly fictional values. Do not enter names, confidential events, personal data, contract details or real supplier intelligence.</p>
+    <p>Local HTTP is for development. A public deployment must use HTTPS, production CORS origins, managed rate limiting and hosting-level abuse protection.</p>
+    <p>This system is an engineering demonstration and is not procurement or financial advice.</p>
+  </section>
+</BaseLayout>

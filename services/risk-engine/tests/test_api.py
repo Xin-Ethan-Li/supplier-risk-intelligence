@@ -22,8 +22,8 @@ def test_health_and_version() -> None:
     assert health.status_code == 200
     assert health.json() == {"status": "ok", "service": "srm-risk-engine"}
     assert version.status_code == 200
-    assert version.json()["milestone"] == "M5"
-    assert version.json()["version"] == "0.5.0"
+    assert version.json()["milestone"] == "M6"
+    assert version.json()["version"] == "0.6.0"
     assert version.json()["modelVersion"] == "srm-xgb-demo-1.0.0"
     assert version.json()["indexVersion"] == "srm-retrieval-demo-1.0.0"
 

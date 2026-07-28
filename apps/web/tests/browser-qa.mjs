@@ -202,7 +202,7 @@ assert(
   "Model-only result rendered citations.",
 );
 
-for (const route of ["/", "/architecture/", "/evaluation/"]) {
+for (const route of ["/", "/architecture/", "/evaluation/", "/privacy/"]) {
   await mobile.goto(`${baseUrl}${route}`, { waitUntil: "networkidle" });
   assert(
     await hasNoHorizontalOverflow(mobile),

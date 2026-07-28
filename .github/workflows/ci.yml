@@ -21,6 +21,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --audit-level high
       - run: pnpm format:check
       - run: pnpm typecheck
       - run: pnpm --filter @srm/api test
@@ -38,7 +39,9 @@ jobs:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: services/risk-engine/pyproject.toml
+      - run: python -m pip install --upgrade "pip>=26.1.2"
       - run: python -m pip install -e ".[dev]"
+      - run: python -m pip_audit
       - run: python -m ruff check ../../services/risk-engine ../../pipelines
       - run: python -m pytest ../../services/risk-engine/tests ../../pipelines/tests
       - run: python -m pipelines.verify_artifacts
@@ -46,6 +49,8 @@ jobs:
       - run: python -m pipelines.evaluate_retrieval
         working-directory: .
       - run: python -m pipelines.verify_retrieval_artifacts
+        working-directory: .
+      - run: python -m pipelines.security_audit
         working-directory: .
 
   compose:
