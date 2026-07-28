@@ -27,8 +27,8 @@
 
 | 项目       | 状态                     |
 | ---------- | ------------------------ |
-| 当前阶段   | M6 质量与安全已完成      |
-| 当前版本   | 0.6.0                    |
+| 当前阶段   | M7 GitHub 与上线进行中   |
+| 当前版本   | 0.7.0                    |
 | Git 仓库   | 已初始化，分支为 main    |
 | 应用代码   | 三服务工程骨架已创建     |
 | 本地运行   | Native 与 Compose 已验证 |
@@ -46,12 +46,64 @@
 | M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证    |
 | M5 Demo UI            | Complete    | 交互、可视化、状态、响应式与 a11y 已验证 |
 | M6 质量与安全         | Complete    | 边界加固、故障测试、审计与性能基线已验证 |
-| M7 GitHub 与上线      | Not Started | —                                        |
+| M7 GitHub 与上线      | In Progress | 公开资产与部署蓝图完成，等待外部账户授权 |
 | M8 Portfolio          | Not Started | —                                        |
 
 ---
 
 ## 5. Walkthrough 记录
+
+## 2026-07-28 - M7 Public Repository and Deployment Preparation
+
+### 目标
+
+把已经通过 M6 的工程整理为适合技术面试官浏览、可在 15 分钟内本地启动、并能由托管平台从代码重建的公开项目；同时严格区分“仓库内已完成”与“需要外部账户授权后才能完成”的上线状态。
+
+### 完成内容
+
+- 重写顶级 README，增加项目定位、技术亮点、架构、Docker 与 Native Quick Start、验证命令、指标解释、仓库地图、数据声明和完整文档导航。
+- 增加 MIT License、Dependabot 的 npm、pip 与 GitHub Actions 每周更新配置。
+- 增加可访问的 SVG 架构图、桌面与移动结果截图，以及由真实浏览器 QA 截图生成的短 Demo GIF。
+- 新增独立 Evaluation 文档，明确时间切分、类别不平衡、模型与检索指标、融合策略、性能基线和所有结论边界。
+- 新增 Known Limitations 文档，记录合成数据、非因果解释、小型检索集、单区运行、实例内限流和生产化缺口。
+- 新增 Deployment and Troubleshooting 文档，覆盖 Compose 排障、Render 首次部署、账户级成本控制、生产 Smoke Test 和 GitHub 分支保护目标。
+- 新增 Render Blueprint：Astro 静态站点、公共 Fastify API 和私有 Python Risk Engine；后端使用非休眠 Starter Profile，避免面试访问的空闲冷启动。
+- API 支持托管平台标准 `PORT` 回退，同时保留显式 `API_PORT` 优先级；所有服务版本升级到 `0.7.0 / M7`。
+- 为新增 `PORT` 行为和 M7 API/Risk Engine 版本更新自动化契约测试。
+
+### 技术决策
+
+1. **Risk Engine 使用私有服务。** 浏览器只访问公共 Fastify API，模型和索引服务不直接暴露到互联网。
+2. **默认不采用会休眠的免费后端。** Render 免费 Web Service 空闲后可能产生约一分钟首次启动等待，不符合面试官即开即用的目标；实际账单与 Spend Limit 仍须在账户侧确认。
+3. **托管配置采用仓库根目录 Blueprint。** 服务类型、区域、构建路径、健康检查、CORS、timeout 和安全 Header 都可审查并随主分支版本化。
+4. **外部状态不提前标记完成。** GitHub 公开仓库、分支保护、Render 资源、HTTPS Smoke Test 和告警仍保持待办，直到真实账户中验证。
+
+### 验证
+
+- `render.yaml` 可解析并包含 3 个服务；`docker compose config --quiet` 通过。
+- `pnpm verify` 通过：格式、ESLint、Ruff、Astro Check、TypeScript、17 个 Vitest、19 个 Pytest、模型/检索 Artifact 校验与 5 个 Astro 页面构建全部成功。
+- 三个 M7 Docker 镜像重建成功；API 与 Risk Engine healthy，两个 `/version` 均返回 `0.7.0 / M7`，Demo 页面返回 HTTP 200。
+- Pytest 仍有 21 条已知 Joblib/NumPy 反序列化弃用警告，不影响测试结果；已保留为依赖升级观察项。
+- README 使用的桌面截图来自真实 Compose 浏览器 E2E；页面此前已通过桌面、移动和 axe 自动检查。
+
+### 遇到的问题
+
+- 本机没有 GitHub、Render、Railway、Vercel 或 Fly CLI，仓库也没有 remote；因此无法在未获得账户授权的情况下创建远程资源或执行线上 Smoke Test。
+- 已安装 GitHub CLI 2.96.0 并启动浏览器授权，但等待 4 分钟后超时，`gh auth status` 确认尚未登录；未创建任何远程仓库。
+- 全局 Python 不包含项目 ML 依赖，验证命令需要把项目 `.venv` 放入当前 PATH；CI 使用独立 Python 安装，不受此影响。
+
+### 未完成事项
+
+- 创建并推送公开 GitHub 仓库；根据真实仓库 URL更新 Demo/CI 链接。
+- 在 GitHub 启用 `node`、`python`、`compose` 必需检查和 main 分支保护。
+- 在 Render 账户确认实例费用、Spend Limit 和通知后应用 Blueprint。
+- 验证最终域名、HTTPS、三场景交互、日志与移动布局，并记录生产 Smoke Test。
+
+### 下一步
+
+获得 GitHub 与托管账户授权后，推送 main、等待 CI、应用 Blueprint、校正平台分配的 URL，并完成匿名 HTTPS 验收。
+
+---
 
 ## 2026-07-28 - M6 Reliability, Security and Test Hardening
 

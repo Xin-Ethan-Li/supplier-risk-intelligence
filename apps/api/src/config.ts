@@ -45,7 +45,7 @@ function webOrigins(value: string | undefined): string[] {
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
   return {
     host: env.API_HOST ?? "0.0.0.0",
-    port: integerSetting(env.API_PORT, 3000, "API_PORT", 1, 65_535),
+    port: integerSetting(env.API_PORT ?? env.PORT, 3000, "API_PORT", 1, 65_535),
     riskEngineUrl: env.RISK_ENGINE_URL ?? "http://localhost:8000",
     webOrigins: webOrigins(env.WEB_ORIGINS ?? env.WEB_ORIGIN),
     riskEngineTimeoutMs: integerSetting(

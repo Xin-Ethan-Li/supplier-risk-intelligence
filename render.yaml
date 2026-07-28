@@ -1,0 +1,59 @@
+services:
+  - type: pserv
+    name: srm-risk-engine
+    runtime: docker
+    plan: starter
+    region: frankfurt
+    dockerfilePath: ./services/risk-engine/Dockerfile
+    dockerContext: .
+    autoDeployTrigger: checksPass
+
+  - type: web
+    name: srm-risk-api-demo
+    runtime: docker
+    plan: starter
+    region: frankfurt
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /ready
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: API_PORT
+        value: 10000
+      - key: RISK_ENGINE_URL
+        value: http://srm-risk-engine:8000
+      - key: WEB_ORIGINS
+        value: https://srm-supplier-risk-demo.onrender.com
+      - key: RISK_ENGINE_TIMEOUT_MS
+        value: 5000
+      - key: API_REQUEST_TIMEOUT_MS
+        value: 7000
+      - key: API_BODY_LIMIT_BYTES
+        value: 65536
+      - key: API_RATE_LIMIT_MAX
+        value: 30
+      - key: API_RATE_LIMIT_WINDOW_MS
+        value: 60000
+
+  - type: web
+    name: srm-supplier-risk-demo
+    runtime: static
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @srm/web build
+    staticPublishPath: ./apps/web/dist
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: PUBLIC_API_BASE_URL
+        value: https://srm-risk-api-demo.onrender.com
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=()
+      - path: /*
+        name: Content-Security-Policy
+        value: default-src 'self'; connect-src 'self' https://srm-risk-api-demo.onrender.com; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'

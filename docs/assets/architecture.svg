@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="560" viewBox="0 0 1400 560" role="img" aria-labelledby="title desc">
+  <title id="title">Supplier Risk Intelligence request and offline build architecture</title>
+  <desc id="desc">An Astro interface calls a Fastify API, which orchestrates a Python risk engine containing XGBoost and hybrid retrieval. Offline pipelines produce versioned model and retrieval artifacts.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07131d"/><stop offset="1" stop-color="#102b35"/></linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#42e8bd"/><stop offset="1" stop-color="#74b9ff"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity=".28"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#42e8bd"/></marker>
+    <style>
+      .label{font:700 24px system-ui,sans-serif;fill:#f2f7f8}.sub{font:16px system-ui,sans-serif;fill:#a9bec5}.tag{font:700 13px system-ui,sans-serif;letter-spacing:1.5px;fill:#42e8bd}.box{fill:#102631;stroke:#31515c;stroke-width:2;rx:18;filter:url(#shadow)}.inner{fill:#0b1b24;stroke:#28444e;stroke-width:1.5;rx:12}.flow{fill:none;stroke:#42e8bd;stroke-width:4;marker-end:url(#arrow)}.offline{fill:none;stroke:#74b9ff;stroke-width:3;stroke-dasharray:9 7;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1400" height="560" rx="28" fill="url(#bg)"/>
+  <text x="70" y="64" class="tag">ONLINE REQUEST PATH</text>
+  <rect x="70" y="95" width="260" height="170" class="box"/>
+  <text x="100" y="145" class="label">Astro Demo</text><text x="100" y="177" class="sub">Scenario input</text><text x="100" y="204" class="sub">Risk + evidence UI</text><text x="100" y="235" class="tag">STATIC WEB</text>
+  <path d="M330 180 H430" class="flow"/>
+  <rect x="440" y="95" width="260" height="170" class="box"/>
+  <text x="470" y="145" class="label">Fastify API</text><text x="470" y="177" class="sub">Validation + limits</text><text x="470" y="204" class="sub">Trace + OpenAPI</text><text x="470" y="235" class="tag">TYPESCRIPT</text>
+  <path d="M700 180 H800" class="flow"/>
+  <rect x="810" y="95" width="520" height="170" class="box"/>
+  <text x="840" y="137" class="label">Python Risk Engine</text>
+  <rect x="840" y="158" width="210" height="76" class="inner"/><text x="865" y="190" class="tag">XGBOOST</text><text x="865" y="216" class="sub">probability + drivers</text>
+  <rect x="1080" y="158" width="220" height="76" class="inner"/><text x="1105" y="190" class="tag">HYBRID RAG</text><text x="1105" y="216" class="sub">BM25 + LSA + citations</text>
+  <text x="70" y="342" class="tag">OFFLINE, REPRODUCIBLE ARTIFACT BUILD</text>
+  <rect x="70" y="374" width="280" height="120" class="box"/><text x="100" y="421" class="label">Synthetic data</text><text x="100" y="453" class="sub">fixed seed · time split</text>
+  <path d="M350 434 H455" class="offline"/>
+  <rect x="465" y="374" width="310" height="120" class="box"/><text x="495" y="421" class="label">Training + ingestion</text><text x="495" y="453" class="sub">evaluation · deduplication</text>
+  <path d="M775 434 H880" class="offline"/>
+  <rect x="890" y="374" width="440" height="120" class="box"/><text x="920" y="421" class="label">Versioned artifacts</text><text x="920" y="453" class="sub">model JSON · metadata · read-only index</text>
+  <path d="M1110 374 V286" class="offline"/>
+</svg>

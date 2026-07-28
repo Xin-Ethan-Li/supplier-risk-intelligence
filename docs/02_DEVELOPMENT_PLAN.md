@@ -201,10 +201,10 @@
 
 ### 工作项
 
-- [ ] 编写顶级 README。
-- [ ] 加入架构图、截图和 Demo GIF。
-- [ ] 编写 Quick Start 和 Troubleshooting。
-- [ ] 编写 Evaluation、Security 和 Limitations 文档。
+- [x] 编写顶级 README。
+- [x] 加入架构图、截图和 Demo GIF。
+- [x] 编写 Quick Start 和 Troubleshooting。
+- [x] 编写 Evaluation、Security 和 Limitations 文档。
 - [ ] 创建公开 GitHub 仓库。
 - [ ] 配置分支保护和 CI 状态检查。
 - [ ] 部署 API 和 Risk Engine。

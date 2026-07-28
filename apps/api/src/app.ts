@@ -68,7 +68,7 @@ export async function buildApp(
         title: "Supplier Risk Intelligence API",
         description:
           "Portfolio demo API using synthetic metrics and fictional supplier documents.",
-        version: "0.6.0",
+        version: "0.7.0",
       },
       tags: [
         {
@@ -132,8 +132,8 @@ export async function buildApp(
 
   app.get("/version", { schema: { tags: ["system"] } }, async () => ({
     service: "srm-api",
-    version: "0.6.0",
-    milestone: "M6",
+    version: "0.7.0",
+    milestone: "M7",
   }));
 
   app.get(

@@ -30,4 +30,9 @@ describe("API configuration", () => {
       "API_BODY_LIMIT_BYTES",
     );
   });
+
+  it("uses the hosting platform PORT when API_PORT is not set", () => {
+    expect(loadConfig({ PORT: "10000" }).port).toBe(10_000);
+    expect(loadConfig({ PORT: "10000", API_PORT: "3000" }).port).toBe(3_000);
+  });
 });
