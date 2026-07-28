@@ -4,11 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "srm-risk-engine"
-version = "0.2.0"
+version = "0.3.0"
 description = "Python ML and retrieval boundary for the supplier-risk demo."
 requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.115,<1",
+  "joblib>=1.4,<2",
   "numpy>=2.2,<3",
   "pandas>=2.2,<4",
   "pydantic>=2.10,<3",

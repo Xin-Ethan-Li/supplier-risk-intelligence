@@ -111,18 +111,18 @@
 
 ### 工作项
 
-- [ ] 创建虚构供应商和示例文档集。
-- [ ] 定义文档 Metadata Schema。
-- [ ] 实现文本提取接口和规则清理。
-- [ ] 实现文件 Hash 完全去重。
-- [ ] 实现候选分组后的近重复检测。
-- [ ] 实现语义分块。
-- [ ] 集成本地 Sentence-Transformers Embedding。
-- [ ] 实现 L2 normalization。
-- [ ] 构建 Milvus Lite 或兼容的只读向量索引。
-- [ ] 实现 Domain Anchor Boost、Source Quality 和 Temporal Decay。
-- [ ] 创建人工标注查询集。
-- [ ] 计算 Recall@5、MRR 和检索延迟。
+- [x] 创建虚构供应商和示例文档集。
+- [x] 定义文档 Metadata Schema。
+- [x] 实现结构化文本提取、Metadata 校验和规则清理。
+- [x] 实现文件 Hash 完全去重。
+- [x] 实现候选分组后的近重复检测。
+- [x] 实现按文档 Section 的语义分块。
+- [x] 集成本地 TF-IDF + LSA 稠密 Embedding。
+- [x] 实现 L2 normalization。
+- [x] 构建兼容的版本化只读向量索引。
+- [x] 实现 BM25、Domain Anchor Boost、Source Quality 和 Temporal Decay。
+- [x] 创建人工标注查询集。
+- [x] 计算 Recall@5、MRR 和检索延迟。
 
 ### 验收
 

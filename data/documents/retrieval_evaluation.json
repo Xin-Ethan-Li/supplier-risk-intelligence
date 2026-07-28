@@ -1,0 +1,50 @@
+[
+  {
+    "queryId": "Q1",
+    "scenarioId": "high-risk-logistics",
+    "question": "Are port congestion and missed sailings likely to delay our European orders?",
+    "relevantDocumentIds": ["NSC-LOG-2026-06"]
+  },
+  {
+    "queryId": "Q2",
+    "scenarioId": "high-risk-logistics",
+    "question": "Has a plant outage reduced safety stock or put July commitments at risk?",
+    "relevantDocumentIds": ["NSC-INC-2026-07"]
+  },
+  {
+    "queryId": "Q3",
+    "scenarioId": "high-risk-logistics",
+    "question": "Is supplier liquidity or working capital under pressure?",
+    "relevantDocumentIds": ["NSC-FIN-2026-Q2"]
+  },
+  {
+    "queryId": "Q4",
+    "scenarioId": "medium-risk-quality",
+    "question": "Were repeat dimensional defects fully corrected and verified?",
+    "relevantDocumentIds": ["APX-QA-2026-05"]
+  },
+  {
+    "queryId": "Q5",
+    "scenarioId": "medium-risk-quality",
+    "question": "What does the latest scorecard say about delivery and quality trend?",
+    "relevantDocumentIds": ["APX-SCORE-2026-Q2"]
+  },
+  {
+    "queryId": "Q6",
+    "scenarioId": "low-risk-stable",
+    "question": "Is this supplier consistently delivering orders on time with low defects?",
+    "relevantDocumentIds": ["GLM-SCORE-2026-Q2"]
+  },
+  {
+    "queryId": "Q7",
+    "scenarioId": "low-risk-stable",
+    "question": "Did the backup warehouse and secondary carrier meet recovery objectives?",
+    "relevantDocumentIds": ["GLM-BCP-2026-06"]
+  },
+  {
+    "queryId": "Q8",
+    "scenarioId": "low-risk-stable",
+    "question": "Are there any liquidity, covenant or overdue payment concerns?",
+    "relevantDocumentIds": ["GLM-FIN-2026-Q2"]
+  }
+]

@@ -24,10 +24,34 @@ const client: RiskEngineClient = {
       drivers: [],
       inferenceMs: 0.8,
     },
-    document: { status: "NOT_IMPLEMENTED", indexVersion: "pending-m3" },
-    insight: { summary: "The model classified disruption risk as high." },
-    evidence: [],
-    telemetry: { modelInferenceMs: 0.8, riskEngineMs: 1 },
+    document: {
+      status: "READY",
+      indexVersion: "srm-retrieval-demo-1.0.0",
+      riskScore: 0.86,
+      riskBand: "HIGH",
+      evidenceCount: 1,
+      retrievalMs: 0.6,
+    },
+    insight: {
+      summary: "The model classified disruption risk as high [E1].",
+      citationIds: ["E1"],
+    },
+    evidence: [
+      {
+        citationId: "E1",
+        documentId: "NSC-LOG-2026-06",
+        title: "June Logistics Exception Bulletin",
+        supplierName: "Northstar Components",
+        sourceType: "LOGISTICS_BULLETIN",
+        publishedAt: "2026-06-18",
+        section: "Ocean freight",
+        excerpt: "Three shipments missed their booked sailings.",
+        score: 0.91,
+        riskCategory: "LOGISTICS",
+        severity: 0.91,
+      },
+    ],
+    telemetry: { modelInferenceMs: 0.8, retrievalMs: 0.6, riskEngineMs: 1 },
   }),
 };
 
@@ -84,7 +108,10 @@ describe("M2 evaluation API", () => {
         modelVersion: "srm-xgb-demo-1.0.0",
         riskBand: "HIGH",
       },
-      document: { indexVersion: "pending-m3" },
+      document: {
+        status: "READY",
+        indexVersion: "srm-retrieval-demo-1.0.0",
+      },
     });
   });
 

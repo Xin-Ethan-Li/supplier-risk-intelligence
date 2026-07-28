@@ -65,8 +65,8 @@ export async function buildApp(
 
   app.get("/version", async () => ({
     service: "srm-api",
-    version: "0.2.0",
-    milestone: "M2",
+    version: "0.3.0",
+    milestone: "M3",
   }));
 
   app.post<{ Body: EvaluationRequest; Reply: EvaluationResponse }>(
@@ -95,11 +95,12 @@ export async function buildApp(
         telemetry: {
           apiMs: Math.max(0, totalMs - evaluation.telemetry.riskEngineMs),
           modelInferenceMs: evaluation.telemetry.modelInferenceMs,
+          retrievalMs: evaluation.telemetry.retrievalMs,
           riskEngineMs: evaluation.telemetry.riskEngineMs,
           totalMs,
         },
         disclaimer:
-          "Synthetic-data technical demonstration only. M2 metrics are not production claims.",
+          "Synthetic model data and fictional documents only. Demo metrics are not production claims.",
       };
     },
   );

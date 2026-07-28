@@ -1,16 +1,20 @@
+from concurrent.futures import ThreadPoolExecutor
 from time import perf_counter
 
 from fastapi import FastAPI, Header
 
 from .model_service import RiskModel
 from .models import EvaluationRequest
+from .retrieval_service import RetrievalIndex
 
 risk_model = RiskModel()
+retrieval_index = RetrievalIndex()
+executor = ThreadPoolExecutor(max_workers=2)
 
 app = FastAPI(
     title="Supplier Risk Engine",
-    version="0.2.0",
-    description="M2 supplier disruption inference with a versioned XGBoost model.",
+    version="0.3.0",
+    description="M3 supplier risk inference with hybrid retrieval and cited evidence.",
 )
 
 
@@ -25,6 +29,7 @@ def ready() -> dict[str, str]:
         "status": "ready",
         "service": "srm-risk-engine",
         "modelVersion": risk_model.version,
+        "indexVersion": retrieval_index.version,
     }
 
 
@@ -32,10 +37,10 @@ def ready() -> dict[str, str]:
 def version() -> dict[str, str]:
     return {
         "service": "srm-risk-engine",
-        "version": "0.2.0",
-        "milestone": "M2",
+        "version": "0.3.0",
+        "milestone": "M3",
         "modelVersion": risk_model.version,
-        "indexVersion": "pending-m3",
+        "indexVersion": retrieval_index.version,
     }
 
 
@@ -46,24 +51,40 @@ def evaluate_supplier(
 ) -> dict[str, object]:
     started_at = perf_counter()
     _ = x_correlation_id
-    quantitative = risk_model.predict(request.supplierMetrics)
+    model_future = executor.submit(risk_model.predict, request.supplierMetrics)
+    retrieval_future = executor.submit(retrieval_index.search, request.question, request.scenarioId)
+    quantitative = model_future.result()
+    retrieval = retrieval_future.result()
+    evidence = retrieval.pop("evidence")
+
+    if evidence:
+        citation_ids = [evidence[0]["citationId"]]
+        summary = (
+            f"The synthetic-data model classified 14-day disruption risk as "
+            f"{quantitative['riskBand'].lower()} at "
+            f"{float(quantitative['riskProbability']):.1%}. Fictional document evidence "
+            f"indicates {retrieval['riskBand'].lower()} risk, led by "
+            f"{evidence[0]['title']} [{evidence[0]['citationId']}]."
+        )
+    else:
+        citation_ids = []
+        summary = (
+            f"The synthetic-data model classified 14-day disruption risk as "
+            f"{quantitative['riskBand'].lower()} at "
+            f"{float(quantitative['riskProbability']):.1%}. "
+            "Insufficient fictional document evidence was found for this question."
+        )
 
     elapsed_ms = (perf_counter() - started_at) * 1000
     return {
         "status": "PARTIAL",
         "quantitative": quantitative,
-        "document": {"status": "NOT_IMPLEMENTED", "indexVersion": "pending-m3"},
-        "insight": {
-            "summary": (
-                f"The synthetic-data model classified 14-day disruption risk as "
-                f"{quantitative['riskBand'].lower()} at "
-                f"{float(quantitative['riskProbability']):.1%}. "
-                "Document evidence will be added in M3."
-            )
-        },
-        "evidence": [],
+        "document": retrieval,
+        "insight": {"summary": summary, "citationIds": citation_ids},
+        "evidence": evidence,
         "telemetry": {
             "modelInferenceMs": quantitative["inferenceMs"],
+            "retrievalMs": retrieval["retrievalMs"],
             "riskEngineMs": elapsed_ms,
         },
     }

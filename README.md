@@ -2,7 +2,7 @@
 
 An explainable supplier-risk technical demonstration combining a TypeScript API, a Python risk engine, and an Astro web experience.
 
-> Status: M2 data and model complete. The live evaluation now returns a versioned XGBoost probability, risk band, thresholds, and feature contributions. Document retrieval remains explicitly pending M3.
+> Status: M3 hybrid retrieval complete. Live evaluations combine the M2 model with cited evidence from a fully fictional supplier corpus. Score fusion remains a separate M4 milestone.
 
 ## Services
 
@@ -36,6 +36,7 @@ pnpm dev
 
 ```bash
 python -m pipelines.verify_artifacts
+python -m pipelines.verify_retrieval_artifacts
 pnpm verify
 ```
 
@@ -52,6 +53,19 @@ The committed `srm-xgb-demo-1.0.0` artifact is trained on 12,000 deterministic s
 
 These measurements characterize the synthetic generator and demo pipeline only; they do not establish real-world supplier performance.
 
+## M3 retrieval evaluation
+
+The committed `srm-retrieval-demo-1.0.0` index uses section-aware chunks, exact and near-duplicate controls, L2-normalized TF-IDF/LSA dense vectors, BM25, domain anchors, source quality and temporal decay.
+
+| Retrieval metric   | Result |
+| ------------------ | -----: |
+| Evaluation queries |      8 |
+| Recall@5           | 1.0000 |
+| MRR                | 1.0000 |
+| Indexed chunks     |     17 |
+
+This is a small, intentionally designed fictional evaluation set. Perfect results do not imply general retrieval performance.
+
 ## Documentation
 
 - [Product requirements](docs/01_PRD.md)
@@ -61,4 +75,4 @@ These measurements characterize the synthetic generator and demo pipeline only; 
 
 ## Data and claims
 
-This repository is a portfolio reference implementation. It does not contain employer data, source code, models, or documents. M2 uses clearly labelled synthetic data; later milestones add fictional supplier documents. Demo measurements are reported separately from historical production-project claims.
+This repository is a portfolio reference implementation. It does not contain employer data, source code, models, or documents. M2 uses clearly labelled synthetic data and M3 uses entirely fictional supplier documents. Demo measurements are reported separately from historical production-project claims.

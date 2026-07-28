@@ -6,10 +6,10 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
 
 <BaseLayout title="Live Demo | Supplier Risk Intelligence">
   <section class="shell page-heading">
-    <p class="eyebrow">M2 LIVE MODEL</p>
-    <h1>Estimate 14-day supplier disruption risk.</h1>
+    <p class="eyebrow">M3 HYBRID RAG</p>
+    <h1>Combine model risk with cited evidence.</h1>
     <p class="lede">
-      Adjust the point-in-time supplier signals and run a versioned XGBoost model. Results and metrics use deterministic synthetic data and are not production claims.
+      Run a versioned XGBoost model and search a fictional supplier corpus with dense, lexical and domain-aware ranking. Every document conclusion is tied to returned evidence.
     </p>
   </section>
 
@@ -57,10 +57,16 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
         <h3>Leading model drivers</h3>
         <ol data-driver-list></ol>
       </div>
+      <div class="evidence" data-evidence hidden>
+        <h3>Fictional document evidence</h3>
+        <div class="evidence-list" data-evidence-list></div>
+      </div>
       <dl class="result-meta">
         <div><dt>Model</dt><dd data-model-version>—</dd></div>
         <div><dt>Evidence index</dt><dd data-index-version>—</dd></div>
+        <div><dt>Document risk</dt><dd data-document-risk>—</dd></div>
         <div><dt>Model inference</dt><dd data-inference-ms>—</dd></div>
+        <div><dt>Retrieval</dt><dd data-retrieval-ms>—</dd></div>
         <div><dt>Total latency</dt><dd data-total-ms>—</dd></div>
         <div><dt>Correlation ID</dt><dd class="mono" data-correlation-id>—</dd></div>
       </dl>
@@ -87,6 +93,11 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
         financialStabilityIndex: 0.88, recentIncidents: 0
       }
     };
+    const questions: Record<string, string> = {
+      "high-risk-logistics": "Are port congestion, plant interruption or liquidity pressure likely to disrupt delivery?",
+      "medium-risk-quality": "Were the repeat dimensional defects fully corrected and verified?",
+      "low-risk-stable": "Is this supplier delivering consistently with adequate continuity and financial stability?"
+    };
 
     const scenarioSelect = form?.elements.namedItem("scenarioId") as HTMLSelectElement | null;
     scenarioSelect?.addEventListener("change", (event: Event) => {
@@ -97,6 +108,8 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
         const input = form.elements.namedItem(name) as HTMLInputElement | null;
         if (input) input.value = String(value);
       });
+      const question = form.elements.namedItem("question") as HTMLTextAreaElement | null;
+      if (question) question.value = questions[(event.target as HTMLSelectElement).value];
     });
 
     form?.addEventListener("submit", async (event) => {
@@ -141,7 +154,9 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
         band.dataset.band = quantitative.riskBand;
         document.querySelector<HTMLElement>("[data-model-version]")!.textContent = quantitative.modelVersion;
         document.querySelector<HTMLElement>("[data-index-version]")!.textContent = result.document.indexVersion;
+        document.querySelector<HTMLElement>("[data-document-risk]")!.textContent = `${result.document.riskBand} · ${(result.document.riskScore * 100).toFixed(1)}%`;
         document.querySelector<HTMLElement>("[data-inference-ms]")!.textContent = `${quantitative.inferenceMs.toFixed(2)} ms`;
+        document.querySelector<HTMLElement>("[data-retrieval-ms]")!.textContent = `${result.document.retrievalMs.toFixed(2)} ms`;
         document.querySelector<HTMLElement>("[data-total-ms]")!.textContent = `${result.telemetry.totalMs.toFixed(2)} ms`;
         document.querySelector<HTMLElement>("[data-correlation-id]")!.textContent = result.correlationId;
 
@@ -154,6 +169,30 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
           return item;
         }));
         document.querySelector<HTMLElement>("[data-drivers]")!.hidden = false;
+
+        const evidenceList = document.querySelector<HTMLElement>("[data-evidence-list]")!;
+        evidenceList.replaceChildren(...result.evidence.map((evidence: { citationId: string; title: string; sourceType: string; publishedAt: string; section: string; excerpt: string; score: number }) => {
+          const card = document.createElement("article");
+          card.className = "evidence-card";
+          const heading = document.createElement("h4");
+          heading.textContent = `[${evidence.citationId}] ${evidence.title}`;
+          const metadata = document.createElement("p");
+          metadata.className = "evidence-meta";
+          metadata.textContent = `${evidence.sourceType.replaceAll("_", " ")} · ${evidence.publishedAt} · ${evidence.section}`;
+          const excerpt = document.createElement("p");
+          excerpt.textContent = evidence.excerpt;
+          const score = document.createElement("span");
+          score.className = "evidence-score";
+          score.textContent = `relevance ${evidence.score.toFixed(3)}`;
+          card.append(heading, metadata, excerpt, score);
+          return card;
+        }));
+        if (!result.evidence.length) {
+          const empty = document.createElement("p");
+          empty.textContent = "Insufficient evidence — no citation was generated.";
+          evidenceList.append(empty);
+        }
+        document.querySelector<HTMLElement>("[data-evidence]")!.hidden = false;
         if (status) status.textContent = "Evaluation completed successfully.";
       } catch (error) {
         if (status) status.textContent = error instanceof Error ? error.message : "The request failed.";

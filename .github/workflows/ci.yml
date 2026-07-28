@@ -43,6 +43,10 @@ jobs:
       - run: python -m pytest ../../services/risk-engine/tests ../../pipelines/tests
       - run: python -m pipelines.verify_artifacts
         working-directory: .
+      - run: python -m pipelines.evaluate_retrieval
+        working-directory: .
+      - run: python -m pipelines.verify_retrieval_artifacts
+        working-directory: .
 
   compose:
     runs-on: ubuntu-latest

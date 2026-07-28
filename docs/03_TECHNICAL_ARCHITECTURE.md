@@ -231,7 +231,7 @@ M2 使用 XGBoost `pred_contribs` 产生局部特征贡献。贡献值位于模�
 
 ```mermaid
 flowchart LR
-    RAW["Sample PDF / Text"] --> EXT["Text Extraction"]
+    RAW["Fictional Structured Documents"] --> EXT["Section Extraction + Validation"]
     EXT --> CLEAN["Clean and PII Rules"]
     CLEAN --> HASH["Exact Hash Dedup"]
     HASH --> CAND["Supplier + Type + Time Buckets"]
@@ -248,10 +248,11 @@ flowchart LR
 
 ```text
 finalScore =
-    semanticSimilarity * w_semantic
-  + domainAnchorScore  * w_anchor
-  + sourceQuality      * w_source
-  + freshnessScore     * w_freshness
+    denseCosine      * 0.45
+  + normalizedBM25   * 0.35
+  + domainAnchor     * 0.10
+  + sourceQuality    * 0.06
+  + temporalDecay    * 0.04
 ```
 
 权重必须：
@@ -263,13 +264,9 @@ finalScore =
 
 ### 8.3 Temporal Decay
 
-不同文档类型使用不同 Half-life：
+M3 使用 730 天统一 Half-life，防止小型语料中的新鲜度信号压过文本相关性。按文档类型配置不同 Half-life 保留为后续扩展，不在当前 Demo 中伪装成已实现能力。
 
-- 新闻和运营事件：衰减较快。
-- 质量事故：中等衰减。
-- 年报和法律文件：衰减较慢。
-
-具体参数以评估结果为准，不在架构阶段伪造最终数值。
+M3 Public Profile 不下载 Sentence-Transformers 模型。离线构建使用 word/bigram TF-IDF 与固定随机种子的 Truncated SVD 生成 16 维 LSA 稠密向量，再执行 L2 normalization。该方案比预训练语义模型能力有限，但构建确定、镜像较小、无需外部模型服务；Full Profile 可替换为 Sentence-Transformers 与 Milvus，而不改变 Citation Contract。
 
 ### 8.4 Citation Contract
 
@@ -277,21 +274,17 @@ finalScore =
 
 ```json
 {
-  "citationId": "ev_01",
-  "supplierId": "sup_demo_003",
-  "documentId": "doc_legal_004",
-  "title": "Notice of Contract Dispute",
-  "source": "Demo Legal Registry",
-  "publishedAt": "2026-05-18",
-  "documentType": "LEGAL",
-  "snippet": "...",
-  "scores": {
-    "semantic": 0.83,
-    "anchor": 0.15,
-    "source": 0.08,
-    "freshness": 0.06,
-    "final": 0.81
-  }
+  "citationId": "E1",
+  "documentId": "NSC-LOG-2026-06",
+  "title": "June Logistics Exception Bulletin",
+  "supplierName": "Northstar Components",
+  "sourceType": "LOGISTICS_BULLETIN",
+  "publishedAt": "2026-06-18",
+  "section": "Ocean freight",
+  "excerpt": "Three priority component shipments missed their booked sailings...",
+  "score": 0.91,
+  "riskCategory": "LOGISTICS",
+  "severity": 0.91
 }
 ```
 

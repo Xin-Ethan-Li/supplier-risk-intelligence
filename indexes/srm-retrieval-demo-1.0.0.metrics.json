@@ -1,0 +1,94 @@
+{
+  "indexVersion": "srm-retrieval-demo-1.0.0",
+  "dataNature": "fictional",
+  "queries": 8,
+  "recallAt5": 1,
+  "mrr": 1.0,
+  "meanRetrievalMs": 1.198725,
+  "cases": [
+    {
+      "queryId": "Q1",
+      "retrievedDocumentIds": [
+        "NSC-LOG-2026-06",
+        "NSC-INC-2026-07"
+      ],
+      "firstRelevantRank": 1,
+      "recallAt5": 1,
+      "reciprocalRank": 1.0,
+      "retrievalMs": 5.7467
+    },
+    {
+      "queryId": "Q2",
+      "retrievedDocumentIds": [
+        "NSC-INC-2026-07"
+      ],
+      "firstRelevantRank": 1,
+      "recallAt5": 1,
+      "reciprocalRank": 1.0,
+      "retrievalMs": 0.697
+    },
+    {
+      "queryId": "Q3",
+      "retrievedDocumentIds": [
+        "NSC-FIN-2026-Q2",
+        "NSC-LOG-2026-06"
+      ],
+      "firstRelevantRank": 1,
+      "recallAt5": 1,
+      "reciprocalRank": 1.0,
+      "retrievalMs": 0.5498
+    },
+    {
+      "queryId": "Q4",
+      "retrievedDocumentIds": [
+        "APX-QA-2026-05"
+      ],
+      "firstRelevantRank": 1,
+      "recallAt5": 1,
+      "reciprocalRank": 1.0,
+      "retrievalMs": 0.5486
+    },
+    {
+      "queryId": "Q5",
+      "retrievedDocumentIds": [
+        "APX-SCORE-2026-Q2"
+      ],
+      "firstRelevantRank": 1,
+      "recallAt5": 1,
+      "reciprocalRank": 1.0,
+      "retrievalMs": 0.5279
+    },
+    {
+      "queryId": "Q6",
+      "retrievedDocumentIds": [
+        "GLM-SCORE-2026-Q2",
+        "GLM-FIN-2026-Q2"
+      ],
+      "firstRelevantRank": 1,
+      "recallAt5": 1,
+      "reciprocalRank": 1.0,
+      "retrievalMs": 0.5358
+    },
+    {
+      "queryId": "Q7",
+      "retrievedDocumentIds": [
+        "GLM-BCP-2026-06"
+      ],
+      "firstRelevantRank": 1,
+      "recallAt5": 1,
+      "reciprocalRank": 1.0,
+      "retrievalMs": 0.4786
+    },
+    {
+      "queryId": "Q8",
+      "retrievedDocumentIds": [
+        "GLM-FIN-2026-Q2"
+      ],
+      "firstRelevantRank": 1,
+      "recallAt5": 1,
+      "reciprocalRank": 1.0,
+      "retrievalMs": 0.5054
+    }
+  ],
+  "disclaimer": "Metrics use a small fictional, human-authored evaluation set."
+}

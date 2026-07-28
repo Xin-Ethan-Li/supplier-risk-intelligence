@@ -21,8 +21,9 @@ def test_health_and_version() -> None:
     assert health.status_code == 200
     assert health.json() == {"status": "ok", "service": "srm-risk-engine"}
     assert version.status_code == 200
-    assert version.json()["milestone"] == "M2"
+    assert version.json()["milestone"] == "M3"
     assert version.json()["modelVersion"] == "srm-xgb-demo-1.0.0"
+    assert version.json()["indexVersion"] == "srm-retrieval-demo-1.0.0"
 
 
 def test_evaluate_returns_model_prediction() -> None:
@@ -54,7 +55,13 @@ def test_evaluate_returns_model_prediction() -> None:
     assert 0 <= result["quantitative"]["riskProbability"] <= 1
     assert result["quantitative"]["riskBand"] in {"LOW", "MEDIUM", "HIGH"}
     assert len(result["quantitative"]["drivers"]) == 5
-    assert result["document"]["indexVersion"] == "pending-m3"
+    assert result["document"]["status"] == "READY"
+    assert result["document"]["indexVersion"] == "srm-retrieval-demo-1.0.0"
+    assert result["document"]["evidenceCount"] > 0
+    assert result["insight"]["citationIds"]
+    assert result["evidence"][0]["citationId"] == "E1"
+    evidence_ids = {item["citationId"] for item in result["evidence"]}
+    assert set(result["insight"]["citationIds"]) <= evidence_ids
 
 
 def test_evaluate_rejects_invalid_metrics() -> None:

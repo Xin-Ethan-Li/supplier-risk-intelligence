@@ -23,6 +23,20 @@ export interface RiskDriver {
   direction: "INCREASES_RISK" | "REDUCES_RISK";
 }
 
+export interface Evidence {
+  citationId: string;
+  documentId: string;
+  title: string;
+  supplierName: string;
+  sourceType: string;
+  publishedAt: string;
+  section: string;
+  excerpt: string;
+  score: number;
+  riskCategory: string;
+  severity: number;
+}
+
 export interface EvaluationResponse {
   evaluationId: string;
   correlationId: string;
@@ -38,12 +52,20 @@ export interface EvaluationResponse {
     drivers: RiskDriver[];
     inferenceMs: number;
   };
-  document: { status: "NOT_IMPLEMENTED"; indexVersion: string };
-  insight: { summary: string };
-  evidence: Array<Record<string, unknown>>;
+  document: {
+    status: "READY" | "INSUFFICIENT_EVIDENCE";
+    indexVersion: string;
+    riskScore: number;
+    riskBand: "LOW" | "MEDIUM" | "HIGH";
+    evidenceCount: number;
+    retrievalMs: number;
+  };
+  insight: { summary: string; citationIds: string[] };
+  evidence: Evidence[];
   telemetry: {
     apiMs: number;
     modelInferenceMs: number;
+    retrievalMs: number;
     riskEngineMs: number;
     totalMs: number;
   };

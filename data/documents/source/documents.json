@@ -1,0 +1,242 @@
+[
+  {
+    "documentId": "NSC-LOG-2026-06",
+    "scenarioId": "high-risk-logistics",
+    "supplierName": "Northstar Components",
+    "title": "June Logistics Exception Bulletin",
+    "sourceType": "LOGISTICS_BULLETIN",
+    "publishedAt": "2026-06-18",
+    "sourceQuality": 0.92,
+    "riskCategory": "LOGISTICS",
+    "severity": 0.91,
+    "sections": [
+      {
+        "heading": "Ocean freight",
+        "text": "Three priority component shipments missed their booked sailings after a regional port backlog and carrier capacity reduction. The supplier expects delays of nine to fourteen days for open European orders."
+      },
+      {
+        "heading": "Recovery action",
+        "text": "Northstar requested air-freight quotations for two critical orders, but approval remains pending because expedited transport cost exceeds the existing contingency budget."
+      }
+    ]
+  },
+  {
+    "documentId": "NSC-INC-2026-07",
+    "scenarioId": "high-risk-logistics",
+    "supplierName": "Northstar Components",
+    "title": "Plant Continuity Incident Report",
+    "sourceType": "INCIDENT_REPORT",
+    "publishedAt": "2026-07-04",
+    "sourceQuality": 0.98,
+    "riskCategory": "OPERATIONS",
+    "severity": 0.86,
+    "sections": [
+      {
+        "heading": "Incident",
+        "text": "A power distribution fault stopped final assembly for eighteen hours and consumed most finished-goods safety stock. Two production lines restarted, while the third line remains under controlled recovery."
+      },
+      {
+        "heading": "Customer impact",
+        "text": "The recovery plan prioritizes overdue orders, but the operations team reports a material risk that July delivery commitments will slip if another interruption occurs."
+      }
+    ]
+  },
+  {
+    "documentId": "NSC-FIN-2026-Q2",
+    "scenarioId": "high-risk-logistics",
+    "supplierName": "Northstar Components",
+    "title": "Quarterly Financial Monitoring Note",
+    "sourceType": "FINANCIAL_REVIEW",
+    "publishedAt": "2026-06-30",
+    "sourceQuality": 0.88,
+    "riskCategory": "FINANCIAL",
+    "severity": 0.72,
+    "sections": [
+      {
+        "heading": "Liquidity",
+        "text": "Available cash declined for the second quarter as freight premiums and raw-material prepayments increased. Management forecasts limited headroom against its internal liquidity floor through August."
+      },
+      {
+        "heading": "Monitoring",
+        "text": "No payment default has been reported. Weekly cash monitoring and confirmation of critical sub-tier payments are recommended until working-capital pressure eases."
+      }
+    ]
+  },
+  {
+    "documentId": "NSC-LOG-2026-06-COPY",
+    "scenarioId": "high-risk-logistics",
+    "supplierName": "Northstar Components",
+    "title": "June Logistics Exception Bulletin - Distribution Copy",
+    "sourceType": "LOGISTICS_BULLETIN",
+    "publishedAt": "2026-06-18",
+    "sourceQuality": 0.75,
+    "riskCategory": "LOGISTICS",
+    "severity": 0.91,
+    "sections": [
+      {
+        "heading": "Ocean freight",
+        "text": "Three priority component shipments missed their booked sailings after a regional port backlog and carrier capacity reduction. The supplier expects delays of nine to fourteen days for open European orders."
+      },
+      {
+        "heading": "Recovery action",
+        "text": "Northstar requested air-freight quotations for two critical orders, but approval remains pending because expedited transport cost exceeds the existing contingency budget."
+      }
+    ]
+  },
+  {
+    "documentId": "APX-QA-2026-05",
+    "scenarioId": "medium-risk-quality",
+    "supplierName": "Apex Precision",
+    "title": "Corrective Action Review 24-117",
+    "sourceType": "QUALITY_AUDIT",
+    "publishedAt": "2026-05-22",
+    "sourceQuality": 0.97,
+    "riskCategory": "QUALITY",
+    "severity": 0.58,
+    "sections": [
+      {
+        "heading": "Finding",
+        "text": "Incoming inspection found repeat dimensional variation on machined housings. The defect is contained to two lots, and no field failures have been recorded."
+      },
+      {
+        "heading": "Corrective action",
+        "text": "Apex replaced a worn fixture and added first-piece verification. Effectiveness evidence is incomplete because only one conforming production run has been reviewed; two further runs are required for closure."
+      }
+    ]
+  },
+  {
+    "documentId": "APX-QA-2026-04",
+    "scenarioId": "medium-risk-quality",
+    "supplierName": "Apex Precision",
+    "title": "Corrective Action Review 24-117 - Initial Draft",
+    "sourceType": "QUALITY_AUDIT",
+    "publishedAt": "2026-04-29",
+    "sourceQuality": 0.72,
+    "riskCategory": "QUALITY",
+    "severity": 0.55,
+    "sections": [
+      {
+        "heading": "Finding",
+        "text": "Incoming inspection identified repeat dimensional variation on machined housings. The issue was contained to two production lots and no field failures were reported."
+      },
+      {
+        "heading": "Corrective action",
+        "text": "A worn fixture was replaced and first-piece verification was added. Effectiveness evidence remains incomplete pending review of additional conforming production runs."
+      }
+    ]
+  },
+  {
+    "documentId": "APX-SCORE-2026-Q2",
+    "scenarioId": "medium-risk-quality",
+    "supplierName": "Apex Precision",
+    "title": "Q2 Supplier Performance Scorecard",
+    "sourceType": "PERFORMANCE_SCORECARD",
+    "publishedAt": "2026-07-01",
+    "sourceQuality": 0.9,
+    "riskCategory": "PERFORMANCE",
+    "severity": 0.38,
+    "sections": [
+      {
+        "heading": "Delivery",
+        "text": "On-time delivery remained at 94 percent and no order cancellations were recorded during the quarter."
+      },
+      {
+        "heading": "Quality trend",
+        "text": "The defect rate increased from 2.1 to 3.8 percent, driven by the two contained housing lots. Quality performance is on watch pending corrective-action closure."
+      }
+    ]
+  },
+  {
+    "documentId": "APX-FIN-2026-Q2",
+    "scenarioId": "medium-risk-quality",
+    "supplierName": "Apex Precision",
+    "title": "Financial Health Confirmation",
+    "sourceType": "FINANCIAL_REVIEW",
+    "publishedAt": "2026-06-15",
+    "sourceQuality": 0.84,
+    "riskCategory": "FINANCIAL",
+    "severity": 0.16,
+    "sections": [
+      {
+        "heading": "Position",
+        "text": "Apex reported stable cash generation, no overdue statutory payments and adequate committed facilities for the next twelve months."
+      }
+    ]
+  },
+  {
+    "documentId": "GLM-SCORE-2026-Q2",
+    "scenarioId": "low-risk-stable",
+    "supplierName": "Greenline Materials",
+    "title": "Q2 Supplier Performance Scorecard",
+    "sourceType": "PERFORMANCE_SCORECARD",
+    "publishedAt": "2026-07-03",
+    "sourceQuality": 0.93,
+    "riskCategory": "PERFORMANCE",
+    "severity": 0.08,
+    "sections": [
+      {
+        "heading": "Delivery",
+        "text": "Greenline achieved 99.2 percent on-time delivery with no missed priority orders, cancellations or open logistics escalations."
+      },
+      {
+        "heading": "Quality",
+        "text": "The rolling defect rate remained below 0.6 percent. All minor observations were closed within the agreed response period."
+      }
+    ]
+  },
+  {
+    "documentId": "GLM-BCP-2026-06",
+    "scenarioId": "low-risk-stable",
+    "supplierName": "Greenline Materials",
+    "title": "Business Continuity Exercise Summary",
+    "sourceType": "CONTINUITY_REVIEW",
+    "publishedAt": "2026-06-11",
+    "sourceQuality": 0.96,
+    "riskCategory": "OPERATIONS",
+    "severity": 0.1,
+    "sections": [
+      {
+        "heading": "Exercise result",
+        "text": "The alternate warehouse and secondary carrier were activated within four hours during the annual continuity exercise. Order data, staffing and customer communications met the recovery objectives."
+      },
+      {
+        "heading": "Follow-up",
+        "text": "One documentation improvement was assigned and closed. No material continuity gap remains open."
+      }
+    ]
+  },
+  {
+    "documentId": "GLM-FIN-2026-Q2",
+    "scenarioId": "low-risk-stable",
+    "supplierName": "Greenline Materials",
+    "title": "Quarterly Financial Review",
+    "sourceType": "FINANCIAL_REVIEW",
+    "publishedAt": "2026-06-28",
+    "sourceQuality": 0.86,
+    "riskCategory": "FINANCIAL",
+    "severity": 0.07,
+    "sections": [
+      {
+        "heading": "Liquidity",
+        "text": "Liquidity and covenant headroom improved during the quarter. There are no overdue tax, payroll or critical sub-tier supplier balances."
+      }
+    ]
+  },
+  {
+    "documentId": "GLM-LEGAL-2026-05",
+    "scenarioId": "low-risk-stable",
+    "supplierName": "Greenline Materials",
+    "title": "Contract and Compliance Review",
+    "sourceType": "LEGAL_REVIEW",
+    "publishedAt": "2026-05-30",
+    "sourceQuality": 0.91,
+    "riskCategory": "LEGAL",
+    "severity": 0.05,
+    "sections": [
+      {
+        "heading": "Status",
+        "text": "No material litigation, sanctions concern or unresolved contractual breach was identified in the scheduled compliance review."
+      }
+    ]
+  }
+]

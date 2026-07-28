@@ -6,7 +6,11 @@ export interface RiskEngineEvaluation {
   document: EvaluationResponse["document"];
   insight: EvaluationResponse["insight"];
   evidence: EvaluationResponse["evidence"];
-  telemetry: { modelInferenceMs: number; riskEngineMs: number };
+  telemetry: {
+    modelInferenceMs: number;
+    retrievalMs: number;
+    riskEngineMs: number;
+  };
 }
 
 export interface RiskEngineClient {

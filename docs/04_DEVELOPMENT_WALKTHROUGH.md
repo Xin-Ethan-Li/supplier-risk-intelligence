@@ -27,13 +27,13 @@
 
 | 项目       | 状态                     |
 | ---------- | ------------------------ |
-| 当前阶段   | M2 数据与模型已完成      |
-| 当前版本   | 0.2.0                    |
+| 当前阶段   | M3 Hybrid RAG 已完成     |
+| 当前版本   | 0.3.0                    |
 | Git 仓库   | 已初始化，分支为 main    |
 | 应用代码   | 三服务工程骨架已创建     |
 | 本地运行   | Native 与 Compose 已验证 |
 | 在线环境   | 尚未创建                 |
-| 下一里程碑 | M3 - RAG 检索            |
+| 下一里程碑 | M4 - API Vertical Slice  |
 
 ## 4. 里程碑状态
 
@@ -42,7 +42,7 @@
 | M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对     |
 | M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证       |
 | M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证 |
-| M3 RAG 检索           | Not Started | —                                    |
+| M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证 |
 | M4 API Vertical Slice | Not Started | —                                    |
 | M5 Demo UI            | Not Started | —                                    |
 | M6 质量与安全         | Not Started | —                                    |
@@ -52,6 +52,76 @@
 ---
 
 ## 5. Walkthrough 记录
+
+## 2026-07-28 - M3 Hybrid Retrieval 与 Citation
+
+### 目标
+
+用完全虚构的供应商文档实现可复现的 Hybrid Retrieval，为每个文档风险判断返回可解析 Citation，并明确处理无相关证据的拒答路径。
+
+### 完成内容
+
+- 创建 12 份虚构文档，覆盖物流、运营、质量、财务、绩效与法律类别，以及 3 个 Demo 场景。
+- 定义文档 ID、供应商、来源类型、日期、来源质量、风险类别、严重度和 Section Metadata。
+- 使用内容 SHA-256 删除一份完全重复文档。
+- 在相同场景与来源类型候选组内使用 Jaccard 相似度删除一份旧版近重复文档，保留最新版本。
+- 将 10 份保留文档按 Section 切分为 17 个 Chunk。
+- 离线构建 word/bigram TF-IDF、固定随机种子 LSA 和 L2-normalized 16 维稠密向量。
+- 实现 Dense Cosine、BM25、Domain Anchor、Source Quality 与 Temporal Decay 加权排名。
+- 实现每个文档只返回最高分 Chunk、Top-5 限制和最低相关性阈值。
+- 为无关问题返回 `INSUFFICIENT_EVIDENCE`，不生成 Citation。
+- 创建 8 条人工标注查询集并输出 Recall@5、MRR 与检索耗时。
+- 将模型与检索并行执行，返回文档风险、证据卡片、Citation ID 和阶段延迟。
+- Astro Demo 展示文档风险、检索延迟和虚构 Evidence Cards。
+
+### 检索评估
+
+| 指标               |     结果 |
+| ------------------ | -------: |
+| Evaluation Queries |        8 |
+| Recall@5           | 1.000000 |
+| MRR                | 1.000000 |
+| Retained Documents |       10 |
+| Indexed Chunks     |       17 |
+
+该评估集规模很小，并且针对虚构语料人工设计。满分只说明当前回归用例全部命中，不能推断开放领域或生产语料性能。
+
+### 验证
+
+- `pnpm verify`：Artifact 校验、Prettier、Ruff、Astro、TypeScript、测试和 Build 全部通过。
+- Pytest：9 项通过，覆盖 API、XGBoost、检索命中、拒答、数据时间切分及文档去重。
+- Vitest：3 项通过，覆盖 Fastify 契约、Citation Evidence 和输入校验。
+- Retrieval verifier：版本、语料 Hash、Chunk 数、fictional 标识、两种去重控制与指标门槛通过。
+- Docker Compose：Risk Engine 与 API healthy，Web 正常启动。
+- 容器端到端请求：返回模型概率 0.981211、文档 HIGH、3 条 Evidence、`E1` Citation 和独立检索延迟。
+- Web Smoke Test：M3 标题与 Fictional Evidence 区域返回成功。
+
+### 技术决策
+
+1. **Public Profile 使用 TF-IDF + LSA，而不是运行时下载预训练模型。** 当前 Demo 优先确定性、小镜像和零外部 API；它的语义泛化能力有限，后续 Full Profile 可替换 Sentence-Transformers/Milvus。
+2. **稠密与词法检索同时保留。** Dense LSA 捕获潜在主题，BM25 保留精确术语，领域锚点补充供应链语义。
+3. **只返回每份文档的最高分 Chunk。** 避免 Top-5 被同一来源的相邻 Section 占满。
+4. **Evidence-bound Summary 不依赖付费 LLM。** 摘要中的 `[E1]` 必须来自同一响应 Evidence；无证据时明确拒答。
+5. **保留 `PARTIAL` 顶层状态。** M3 已完成检索，但量化与文档风险的正式融合属于 M4，不能提前宣称完整评估已完成。
+
+### 遇到的问题
+
+- 初始近重复阈值过高，旧版质量报告未被识别并压过最新报告；依据语料对比将候选组阈值调整为 0.54 后，保留最新版本且 MRR 从 0.9375 提升到 1.0。
+- 初始检索保留英文停用词，完全无关问题因公共词得到虚假证据；Dense 与 BM25 同时移除英文停用词后，拒答测试通过。
+- 初始 Top-5 允许同一文档的多个 Section 重复出现；增加按 `documentId` 聚合后 Evidence 来源保持唯一。
+- Joblib 在当前 NumPy 版本加载数组时产生弃用警告，但不影响结果；已记录为依赖升级观察项。
+
+### 未完成事项
+
+- M4 尚需实现量化风险与文档风险的显式融合公式、最终综合风险和完整 Citation Validation。
+- 当前 LSA 只在小型英文虚构语料上评估，没有多语言、长文档或开放领域泛化结论。
+- 尚未加入 PDF/OCR、Cross-Encoder、Milvus Server 或 Cloud LLM；这些均不是 M3 Public Profile 的已实现能力。
+
+### 下一步
+
+进入 M4：完成风险融合、统一响应状态、Citation Validator、OpenAPI 与三场景端到端契约。
+
+---
 
 ## 2026-07-28 - M2 数据、模型与实时推理
 

@@ -1,0 +1,32 @@
+{
+  "indexVersion": "srm-retrieval-demo-1.0.0",
+  "createdAt": "2026-07-28T15:20:29.178247+00:00",
+  "dataNature": "fictional",
+  "embeddingMethod": "tfidf_lsa_l2_normalized",
+  "embeddingDimensions": 16,
+  "lexicalMethod": "bm25",
+  "sourceDocuments": 12,
+  "retainedDocuments": 10,
+  "chunks": 17,
+  "sourceSha256": "0c8c33605d8a4e2b69fcfa7563825d4d66d1fddffb88dc00e528226fed971613",
+  "duplicateDecisions": [
+    {
+      "documentId": "NSC-LOG-2026-06-COPY",
+      "duplicateOf": "NSC-LOG-2026-06",
+      "reason": "exact_content_hash"
+    },
+    {
+      "documentId": "APX-QA-2026-04",
+      "duplicateOf": "APX-QA-2026-05",
+      "reason": "near_duplicate_jaccard"
+    }
+  ],
+  "ranking": {
+    "denseCosine": 0.45,
+    "bm25": 0.35,
+    "domainAnchor": 0.1,
+    "sourceQuality": 0.06,
+    "temporalDecay": 0.04
+  },
+  "disclaimer": "All suppliers, documents and events are fictional demo material."
+}
