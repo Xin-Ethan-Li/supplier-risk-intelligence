@@ -562,9 +562,28 @@ M6 记录单用户、预热、顺序 Docker 基线：3 次 warmup 后跨三个�
 
 ## 18. 推荐仓库结构
 
+### M8 Portfolio 免费发布面
+
+M8 在 Monorepo 中增加独立 `apps/portfolio` Astro 静态应用。它与 SRM Demo 的职责分离：Portfolio 负责候选人定位、项目索引、About、Resume 和 SRM Case Study；Render 上的 `apps/web` 继续负责可交互风险评估。
+
+```text
+GitHub Pages (free, static)
+  └── Portfolio / Case Study
+        ├── GitHub source
+        ├── Render live demo
+        └── HTML resume / email contact
+
+Render Static Site (free) → Fastify + Python free backend
+```
+
+GitHub Actions 在 `main` 的 Portfolio 相关文件变化后构建 `apps/portfolio`，将仓库名作为 Astro `base`，并通过 GitHub Pages Artifact 发布。站点不依赖数据库、Serverless Function 或运行时 Secret；Google Analytics 仅在显式设置 `PUBLIC_GA_ID` 时启用。自定义域名不是免费上线的前置条件。
+
+Case Study 使用构建期复制的本地架构图和 Demo 截图，避免页面运行时依赖 GitHub Raw 图片。PDF 简历默认不进入公开仓库，因为当前版本包含电话号码；未获得明确公开授权前，Resume 页面只提供 HTML 摘要和邮件索取入口。
+
 ```text
 supplier-risk-intelligence-demo/
 ├── apps/
+│   ├── portfolio/
 │   ├── web/
 │   └── api/
 ├── services/

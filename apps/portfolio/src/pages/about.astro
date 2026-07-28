@@ -1,0 +1,48 @@
+---
+import { profile } from "../data/portfolio";
+import PortfolioLayout from "../layouts/PortfolioLayout.astro";
+const base = import.meta.env.BASE_URL;
+---
+
+<PortfolioLayout title="About" description="About Xin (Ethan) Li, an AI Software Engineer with a backend engineering foundation.">
+  <section class="shell page-hero">
+    <p class="kicker">ABOUT · ENGINEERING WITH CONTEXT</p>
+    <h1>I make AI useful by making the system around it reliable.</h1>
+    <p class="lede">I am a Software Engineer with 5+ years of backend experience, now focused on integrating ML, retrieval and LLM capabilities into enterprise workflows.</p>
+  </section>
+
+  <section class="shell page-section">
+    <p class="kicker">MY APPROACH</p>
+    <div class="prose">
+      <h2>Models are only one part of the product.</h2>
+      <p>I care about the less glamorous parts that determine whether an AI feature earns trust: data quality, retrieval evaluation, timeouts, fallback behavior, API contracts, observability and clear limits.</p>
+      <p>My background in Node.js and TypeScript gives me a practical production lens. Python and ML extend that foundation; they do not replace it. The result is software that can explain what it knows, show its evidence and fail in a controlled way.</p>
+    </div>
+  </section>
+
+  <section class="shell page-section">
+    <p class="kicker">EXPERIENCE</p>
+    <div>
+      <article class="experience-item">
+        <time>2021 — PRESENT</time>
+        <div><h3>Software Engineer · Elitesland Software System</h3><p>Backend services, supplier-risk workflows, document processing, applied AI and production delivery in a remote engineering environment.</p></div>
+      </article>
+      <article class="experience-item">
+        <time>2020 — 2021</time>
+        <div><h3>Software Engineer · VIP.com</h3><p>E-commerce transaction flows, payment integrations, webhook consistency, observability and integration testing.</p></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="shell page-section">
+    <p class="kicker">EDUCATION & TOOLS</p>
+    <div class="prose">
+      <h2>Computer science, applied.</h2>
+      <p><strong>MSc in Computer Science</strong>, University College Cork, Ireland — graduated December 2025.</p>
+      <p><strong>BSc in Computer Science</strong>, Dalian Jiaotong University, China.</p>
+      <h3>Working toolkit</h3>
+      <p>TypeScript · Node.js · Python · Fastify · FastAPI · PostgreSQL · Redis · RabbitMQ · XGBoost · RAG · Docker · AWS · Terraform · GitHub Actions</p>
+      <div class="button-row"><a class="button primary" href={`mailto:${profile.email}`}>Contact me ↗</a><a class="button secondary" href={`${base}resume/`}>View resume</a></div>
+    </div>
+  </section>
+</PortfolioLayout>

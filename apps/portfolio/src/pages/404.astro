@@ -1,0 +1,13 @@
+---
+import PortfolioLayout from "../layouts/PortfolioLayout.astro";
+const base = import.meta.env.BASE_URL;
+---
+
+<PortfolioLayout title="Page not found" description="The requested page could not be found.">
+  <section class="shell page-hero">
+    <p class="kicker">404 · NOT FOUND</p>
+    <h1>This path ends here.</h1>
+    <p class="lede">The page may have moved, but the projects are still available.</p>
+    <div class="button-row"><a class="button primary" href={base}>Return home</a><a class="button secondary" href={`${base}projects/`}>View projects</a></div>
+  </section>
+</PortfolioLayout>

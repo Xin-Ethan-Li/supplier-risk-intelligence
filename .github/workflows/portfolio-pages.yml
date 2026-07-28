@@ -1,0 +1,55 @@
+name: Portfolio Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/portfolio/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/portfolio-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: portfolio-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: actions/configure-pages@v5
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @srm/portfolio build
+        env:
+          PORTFOLIO_SITE: https://xin-ethan-li.github.io
+          PORTFOLIO_BASE: /supplier-risk-intelligence/
+          PUBLIC_GA_ID: ${{ vars.PUBLIC_GA_ID }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/portfolio/dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

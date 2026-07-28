@@ -1,0 +1,84 @@
+---
+import PortfolioLayout from "../../layouts/PortfolioLayout.astro";
+
+const base = import.meta.env.BASE_URL;
+const architectureImage = `${base}case-assets/architecture.svg`;
+const demoImage = `${base}case-assets/demo-desktop.png`;
+---
+
+<PortfolioLayout title="Supplier Risk Intelligence" description="Case study: an explainable supplier-risk demo combining XGBoost, hybrid retrieval and evidence-bound decision support.">
+  <section class="shell case-hero">
+    <p class="kicker">CASE STUDY 01 · APPLIED AI SYSTEMS</p>
+    <h1>Supplier Risk<br />Intelligence.</h1>
+    <p class="lede">A portfolio-safe reconstruction of an enterprise AI pattern: combine quantitative risk signals with retrieved evidence, then expose the result through an observable, inspectable workflow.</p>
+    <div class="button-row"><a class="button primary" href="https://srm-supplier-risk-demo.onrender.com/demo/" target="_blank" rel="noreferrer">Run live demo ↗</a><a class="button secondary" href="https://github.com/Xin-Ethan-Li/supplier-risk-intelligence" target="_blank" rel="noreferrer">View source</a></div>
+    <dl class="case-meta">
+      <div><dt>Role</dt><dd>AI / backend engineer</dd></div>
+      <div><dt>Scope</dt><dd>End-to-end demo</dd></div>
+      <div><dt>Stack</dt><dd>Python + TypeScript</dd></div>
+      <div><dt>Delivery</dt><dd>M0 — M7</dd></div>
+    </dl>
+  </section>
+
+  <section class="shell page-section">
+    <p class="kicker">THE PROBLEM</p>
+    <div class="prose">
+      <h2>A score alone is not enough.</h2>
+      <p>Supplier-risk decisions mix structured operating signals with unstructured incident, financial and logistics evidence. A useful system has to surface both—without letting an opaque generated answer outrun its sources.</p>
+      <p>The design question was therefore larger than “train a model” or “add RAG.” It was: how can a reviewer move from risk signal to evidence, understand the contributing factors and inspect the system boundary in one interaction?</p>
+    </div>
+  </section>
+
+  <section class="shell page-section">
+    <p class="kicker">HONEST CONSTRAINTS</p>
+    <div class="prose">
+      <h2>Public, reproducible and safe to discuss.</h2>
+      <ul>
+        <li>No employer data, proprietary model artifact or confidential source document.</li>
+        <li>No paid LLM or hidden API dependency on the public request path.</li>
+        <li>All supplier records are synthetic; all retrieved documents are fictional.</li>
+        <li>Every metric is labelled as a repository regression result, not a production claim.</li>
+        <li>The entire hosted profile fits within free Render resources.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="shell section">
+    <div class="section-head"><div><p class="kicker">ARCHITECTURE</p><h2>Clear logical boundaries.</h2></div><p>Astro handles the experience, Fastify owns the public contract and Python owns model and retrieval execution. Free hosting combines the two backend processes physically while preserving those boundaries.</p></div>
+    <div class="architecture-frame"><img src={architectureImage} alt="Architecture from Astro web through Fastify API to the Python risk engine, model and retrieval artifacts" loading="lazy" /></div>
+  </section>
+
+  <section class="shell page-section">
+    <p class="kicker">KEY DECISIONS</p>
+    <div class="decision-grid">
+      <article class="decision-card"><span>01 / EVIDENCE FIRST</span><h3>Deterministic summary</h3><p>The public path assembles conclusions only from validated structured outputs and citations. No live LLM is required to produce a credible answer.</p></article>
+      <article class="decision-card"><span>02 / IMBALANCED RISK</span><h3>Recall-aware evaluation</h3><p>Chronological splits and an F2-oriented threshold make the tradeoff visible. PR-AUC, recall and the confusion matrix take priority over accuracy.</p></article>
+      <article class="decision-card"><span>03 / HYBRID RETRIEVAL</span><h3>More than vector similarity</h3><p>Dense and BM25 relevance are combined with domain anchors, source quality, temporal decay and per-document result control.</p></article>
+      <article class="decision-card"><span>04 / OPERABLE BY DESIGN</span><h3>Trace the whole request</h3><p>Request IDs, correlation IDs, stage timing, typed errors, timeouts and dependency status make the AI workflow inspectable.</p></article>
+    </div>
+  </section>
+
+  <section class="shell page-section">
+    <p class="kicker">REPRODUCIBLE RESULTS</p>
+    <div class="prose">
+      <h2>Measurements with boundaries attached.</h2>
+      <p>The synthetic final test contains a 2.19% positive class. The committed XGBoost artifact reaches 89.2% recall and 0.653 PR-AUC, with precision deliberately traded for recall. The small curated retrieval regression set reaches Recall@5 and MRR of 1.0; this verifies the eight committed questions, not open-domain retrieval.</p>
+      <p>The production smoke test returned complete High, Medium and Low results, each with evidence, local feature drivers and trace identifiers. Local warm-stack P95 was 34.08 ms; free-hosting cold starts are disclosed separately.</p>
+    </div>
+  </section>
+
+  <section class="shell section">
+    <div class="section-head"><div><p class="kicker">THE EXPERIENCE</p><h2>Signal, evidence, trace.</h2></div><p>The interface keeps the decision path in one workspace: choose a fictional scenario, adjust the metrics, evaluate and open the evidence behind the conclusion.</p></div>
+    <div class="demo-frame"><img src={demoImage} alt="Supplier Risk Intelligence desktop demo showing a medium-risk result, model signals and supporting evidence" loading="lazy" /></div>
+  </section>
+
+  <section class="shell page-section">
+    <p class="kicker">WHAT I LEARNED</p>
+    <div class="prose">
+      <h2>The strongest demo is the one that shows its limits.</h2>
+      <p>Separating production inspiration from public evidence made the project stronger. The synthetic generator, fictional corpus, deterministic summary and versioned artifacts create a system that another engineer can actually run, challenge and extend.</p>
+      <p>The deployment reinforced the same principle at the infrastructure layer: logical service boundaries can remain clear even when a free-hosting constraint requires a combined physical container.</p>
+      <div class="button-row"><a class="button primary" href="https://srm-supplier-risk-demo.onrender.com/demo/" target="_blank" rel="noreferrer">Try the system ↗</a><a class="button secondary" href="https://github.com/Xin-Ethan-Li/supplier-risk-intelligence/blob/main/docs/03_TECHNICAL_ARCHITECTURE.md" target="_blank" rel="noreferrer">Read architecture</a></div>
+    </div>
+  </section>
+</PortfolioLayout>

@@ -1,0 +1,25 @@
+{
+  "name": "@srm/portfolio",
+  "version": "0.8.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "dev": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "lint": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "preview": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro preview",
+    "postbuild": "node scripts/copy-case-assets.mjs",
+    "qa:browser": "node tests/browser-qa.mjs",
+    "typecheck": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro check"
+  },
+  "dependencies": {
+    "astro": "^7.1.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "axe-core": "^4.12.1",
+    "cross-env": "^10.1.0",
+    "playwright-core": "^1.62.0",
+    "typescript": "^5.9.2"
+  }
+}

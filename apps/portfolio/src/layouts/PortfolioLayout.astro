@@ -1,0 +1,82 @@
+---
+import { profile } from "../data/portfolio";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const path = Astro.url.pathname;
+const canonical = new URL(path, Astro.site);
+const pageTitle = title === profile.name ? `${profile.name} — ${profile.role}` : `${title} — ${profile.name}`;
+const socialImage = new URL(image ?? `${base}og.svg`, Astro.site);
+const analyticsId = import.meta.env.PUBLIC_GA_ID;
+const nav = [
+  { href: "", label: "Home" },
+  { href: "projects/", label: "Projects" },
+  { href: "about/", label: "About" },
+  { href: "resume/", label: "Resume" },
+];
+const hrefFor = (href: string) => `${base}${href}`;
+const isActive = (href: string) => href === "" ? path === base || path === base.slice(0, -1) : path.startsWith(hrefFor(href));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#101b26" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={hrefFor("favicon.svg")} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <header class="site-header">
+      <a class="wordmark" href={hrefFor("")} aria-label={`${profile.name}, home`}>
+        <span>XL</span>
+        <strong>ETHAN LI</strong>
+      </a>
+      <nav aria-label="Primary navigation">
+        {nav.map((item) => (
+          <a href={hrefFor(item.href)} aria-current={isActive(item.href) ? "page" : undefined}>{item.label}</a>
+        ))}
+      </nav>
+      <a class="header-contact" href={`mailto:${profile.email}`}>Let's talk <span aria-hidden="true">↗</span></a>
+    </header>
+    <main id="content">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div>
+        <p class="kicker">OPEN TO AI SOFTWARE ENGINEERING ROLES</p>
+        <h2>Build useful systems.<br />Make the reasoning visible.</h2>
+      </div>
+      <div class="footer-links">
+        <a href={`mailto:${profile.email}`}>{profile.email}</a>
+        <a href={profile.github} target="_blank" rel="noreferrer">GitHub ↗</a>
+        <a href={hrefFor("resume/")}>Resume</a>
+      </div>
+      <p class="footer-meta">© {new Date().getFullYear()} Xin (Ethan) Li · Built with Astro · Hosted free on GitHub Pages</p>
+    </footer>
+    {analyticsId && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`}></script>}
+    {analyticsId && <script is:inline define:vars={{ analyticsId }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', analyticsId, { anonymize_ip: true });
+    </script>}
+  </body>
+</html>

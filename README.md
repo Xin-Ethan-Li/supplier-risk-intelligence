@@ -2,9 +2,13 @@
 
 [![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-42e8bd.svg)](LICENSE)
-[![Demo: awaiting account deploy](https://img.shields.io/badge/demo-awaiting_account_deploy-d69e2e.svg)](docs/08_DEPLOYMENT_TROUBLESHOOTING.md)
+[![Demo: live](https://img.shields.io/badge/demo-live-42e8bd.svg)](https://srm-supplier-risk-demo.onrender.com/demo/)
 
 An explainable supplier-risk portfolio demo that combines an XGBoost risk model, hybrid evidence retrieval and a citation-bound decision workflow. It is intentionally built without employer data, paid AI APIs or hidden external services. The hosted profile uses only free Render resources; after idle time, its first request can take about one minute to start.
+
+**Live demo:** https://srm-supplier-risk-demo.onrender.com/demo/
+
+**Engineering portfolio:** https://xin-ethan-li.github.io/supplier-risk-intelligence/
 
 ![The desktop demo showing a medium-risk supplier result](docs/assets/demo-desktop.png)
 
