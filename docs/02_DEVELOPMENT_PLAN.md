@@ -228,7 +228,7 @@
 - [x] 建立独立视觉风格和真实内容。
 - [x] 添加 Home、Projects、About 和 Resume。
 - [x] 编写 SRM Case Study。
-- [ ] 连接 Live Demo、GitHub 和 PDF CV；前两项完成，PDF 等待公开隐私确认。
+- [x] 连接 Live Demo、GitHub 和 HTML Resume；用户确认 PDF 保持私有并通过邮件索取。
 - [x] 配置 SEO、Open Graph、Sitemap 和可选 Analytics。
 - [ ] 通过 GitHub Pages 部署；Workflow 已完成，等待合并后首次运行。
 - [ ] 配置自定义域名和 HTTPS。

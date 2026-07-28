@@ -66,6 +66,7 @@
 - 首页明确展示 AI Software Engineer 定位、爱尔兰工作资格、三项代表项目、三类能力和联系方式。
 - SRM Case Study 覆盖问题、公开边界、逻辑架构、关键工程决策、可复现实验结果、界面与复盘，并连接 Live Demo、GitHub 和架构文档。
 - 从当前 PDF CV 提取公开求职信息并完成两页视觉核对；由于源 PDF 包含电话号码且被 `.gitignore` 排除，未擅自提交 PDF，改为 HTML Resume 与邮件索取入口。
+- 用户随后明确确认保持该安全方案：公开站点继续展示 HTML Resume，通过邮件索取 PDF，不公开电话号码与 PDF 文件。
 - 配置 Canonical、Open Graph、Twitter Card、SVG Social Image、`robots.txt`、`sitemap.xml`、404 和可选 `PUBLIC_GA_ID` Analytics。
 - 新增 GitHub Pages Workflow，使用 Node 24、pnpm 11.9、冻结 Lockfile 和 Pages Artifact；项目站路径为 `/supplier-risk-intelligence/`。
 - Case Study 图片由构建后脚本复制到站点产物，消除运行时 GitHub Raw 依赖。
@@ -81,7 +82,6 @@
 #### 未完成事项
 
 - 合并 M8 PR，在仓库 Settings → Pages 将 Source 设为 GitHub Actions，并验证首次公开 URL。
-- 由用户决定是否公开包含电话号码的 PDF CV；默认继续保持私有。
 - 自定义域名需要购买成本，因此不纳入本轮免费方案；GitHub Pages 默认域名提供 HTTPS。
 
 ### 2026-07-28 - Render 部署与生产验收
