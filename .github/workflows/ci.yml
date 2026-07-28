@@ -44,7 +44,8 @@ jobs:
       - run: python -m pip_audit
       - run: python -m ruff check --config services/risk-engine/pyproject.toml services/risk-engine pipelines
         working-directory: .
-      - run: python -m pytest ../../services/risk-engine/tests ../../pipelines/tests
+      - run: python -m pytest services/risk-engine/tests pipelines/tests
+        working-directory: .
       - run: python -m pipelines.verify_artifacts
         working-directory: .
       - run: python -m pipelines.evaluate_retrieval
