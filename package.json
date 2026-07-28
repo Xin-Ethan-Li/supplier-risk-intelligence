@@ -9,12 +9,15 @@
   },
   "scripts": {
     "build": "pnpm -r --if-present build",
+    "data:generate": "python -m pipelines.generate_synthetic_data",
     "dev": "concurrently -k -n WEB,API,RISK -c cyan,green,yellow \"pnpm --filter @srm/web dev\" \"pnpm --filter @srm/api dev\" \"python -m uvicorn app.main:app --reload --app-dir services/risk-engine --port 8000\"",
     "format:check": "prettier --check .",
     "lint": "eslint apps/api/src apps/api/tests && pnpm -r --if-present lint && pnpm lint:risk",
-    "lint:risk": "python -m ruff check services/risk-engine",
+    "lint:risk": "python -m ruff check services/risk-engine pipelines",
+    "model:train": "python -m pipelines.train_model",
+    "model:verify": "python -m pipelines.verify_artifacts",
     "test": "pnpm -r --if-present test && pnpm test:risk",
-    "test:risk": "python -m pytest services/risk-engine/tests",
+    "test:risk": "python -m pytest services/risk-engine/tests pipelines/tests",
     "typecheck": "pnpm -r --if-present typecheck",
     "bootstrap:risk": "python -m pip install -e \"./services/risk-engine[dev]\"",
     "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"

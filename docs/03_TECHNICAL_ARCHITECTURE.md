@@ -199,6 +199,8 @@ flowchart LR
 - SMOTE 或任何采样只在训练 Fold 内执行。
 - 标准化、缺失值规则和类别编码只在训练数据拟合。
 
+M2 的实际实现使用 2019–2023 训练、2024 验证和 2025 最终测试。类别不平衡通过仅由训练期标签计算的 `scale_pos_weight` 处理，不生成合成少数类样本。
+
 ### 模型输出
 
 ```json
@@ -207,8 +209,8 @@ flowchart LR
   "riskProbability": 0.82,
   "riskBand": "HIGH",
   "thresholds": {
-    "medium": 0.35,
-    "high": 0.7
+    "medium": 0.099167,
+    "high": 0.220371
   },
   "drivers": [
     {
@@ -220,6 +222,8 @@ flowchart LR
   ]
 }
 ```
+
+M2 使用 XGBoost `pred_contribs` 产生局部特征贡献。贡献值位于模型的 margin/log-odds 空间，接口用其绝对值排序、用正负号表达风险方向；它不是概率百分点。
 
 ## 8. 文档 Ingestion 与 RAG
 

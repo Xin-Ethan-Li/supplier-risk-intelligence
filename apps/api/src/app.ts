@@ -5,7 +5,7 @@ import {
   evaluationRequestSchema,
   evaluationResponseSchema,
   type EvaluationRequest,
-  type SkeletonEvaluationResponse,
+  type EvaluationResponse,
 } from "@srm/api-schema";
 import Fastify, { type FastifyInstance } from "fastify";
 import type { ApiConfig } from "./config.js";
@@ -65,11 +65,11 @@ export async function buildApp(
 
   app.get("/version", async () => ({
     service: "srm-api",
-    version: "0.1.0",
-    milestone: "M1",
+    version: "0.2.0",
+    milestone: "M2",
   }));
 
-  app.post<{ Body: EvaluationRequest; Reply: SkeletonEvaluationResponse }>(
+  app.post<{ Body: EvaluationRequest; Reply: EvaluationResponse }>(
     "/v1/evaluations",
     {
       schema: {
@@ -80,25 +80,26 @@ export async function buildApp(
     async (request) => {
       const startedAt = performance.now();
       const correlationId = request.headers["x-correlation-id"] as string;
-      const preview = await riskEngine.preview(request.body, correlationId);
+      const evaluation = await riskEngine.evaluate(request.body, correlationId);
       const totalMs = performance.now() - startedAt;
 
       return {
         evaluationId: randomUUID(),
         correlationId,
         createdAt: new Date().toISOString(),
-        status: preview.status,
-        quantitative: preview.quantitative,
-        document: preview.document,
-        insight: preview.insight,
-        evidence: preview.evidence,
+        status: evaluation.status,
+        quantitative: evaluation.quantitative,
+        document: evaluation.document,
+        insight: evaluation.insight,
+        evidence: evaluation.evidence,
         telemetry: {
-          apiMs: Math.max(0, totalMs - preview.telemetry.riskEngineMs),
-          riskEngineMs: preview.telemetry.riskEngineMs,
+          apiMs: Math.max(0, totalMs - evaluation.telemetry.riskEngineMs),
+          modelInferenceMs: evaluation.telemetry.modelInferenceMs,
+          riskEngineMs: evaluation.telemetry.riskEngineMs,
           totalMs,
         },
         disclaimer:
-          "Synthetic-data technical demonstration only. M1 returns an explicit skeleton response.",
+          "Synthetic-data technical demonstration only. M2 metrics are not production claims.",
       };
     },
   );

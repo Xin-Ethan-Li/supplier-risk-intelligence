@@ -2,12 +2,15 @@ from time import perf_counter
 
 from fastapi import FastAPI, Header
 
+from .model_service import RiskModel
 from .models import EvaluationRequest
+
+risk_model = RiskModel()
 
 app = FastAPI(
     title="Supplier Risk Engine",
-    version="0.1.0",
-    description="M1 boundary for later XGBoost inference and hybrid retrieval.",
+    version="0.2.0",
+    description="M2 supplier disruption inference with a versioned XGBoost model.",
 )
 
 
@@ -18,37 +21,49 @@ def health() -> dict[str, str]:
 
 @app.get("/ready")
 def ready() -> dict[str, str]:
-    return {"status": "ready", "service": "srm-risk-engine"}
+    return {
+        "status": "ready",
+        "service": "srm-risk-engine",
+        "modelVersion": risk_model.version,
+    }
 
 
 @app.get("/version")
 def version() -> dict[str, str]:
     return {
         "service": "srm-risk-engine",
-        "version": "0.1.0",
-        "milestone": "M1",
-        "modelVersion": "pending-m2",
+        "version": "0.2.0",
+        "milestone": "M2",
+        "modelVersion": risk_model.version,
         "indexVersion": "pending-m3",
     }
 
 
-@app.post("/v1/evaluations/preview")
-def preview_evaluation(
+@app.post("/v1/evaluations/evaluate")
+def evaluate_supplier(
     request: EvaluationRequest,
     x_correlation_id: str | None = Header(default=None),
 ) -> dict[str, object]:
     started_at = perf_counter()
-    _ = request
     _ = x_correlation_id
+    quantitative = risk_model.predict(request.supplierMetrics)
 
     elapsed_ms = (perf_counter() - started_at) * 1000
     return {
-        "status": "SKELETON",
-        "quantitative": {"status": "NOT_IMPLEMENTED", "modelVersion": "pending-m2"},
+        "status": "PARTIAL",
+        "quantitative": quantitative,
         "document": {"status": "NOT_IMPLEMENTED", "indexVersion": "pending-m3"},
         "insight": {
-            "summary": "M1 vertical slice is connected. Model inference begins in M2."
+            "summary": (
+                f"The synthetic-data model classified 14-day disruption risk as "
+                f"{quantitative['riskBand'].lower()} at "
+                f"{float(quantitative['riskProbability']):.1%}. "
+                "Document evidence will be added in M3."
+            )
         },
         "evidence": [],
-        "telemetry": {"riskEngineMs": elapsed_ms},
+        "telemetry": {
+            "modelInferenceMs": quantitative["inferenceMs"],
+            "riskEngineMs": elapsed_ms,
+        },
     }

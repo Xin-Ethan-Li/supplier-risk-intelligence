@@ -27,31 +27,93 @@
 
 | 项目       | 状态                     |
 | ---------- | ------------------------ |
-| 当前阶段   | M1 已完成，等待进入 M2   |
-| 当前版本   | 0.1.0                    |
+| 当前阶段   | M2 数据与模型已完成      |
+| 当前版本   | 0.2.0                    |
 | Git 仓库   | 已初始化，分支为 main    |
 | 应用代码   | 三服务工程骨架已创建     |
 | 本地运行   | Native 与 Compose 已验证 |
 | 在线环境   | 尚未创建                 |
-| 下一里程碑 | M2 - 数据与模型          |
+| 下一里程碑 | M3 - RAG 检索            |
 
 ## 4. 里程碑状态
 
-| 里程碑                | 状态        | 说明                             |
-| --------------------- | ----------- | -------------------------------- |
-| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对 |
-| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证   |
-| M2 数据与模型         | Not Started | —                                |
-| M3 RAG 检索           | Not Started | —                                |
-| M4 API Vertical Slice | Not Started | —                                |
-| M5 Demo UI            | Not Started | —                                |
-| M6 质量与安全         | Not Started | —                                |
-| M7 GitHub 与上线      | Not Started | —                                |
-| M8 Portfolio          | Not Started | —                                |
+| 里程碑                | 状态        | 说明                                 |
+| --------------------- | ----------- | ------------------------------------ |
+| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对     |
+| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证       |
+| M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证 |
+| M3 RAG 检索           | Not Started | —                                    |
+| M4 API Vertical Slice | Not Started | —                                    |
+| M5 Demo UI            | Not Started | —                                    |
+| M6 质量与安全         | Not Started | —                                    |
+| M7 GitHub 与上线      | Not Started | —                                    |
+| M8 Portfolio          | Not Started | —                                    |
 
 ---
 
 ## 5. Walkthrough 记录
+
+## 2026-07-28 - M2 数据、模型与实时推理
+
+### 目标
+
+构建不含企业数据的可复现供应商风险数据与模型 Pipeline，并将真实模型推理贯通现有 FastAPI、Fastify 和 Astro Demo。
+
+### 完成内容
+
+- 定义 8 个 point-in-time 特征和未来 14 天中断标签。
+- 使用固定随机种子 726 生成 12,000 条合成供应商快照；完整数据可再生，小样本进入仓库。
+- 按时间切分：2019–2023 训练、2024 验证和阈值选择、2025 最终测试。
+- 仅在训练集计算 `scale_pos_weight`，避免从验证或测试期引入信息。
+- 训练并保存 `srm-xgb-demo-1.0.0` XGBoost JSON 模型、Metadata 和指标报告。
+- 使用 XGBoost `pred_contribs` 输出每次预测的前五项局部特征贡献。
+- 将概率、风险等级、阈值、贡献方向和推理耗时加入共享 API Schema。
+- 将 Python 内部端点升级为 `/v1/evaluations/evaluate`，并贯通公开 `POST /v1/evaluations`。
+- 升级 Astro Demo，展示风险概率、等级、模型驱动因素和延迟。
+- Docker Linux 镜像使用 `xgboost-cpu`，避免下载不需要的 GPU/NCCL 运行时。
+
+### 模型评估
+
+2025 合成测试期共有 1,687 条记录，正类率 2.1932%。验证集按 F2 选择高风险阈值 0.220371，测试结果如下：
+
+| 指标             |                           结果 |
+| ---------------- | -----------------------------: |
+| Recall           |                       0.891892 |
+| Precision        |                       0.323529 |
+| PR-AUC           |                       0.653024 |
+| ROC-AUC          |                       0.971794 |
+| Confusion Matrix | TN 1581 / FP 69 / FN 4 / TP 33 |
+
+以上结果仅描述确定性合成数据与 Demo Pipeline，不代表真实供应商或生产环境表现。
+
+### 验证
+
+- Artifact verifier：模型版本、8 个特征、特征顺序和 synthetic 标识通过。
+- Ruff 与 Prettier：通过。
+- Pytest：6 项通过，覆盖 API、模型加载、贡献输出、数据确定性与时间切分。
+- Vitest：3 项通过，覆盖 Fastify 健康检查、契约和输入拒绝。
+- Astro/TypeScript typecheck 与三个 Workspace build：通过。
+- Docker Compose：Risk Engine 与 API healthy，Web 正常运行。
+- 容器端到端请求：返回 `PARTIAL`、模型 `srm-xgb-demo-1.0.0`、HIGH、概率 0.981211、五项驱动因素和 Correlation ID。
+- Web Smoke Test：`http://localhost:8080/demo/` 返回 200 且包含 M2 模型界面。
+
+### 遇到的问题
+
+- 容器首次启动时，代码在读取环境变量前计算本地项目父目录，Docker 的较短路径触发 `IndexError`；改为优先使用显式模型路径后修复。
+- 标准 Linux `xgboost` 包会引入约 303 MB NCCL 依赖；改用 CPU 包后将 XGBoost 下载降至约 5.7 MB。
+- 首次 Compose 构建超时后留下同名容器；仅清理本项目 `srmdemo-*` 容器后重新启动，未修改其他项目容器。
+
+### 未完成事项
+
+- 文档语料、Embedding、Hybrid Retrieval 和 Citation 仍明确标记为 `pending-m3`。
+- 当前局部贡献是模型 log-odds 空间中的 XGBoost 贡献，用于排序和方向解释，不应理解为概率百分点。
+- GitHub 远程仓库、托管环境和 Portfolio 尚未创建。
+
+### 下一步
+
+进入 M3：构建虚构供应商文档语料、Metadata、分块、Embedding、Hybrid Retrieval 与检索评估。
+
+---
 
 ## 2026-07-28 - M1 仓库与工程骨架
 

@@ -1,7 +1,8 @@
 services:
   risk-engine:
     build:
-      context: ./services/risk-engine
+      context: .
+      dockerfile: services/risk-engine/Dockerfile
     ports:
       - "8000:8000"
     healthcheck:

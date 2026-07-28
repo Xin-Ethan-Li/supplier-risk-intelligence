@@ -214,6 +214,75 @@ textarea:focus {
   position: sticky;
   top: 1rem;
 }
+.risk-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.3rem 0 1.6rem;
+}
+.risk-probability {
+  display: block;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+}
+.risk-caption {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.risk-badge {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 0.75rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+}
+.risk-badge[data-band="HIGH"] {
+  border-color: #ff7d79;
+  color: #ffaaa7;
+}
+.risk-badge[data-band="MEDIUM"] {
+  border-color: #f2be61;
+  color: #ffd78f;
+}
+.risk-badge[data-band="LOW"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.drivers {
+  margin-top: 1.8rem;
+}
+.drivers h3 {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.drivers ol {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.drivers li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  border-left: 3px solid var(--accent);
+  background: rgba(66, 214, 179, 0.06);
+  padding: 0.65rem 0.75rem;
+  font-size: 0.78rem;
+}
+.drivers li[data-direction="REDUCES_RISK"] {
+  border-left-color: #6f92c9;
+  background: rgba(111, 146, 201, 0.07);
+}
+.drivers strong {
+  color: var(--muted);
+  white-space: nowrap;
+}
 .result-meta {
   display: grid;
   gap: 1rem;

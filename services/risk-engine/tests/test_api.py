@@ -21,13 +21,14 @@ def test_health_and_version() -> None:
     assert health.status_code == 200
     assert health.json() == {"status": "ok", "service": "srm-risk-engine"}
     assert version.status_code == 200
-    assert version.json()["milestone"] == "M1"
+    assert version.json()["milestone"] == "M2"
+    assert version.json()["modelVersion"] == "srm-xgb-demo-1.0.0"
 
 
-def test_preview_returns_explicit_skeleton() -> None:
+def test_evaluate_returns_model_prediction() -> None:
     response = request(
         "POST",
-        "/v1/evaluations/preview",
+        "/v1/evaluations/evaluate",
         headers={"x-correlation-id": "test-correlation"},
         json={
             "scenarioId": "high-risk-logistics",
@@ -35,8 +36,10 @@ def test_preview_returns_explicit_skeleton() -> None:
                 "deliveryDelayRate30d": 0.27,
                 "defectRate90d": 0.08,
                 "cancellationRate90d": 0.05,
+                "onTimeDeliveryTrend90d": -0.18,
                 "leadTimeVarianceDays": 6.4,
                 "openDisputes": 3,
+                "financialStabilityIndex": 0.31,
                 "recentIncidents": 4,
             },
             "question": "Is this supplier likely to disrupt delivery?",
@@ -45,23 +48,29 @@ def test_preview_returns_explicit_skeleton() -> None:
 
     assert response.status_code == 200
     result = response.json()
-    assert result["status"] == "SKELETON"
-    assert result["quantitative"]["modelVersion"] == "pending-m2"
+    assert result["status"] == "PARTIAL"
+    assert result["quantitative"]["status"] == "READY"
+    assert result["quantitative"]["modelVersion"] == "srm-xgb-demo-1.0.0"
+    assert 0 <= result["quantitative"]["riskProbability"] <= 1
+    assert result["quantitative"]["riskBand"] in {"LOW", "MEDIUM", "HIGH"}
+    assert len(result["quantitative"]["drivers"]) == 5
     assert result["document"]["indexVersion"] == "pending-m3"
 
 
-def test_preview_rejects_invalid_metrics() -> None:
+def test_evaluate_rejects_invalid_metrics() -> None:
     response = request(
         "POST",
-        "/v1/evaluations/preview",
+        "/v1/evaluations/evaluate",
         json={
             "scenarioId": "invalid",
             "supplierMetrics": {
                 "deliveryDelayRate30d": 3,
                 "defectRate90d": 0,
                 "cancellationRate90d": 0,
+                "onTimeDeliveryTrend90d": 0,
                 "leadTimeVarianceDays": 0,
                 "openDisputes": 0,
+                "financialStabilityIndex": 1,
                 "recentIncidents": 0,
             },
             "question": "Is this valid?",

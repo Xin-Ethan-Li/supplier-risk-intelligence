@@ -12,13 +12,22 @@ const config = {
 
 const client: RiskEngineClient = {
   health: async () => ({ status: "ok", service: "risk-engine" }),
-  preview: async () => ({
-    status: "SKELETON",
-    quantitative: { status: "NOT_IMPLEMENTED", modelVersion: "pending-m2" },
+  evaluate: async () => ({
+    status: "PARTIAL",
+    quantitative: {
+      status: "READY",
+      modelVersion: "srm-xgb-demo-1.0.0",
+      riskProbability: 0.82,
+      riskBand: "HIGH",
+      outlookDays: 14,
+      thresholds: { medium: 0.1, high: 0.22 },
+      drivers: [],
+      inferenceMs: 0.8,
+    },
     document: { status: "NOT_IMPLEMENTED", indexVersion: "pending-m3" },
-    insight: { summary: "M1 vertical slice is connected." },
+    insight: { summary: "The model classified disruption risk as high." },
     evidence: [],
-    telemetry: { riskEngineMs: 1 },
+    telemetry: { modelInferenceMs: 0.8, riskEngineMs: 1 },
   }),
 };
 
@@ -28,7 +37,7 @@ afterEach(async () => {
   await Promise.all(apps.splice(0).map((app) => app.close()));
 });
 
-describe("API skeleton", () => {
+describe("M2 evaluation API", () => {
   it("reports health and readiness", async () => {
     const app = await buildApp({ config, riskEngineClient: client });
     apps.push(app);
@@ -42,7 +51,7 @@ describe("API skeleton", () => {
     expect(ready.json()).toMatchObject({ status: "ready" });
   });
 
-  it("passes a validated preview through the vertical slice", async () => {
+  it("passes a validated model result through the vertical slice", async () => {
     const app = await buildApp({ config, riskEngineClient: client });
     apps.push(app);
     const body: EvaluationRequest = {
@@ -51,8 +60,10 @@ describe("API skeleton", () => {
         deliveryDelayRate30d: 0.27,
         defectRate90d: 0.08,
         cancellationRate90d: 0.05,
+        onTimeDeliveryTrend90d: -0.18,
         leadTimeVarianceDays: 6.4,
         openDisputes: 3,
+        financialStabilityIndex: 0.31,
         recentIncidents: 4,
       },
       question: "Is this supplier likely to disrupt delivery?",
@@ -67,8 +78,12 @@ describe("API skeleton", () => {
     expect(response.statusCode).toBe(200);
     expect(response.headers["x-correlation-id"]).toBeTruthy();
     expect(response.json()).toMatchObject({
-      status: "SKELETON",
-      quantitative: { modelVersion: "pending-m2" },
+      status: "PARTIAL",
+      quantitative: {
+        status: "READY",
+        modelVersion: "srm-xgb-demo-1.0.0",
+        riskBand: "HIGH",
+      },
       document: { indexVersion: "pending-m3" },
     });
   });

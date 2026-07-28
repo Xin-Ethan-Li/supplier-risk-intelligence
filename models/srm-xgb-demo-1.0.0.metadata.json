@@ -1,0 +1,149 @@
+{
+  "modelVersion": "srm-xgb-demo-1.0.0",
+  "createdAt": "2026-07-28T13:59:03.257094+00:00",
+  "dataNature": "synthetic",
+  "randomSeed": 726,
+  "datasetRows": 12000,
+  "datasetSha256": "637ea58d79d4a41b7e072cf42033a00ba8da3eb72e0854f68f7aa3f177251ec8",
+  "generatedDataPath": "data/synthetic/generated",
+  "featureColumns": [
+    "delivery_delay_rate_30d",
+    "defect_rate_90d",
+    "cancellation_rate_90d",
+    "on_time_delivery_trend_90d",
+    "lead_time_variance_days",
+    "open_disputes",
+    "financial_stability_index",
+    "recent_incidents"
+  ],
+  "featureDefinitions": {
+    "delivery_delay_rate_30d": {
+      "displayName": "Delivery delay rate (30d)",
+      "description": "Share of deliveries arriving later than the committed date.",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "defect_rate_90d": {
+      "displayName": "Defect rate (90d)",
+      "description": "Share of inspected units with a recorded quality defect.",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "cancellation_rate_90d": {
+      "displayName": "Cancellation rate (90d)",
+      "description": "Share of accepted orders cancelled by the supplier.",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "on_time_delivery_trend_90d": {
+      "displayName": "On-time delivery trend (90d)",
+      "description": "Change in on-time delivery rate; negative values indicate deterioration.",
+      "minimum": -1.0,
+      "maximum": 1.0
+    },
+    "lead_time_variance_days": {
+      "displayName": "Lead-time variance",
+      "description": "Observed standard deviation of delivery lead time in days.",
+      "minimum": 0.0,
+      "maximum": 90.0
+    },
+    "open_disputes": {
+      "displayName": "Open disputes",
+      "description": "Open commercial, quality or contract disputes at the prediction time.",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "financial_stability_index": {
+      "displayName": "Financial stability index",
+      "description": "Synthetic 0\u20131 stability indicator; lower values imply higher risk.",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "recent_incidents": {
+      "displayName": "Recent incidents",
+      "description": "Count of material delivery, quality or operational incidents in 90 days.",
+      "minimum": 0,
+      "maximum": 100
+    }
+  },
+  "target": "disruption_next_14d",
+  "forecastHorizonDays": 14,
+  "timeSplit": {
+    "train": "2019-01-01 through 2023-12-31",
+    "validation": "2024-01-01 through 2024-12-31",
+    "test": "2025-01-01 through 2025-12-31"
+  },
+  "thresholds": {
+    "medium": 0.099167,
+    "high": 0.220371,
+    "selectionMetric": "validation_f2",
+    "validationF2": 0.681063
+  },
+  "training": {
+    "rows": 8583,
+    "positiveRows": 156,
+    "scalePosWeight": 54.019231,
+    "imbalanceStrategy": "training_only_scale_pos_weight",
+    "parameters": {
+      "objective": "binary:logistic",
+      "eval_metric": "aucpr",
+      "max_depth": 4,
+      "eta": 0.045,
+      "min_child_weight": 4,
+      "subsample": 0.85,
+      "colsample_bytree": 0.85,
+      "lambda": 2.0,
+      "alpha": 0.1,
+      "scale_pos_weight": 54.01923076923077,
+      "seed": 726,
+      "nthread": 2
+    },
+    "rounds": 260
+  },
+  "libraries": {
+    "xgboost": "3.3.0",
+    "scikitLearn": "1.9.0",
+    "pandas": "3.0.5",
+    "numpy": "2.5.1"
+  },
+  "metrics": {
+    "modelVersion": "srm-xgb-demo-1.0.0",
+    "dataNature": "synthetic",
+    "primaryMetrics": [
+      "recall",
+      "precision",
+      "prAuc"
+    ],
+    "validation": {
+      "rows": 1730,
+      "prevalence": 0.027168,
+      "threshold": 0.220371,
+      "recall": 0.851064,
+      "precision": 0.357143,
+      "prAuc": 0.547331,
+      "rocAuc": 0.974412,
+      "confusionMatrix": {
+        "tn": 1611,
+        "fp": 72,
+        "fn": 7,
+        "tp": 40
+      }
+    },
+    "test": {
+      "rows": 1687,
+      "prevalence": 0.021932,
+      "threshold": 0.220371,
+      "recall": 0.891892,
+      "precision": 0.323529,
+      "prAuc": 0.653024,
+      "rocAuc": 0.971794,
+      "confusionMatrix": {
+        "tn": 1581,
+        "fp": 69,
+        "fn": 4,
+        "tp": 33
+      }
+    }
+  },
+  "disclaimer": "Metrics are measured on deterministic synthetic data, not production suppliers."
+}

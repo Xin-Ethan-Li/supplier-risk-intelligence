@@ -6,10 +6,10 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
 
 <BaseLayout title="Live Demo | Supplier Risk Intelligence">
   <section class="shell page-heading">
-    <p class="eyebrow">M1 VERTICAL SLICE</p>
-    <h1>Validate the system boundary.</h1>
+    <p class="eyebrow">M2 LIVE MODEL</p>
+    <h1>Estimate 14-day supplier disruption risk.</h1>
     <p class="lede">
-      The current response is an explicit engineering placeholder. It does not pretend that the M2 model or M3 retrieval index already exists.
+      Adjust the point-in-time supplier signals and run a versioned XGBoost model. Results and metrics use deterministic synthetic data and are not production claims.
     </p>
   </section>
 
@@ -28,25 +28,39 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
         <label>Delay rate <input name="deliveryDelayRate30d" type="number" min="0" max="1" step="0.01" value="0.27" /></label>
         <label>Defect rate <input name="defectRate90d" type="number" min="0" max="1" step="0.01" value="0.08" /></label>
         <label>Cancellation rate <input name="cancellationRate90d" type="number" min="0" max="1" step="0.01" value="0.05" /></label>
+        <label>On-time trend <input name="onTimeDeliveryTrend90d" type="number" min="-1" max="1" step="0.01" value="-0.18" /></label>
         <label>Lead-time variance <input name="leadTimeVarianceDays" type="number" min="0" max="90" step="0.1" value="6.4" /></label>
         <label>Open disputes <input name="openDisputes" type="number" min="0" max="100" step="1" value="3" /></label>
+        <label>Financial stability <input name="financialStabilityIndex" type="number" min="0" max="1" step="0.01" value="0.31" /></label>
         <label>Recent incidents <input name="recentIncidents" type="number" min="0" max="100" step="1" value="4" /></label>
       </div>
       <label>
         Risk question
         <textarea name="question" rows="3">Is this supplier likely to disrupt delivery in the next 14 days?</textarea>
       </label>
-      <button class="button primary" type="submit">Evaluate service boundary</button>
-      <p class="form-status" data-form-status aria-live="polite">Ready to call the local API.</p>
+      <button class="button primary" type="submit">Run risk evaluation</button>
+      <p class="form-status" data-form-status aria-live="polite">Ready to evaluate.</p>
     </form>
 
     <section class="card result-panel" aria-live="polite">
-      <p class="eyebrow">RESPONSE</p>
+      <p class="eyebrow">MODEL RESPONSE</p>
+      <div class="risk-heading">
+        <div>
+          <span class="risk-probability" data-risk-probability>—</span>
+          <span class="risk-caption">disruption probability</span>
+        </div>
+        <span class="risk-badge" data-risk-band>WAITING</span>
+      </div>
       <h2 data-result-title>Waiting for an evaluation</h2>
-      <p data-result-summary>The first request will travel through Astro → Fastify → FastAPI.</p>
+      <p data-result-summary>The request will travel through Astro → Fastify → FastAPI → XGBoost.</p>
+      <div class="drivers" data-drivers hidden>
+        <h3>Leading model drivers</h3>
+        <ol data-driver-list></ol>
+      </div>
       <dl class="result-meta">
         <div><dt>Model</dt><dd data-model-version>—</dd></div>
-        <div><dt>Index</dt><dd data-index-version>—</dd></div>
+        <div><dt>Evidence index</dt><dd data-index-version>—</dd></div>
+        <div><dt>Model inference</dt><dd data-inference-ms>—</dd></div>
         <div><dt>Total latency</dt><dd data-total-ms>—</dd></div>
         <div><dt>Correlation ID</dt><dd class="mono" data-correlation-id>—</dd></div>
       </dl>
@@ -56,6 +70,34 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
   <script>
     const root = document.querySelector<HTMLElement>("[data-demo-root]");
     const form = document.querySelector<HTMLFormElement>("[data-evaluation-form]");
+    const presets: Record<string, Record<string, number>> = {
+      "high-risk-logistics": {
+        deliveryDelayRate30d: 0.27, defectRate90d: 0.08, cancellationRate90d: 0.05,
+        onTimeDeliveryTrend90d: -0.18, leadTimeVarianceDays: 6.4, openDisputes: 3,
+        financialStabilityIndex: 0.31, recentIncidents: 4
+      },
+      "medium-risk-quality": {
+        deliveryDelayRate30d: 0.335, defectRate90d: 0.181, cancellationRate90d: 0.045,
+        onTimeDeliveryTrend90d: -0.041, leadTimeVarianceDays: 5.26, openDisputes: 0,
+        financialStabilityIndex: 0.658, recentIncidents: 1
+      },
+      "low-risk-stable": {
+        deliveryDelayRate30d: 0.02, defectRate90d: 0.01, cancellationRate90d: 0.005,
+        onTimeDeliveryTrend90d: 0.08, leadTimeVarianceDays: 1.2, openDisputes: 0,
+        financialStabilityIndex: 0.88, recentIncidents: 0
+      }
+    };
+
+    const scenarioSelect = form?.elements.namedItem("scenarioId") as HTMLSelectElement | null;
+    scenarioSelect?.addEventListener("change", (event: Event) => {
+      if (!form) return;
+      const preset = presets[(event.target as HTMLSelectElement).value];
+      if (!preset) return;
+      Object.entries(preset).forEach(([name, value]) => {
+        const input = form.elements.namedItem(name) as HTMLInputElement | null;
+        if (input) input.value = String(value);
+      });
+    });
 
     form?.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -70,14 +112,16 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
           deliveryDelayRate30d: value("deliveryDelayRate30d"),
           defectRate90d: value("defectRate90d"),
           cancellationRate90d: value("cancellationRate90d"),
+          onTimeDeliveryTrend90d: value("onTimeDeliveryTrend90d"),
           leadTimeVarianceDays: value("leadTimeVarianceDays"),
           openDisputes: value("openDisputes"),
+          financialStabilityIndex: value("financialStabilityIndex"),
           recentIncidents: value("recentIncidents")
         },
         question: String(data.get("question"))
       };
 
-      if (status) status.textContent = "Calling the API and risk-engine boundary…";
+      if (status) status.textContent = "Running model inference…";
 
       try {
         const response = await fetch(`${root.dataset.apiBaseUrl}/v1/evaluations`, {
@@ -88,13 +132,29 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL ?? "http://localhost:3000
         const result = await response.json();
         if (!response.ok) throw new Error(result.error?.message ?? "Request failed");
 
-        document.querySelector<HTMLElement>("[data-result-title]")!.textContent = "M1 vertical slice connected";
+        const quantitative = result.quantitative;
+        document.querySelector<HTMLElement>("[data-result-title]")!.textContent = `${quantitative.riskBand.toLowerCase()} risk over 14 days`;
         document.querySelector<HTMLElement>("[data-result-summary]")!.textContent = result.insight.summary;
-        document.querySelector<HTMLElement>("[data-model-version]")!.textContent = result.quantitative.modelVersion;
+        document.querySelector<HTMLElement>("[data-risk-probability]")!.textContent = `${(quantitative.riskProbability * 100).toFixed(1)}%`;
+        const band = document.querySelector<HTMLElement>("[data-risk-band]")!;
+        band.textContent = quantitative.riskBand;
+        band.dataset.band = quantitative.riskBand;
+        document.querySelector<HTMLElement>("[data-model-version]")!.textContent = quantitative.modelVersion;
         document.querySelector<HTMLElement>("[data-index-version]")!.textContent = result.document.indexVersion;
+        document.querySelector<HTMLElement>("[data-inference-ms]")!.textContent = `${quantitative.inferenceMs.toFixed(2)} ms`;
         document.querySelector<HTMLElement>("[data-total-ms]")!.textContent = `${result.telemetry.totalMs.toFixed(2)} ms`;
         document.querySelector<HTMLElement>("[data-correlation-id]")!.textContent = result.correlationId;
-        if (status) status.textContent = "Request completed successfully.";
+
+        const driverList = document.querySelector<HTMLOListElement>("[data-driver-list]")!;
+        driverList.replaceChildren(...quantitative.drivers.map((driver: { displayName: string; contribution: number; direction: string }) => {
+          const item = document.createElement("li");
+          const direction = driver.direction === "INCREASES_RISK" ? "raises" : "reduces";
+          item.innerHTML = `<span>${driver.displayName}</span><strong>${direction} risk · ${Math.abs(driver.contribution).toFixed(3)}</strong>`;
+          item.dataset.direction = driver.direction;
+          return item;
+        }));
+        document.querySelector<HTMLElement>("[data-drivers]")!.hidden = false;
+        if (status) status.textContent = "Evaluation completed successfully.";
       } catch (error) {
         if (status) status.textContent = error instanceof Error ? error.message : "The request failed.";
       }

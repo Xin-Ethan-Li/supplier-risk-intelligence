@@ -1,23 +1,20 @@
-import type {
-  EvaluationRequest,
-  SkeletonEvaluationResponse,
-} from "@srm/api-schema";
+import type { EvaluationRequest, EvaluationResponse } from "@srm/api-schema";
 
-export interface RiskEnginePreview {
-  status: "SKELETON";
-  quantitative: SkeletonEvaluationResponse["quantitative"];
-  document: SkeletonEvaluationResponse["document"];
-  insight: SkeletonEvaluationResponse["insight"];
-  evidence: SkeletonEvaluationResponse["evidence"];
-  telemetry: { riskEngineMs: number };
+export interface RiskEngineEvaluation {
+  status: "PARTIAL";
+  quantitative: EvaluationResponse["quantitative"];
+  document: EvaluationResponse["document"];
+  insight: EvaluationResponse["insight"];
+  evidence: EvaluationResponse["evidence"];
+  telemetry: { modelInferenceMs: number; riskEngineMs: number };
 }
 
 export interface RiskEngineClient {
   health(): Promise<{ status: string; service: string }>;
-  preview(
+  evaluate(
     input: EvaluationRequest,
     correlationId: string,
-  ): Promise<RiskEnginePreview>;
+  ): Promise<RiskEngineEvaluation>;
 }
 
 export function createRiskEngineClient(baseUrl: string): RiskEngineClient {
@@ -44,8 +41,8 @@ export function createRiskEngineClient(baseUrl: string): RiskEngineClient {
 
   return {
     health: () => request("/health"),
-    preview: (input, correlationId) =>
-      request("/v1/evaluations/preview", {
+    evaluate: (input, correlationId) =>
+      request("/v1/evaluations/evaluate", {
         method: "POST",
         headers: { "x-correlation-id": correlationId },
         body: JSON.stringify(input),

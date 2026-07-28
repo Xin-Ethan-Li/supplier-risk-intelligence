@@ -20,6 +20,8 @@ tmp/
 .DS_Store
 Thumbs.db
 
+data/synthetic/generated/
+
 # Private source materials are not part of the public demo repository.
 Xin_Ethan_Li_AI_Engineer_CV_0726.pdf
 03_AI_ML_RAG与SRM项目深挖.md
