@@ -38,6 +38,8 @@ The backend uses the Frankfurt region. The browser calls only Fastify; the Risk 
 
 The demo uses no runtime secrets. Do not add employer datasets or provider keys. A future secret must be declared with `sync: false` or added through the hosting dashboard, never committed.
 
+If a static-site build fails with `EROFS: read-only file system, unlink '/usr/bin/pnpm'`, do not run `corepack enable` in the Render build command. Render already provides `pnpm`, and enabling Corepack attempts to replace a package-manager executable in its read-only system directory. Run `pnpm install --frozen-lockfile` directly, as configured in the Blueprint.
+
 ### Free-tier controls
 
 Before sharing the link:
