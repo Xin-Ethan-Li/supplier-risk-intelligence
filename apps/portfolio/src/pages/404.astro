@@ -4,10 +4,13 @@ const base = import.meta.env.BASE_URL;
 ---
 
 <PortfolioLayout title="Page not found" description="The requested page could not be found.">
-  <section class="shell page-hero">
-    <p class="kicker">404 · NOT FOUND</p>
-    <h1>This path ends here.</h1>
-    <p class="lede">The page may have moved, but the projects are still available.</p>
-    <div class="button-row"><a class="button primary" href={base}>Return home</a><a class="button secondary" href={`${base}projects/`}>View projects</a></div>
+  <section class="relative isolate flex min-h-[80vh] items-center overflow-hidden px-8 pb-16 pt-36 sm:px-12 md:px-16 md:pt-44 lg:px-24">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_800px_900px_at_0%_0%,rgba(29,78,216,.2),transparent_70%)]"></div>
+    <div>
+      <p class="text-sm text-[var(--accent-color)]">404 · NOT FOUND</p>
+      <h1 class="mt-6 max-w-5xl text-5xl font-bold tracking-tight text-gray-900 sm:text-7xl md:text-8xl">This path ends here.</h1>
+      <p class="mt-8 max-w-2xl text-base leading-8 text-gray-600 sm:text-lg">The page may have moved, but the engineering work is still available.</p>
+      <div class="mt-8 flex flex-wrap gap-4"><a href={base} class="rounded-lg bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--accent-color)]">Return home</a><a href={`${base}projects/`} class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-800 hover:border-gray-400">View projects</a></div>
+    </div>
   </section>
 </PortfolioLayout>

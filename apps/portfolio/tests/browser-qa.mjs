@@ -47,7 +47,7 @@ async function audit(page, label) {
   );
   assert(
     blocking.length === 0,
-    `${label}: ${blocking.map((item) => item.id).join(", ")}`,
+    `${label}: ${blocking.map((item) => `${item.id} (${item.nodes.map((node) => node.target.join(" ")).join(", ")})`).join("; ")}`,
   );
   return result.violations.length;
 }
@@ -76,6 +76,22 @@ async function verifyViewport(viewport, label) {
     );
   }
   await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
+  assert(
+    (await page.locator("#hero h1").innerText()).includes("Xin (Ethan) Li"),
+    `${label} hero identity is missing`,
+  );
+  for (const sectionId of ["about", "projects", "experience", "education"]) {
+    assert(
+      (await page.locator(`#${sectionId}`).count()) === 1,
+      `${label} home is missing #${sectionId}`,
+    );
+  }
+  assert(
+    (await page
+      .getByRole("navigation", { name: "Primary navigation" })
+      .count()) === 1,
+    `${label} primary navigation is missing`,
+  );
   const violations = await audit(page, `${label} home`);
   await page.screenshot({
     path: path.join(screenshotDir, `${label}-home.png`),
@@ -102,6 +118,16 @@ async function verifyViewport(viewport, label) {
     imageFailures.length === 0,
     `${label} case-study images failed: ${imageFailures.join(", ")}`,
   );
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  });
+  await page.addStyleTag({
+    content:
+      "#site-header { position: absolute !important; } .skip-link { display: none !important; }",
+  });
   await page.screenshot({
     path: path.join(screenshotDir, `${label}-case-study.png`),
     fullPage: true,

@@ -5,14 +5,16 @@ import PortfolioLayout from "../../layouts/PortfolioLayout.astro";
 ---
 
 <PortfolioLayout title="Projects" description="Selected AI engineering, distributed backend and transaction-system projects by Xin (Ethan) Li.">
-  <section class="shell page-hero">
-    <p class="kicker">PROJECT INDEX · 2026</p>
-    <h1>Selected<br />engineering work.</h1>
-    <p class="lede">Three projects, three different system pressures: explainable AI, asynchronous state and reliable payments.</p>
+  <section class="relative isolate overflow-hidden px-8 pb-16 pt-36 sm:px-12 md:px-16 md:pb-24 md:pt-44 lg:px-24">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_700px_700px_at_0%_0%,rgba(29,78,216,.18),transparent_70%)]"></div>
+    <p class="text-sm text-[var(--accent-color)]">PROJECT INDEX · 2026</p>
+    <h1 class="mt-6 max-w-6xl text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl md:text-8xl">Selected engineering work.</h1>
+    <p class="mt-8 max-w-3xl text-base leading-8 text-gray-600 sm:text-lg md:text-xl">Three projects, three different system pressures: explainable AI, asynchronous state and reliable payments.</p>
   </section>
-  <section class="shell section">
-    <div class="project-list">
-      {projects.map((project) => <ProjectCard project={project} />)}
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24">
+    <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4"><h2 class="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl xl:text-7xl">Projects</h2><div class="mt-2 h-[5px] w-[75px] rounded-full bg-[var(--accent-color)]"></div></div>
+      <div class="space-y-8 lg:col-span-8">{projects.map((project) => <ProjectCard project={project} />)}</div>
     </div>
   </section>
 </PortfolioLayout>

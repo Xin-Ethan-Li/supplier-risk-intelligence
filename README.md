@@ -118,9 +118,10 @@ render.yaml               Hosted-demo infrastructure blueprint
 - [Evaluation](docs/06_EVALUATION.md)
 - [Known limitations](docs/07_LIMITATIONS.md)
 - [Deployment and troubleshooting](docs/08_DEPLOYMENT_TROUBLESHOOTING.md)
+- [Third-party notices](THIRD_PARTY_NOTICES.md)
 
 ## Data, privacy and claims
 
 This is a portfolio reference implementation, not a production supplier decision system. It contains no employer data, source code, documents or model artifacts. The model uses 12,000 deterministic synthetic snapshots; retrieval uses entirely fictional supplier documents. Do not submit personal, confidential or commercially sensitive information to the public demo.
 
-Released under the [MIT License](LICENSE).
+Released under the [MIT License](LICENSE). The Portfolio design adapts Ryan Fitzgerald's MIT-licensed [DevPortfolio](https://github.com/RyanFitzgerald/devportfolio); attribution is recorded in [Third-party notices](THIRD_PARTY_NOTICES.md).

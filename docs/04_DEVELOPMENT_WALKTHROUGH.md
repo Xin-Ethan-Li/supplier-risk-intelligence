@@ -25,33 +25,75 @@
 
 ## 3. 当前项目状态
 
-| 项目       | 状态                         |
-| ---------- | ---------------------------- |
-| 当前阶段   | M8 Portfolio 进行中          |
-| 当前版本   | 0.7.0                        |
-| Git 仓库   | GitHub 公开仓库，main 已保护 |
-| 应用代码   | 三服务工程骨架已创建         |
-| 本地运行   | Native 与 Compose 已验证     |
-| 在线环境   | Render 已验收；Pages 待发布  |
-| 下一里程碑 | M8 - Portfolio 上线          |
+| 项目       | 状态                          |
+| ---------- | ----------------------------- |
+| 当前阶段   | M8.1 Portfolio 样式迁移       |
+| 当前版本   | Portfolio 0.8.1               |
+| Git 仓库   | GitHub 公开仓库，main 已保护  |
+| 应用代码   | 三服务工程骨架已创建          |
+| 本地运行   | Native 与 Compose 已验证      |
+| 在线环境   | Render 与 GitHub Pages 已验收 |
+| 下一里程碑 | 合并并验证 M8.1 样式版本      |
 
 ## 4. 里程碑状态
 
-| 里程碑                | 状态        | 说明                                      |
-| --------------------- | ----------- | ----------------------------------------- |
-| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对          |
-| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证            |
-| M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证      |
-| M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证      |
-| M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证     |
-| M5 Demo UI            | Complete    | 交互、可视化、状态、响应式与 a11y 已验证  |
-| M6 质量与安全         | Complete    | 边界加固、故障测试、审计与性能基线已验证  |
-| M7 GitHub 与上线      | Complete    | 公开仓库、免费部署与生产验收完成          |
-| M8 Portfolio          | In Progress | 站点、Case Study 与 Pages Workflow 已完成 |
+| 里程碑                | 状态        | 说明                                     |
+| --------------------- | ----------- | ---------------------------------------- |
+| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对         |
+| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证           |
+| M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证     |
+| M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证     |
+| M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证    |
+| M5 Demo UI            | Complete    | 交互、可视化、状态、响应式与 a11y 已验证 |
+| M6 质量与安全         | Complete    | 边界加固、故障测试、审计与性能基线已验证 |
+| M7 GitHub 与上线      | Complete    | 公开仓库、免费部署与生产验收完成         |
+| M8 Portfolio          | Complete    | 站点、Case Study 与 GitHub Pages 已上线  |
+| M8.1 样式迁移         | In Progress | 本地实现与验证完成，等待 PR 合并发布     |
 
 ---
 
 ## 5. Walkthrough 记录
+
+### 2026-07-29 - DevPortfolio 样式迁移
+
+#### 目标
+
+在完整保留 Portfolio 内容、详情路由和隐私边界的前提下，将视觉样式迁移到 Ryan Fitzgerald DevPortfolio，并使用“单页首页 + 详情页”信息架构。
+
+#### 完成内容
+
+- 从 `main` 创建 `feat/devportfolio-style-migration`，保留已上线的 GitHub Pages 工作流和项目子路径配置。
+- 保持 Astro 7.1.4，不为复制模板而降级框架；增加 Tailwind CSS 4 与 Vite 插件，适配参考模板的实现方式。
+- 重写共享 Layout、全局样式和项目卡片，采用 IBM Plex Mono、白底蓝色强调、网格 Hero、固定导航、灰色项目卡和时间线。
+- 将首页改为单页索引，集中展示 Hero、About、Skills、Capabilities、Projects、Experience、Education 与 CTA。
+- 同步迁移 Projects、About、Resume、SRM Case Study 和 404；保留 Live Demo、GitHub、架构文档、HTML Resume 与邮件索取 PDF。
+- 保留 Canonical、Open Graph、Sitemap、可选 Analytics 和 GitHub Pages `base`；内部链接继续兼容本地根路径及线上仓库子路径。
+- 针对参考模板做必要增强：移动端不隐藏主导航，补充 Skip Link、Reduced Motion、明确的可选链接处理和详情页 SEO。
+- 增加 `THIRD_PARTY_NOTICES.md`，记录 DevPortfolio MIT 许可与来源；Footer 同步显示设计归属。
+- 扩展浏览器 QA，验证首页身份信息、五个锚点区域、主导航、五个独立路由、图片加载和水平溢出。
+
+#### 技术决策
+
+1. **迁移视觉系统，不复制版本锁定。** 参考模板使用 Astro 5；项目继续使用已验证的 Astro 7，只迁移布局、设计语言和交互模式。
+2. **单页负责快速扫描，详情页负责证据深度。** 首页适合 HR 快速判断，SRM Case Study 和 Resume 等稳定 URL 继续支持面试深挖与外部分享。
+3. **样式迁移不改变部署与隐私边界。** GitHub Pages 免费静态发布不变，PDF 不进入仓库或站点，仍通过邮件索取。
+4. **保留模板辨识度并修复已知可用性缺口。** 字体、配色、Hero、卡片和时间线贴近参考样式，但移动导航、子路径和无障碍按本项目要求实现。
+
+#### 验证
+
+- `pnpm --filter @srm/portfolio typecheck`：15 个文件，0 errors、0 warnings、0 hints。
+- GitHub Pages Profile 构建：6 个静态 HTML 页面及完整 SEO、图片和字体相关资产生成成功。
+- `pnpm --filter @srm/portfolio qa:browser`：1440×1000 与 390×844 均通过；5 个路由可访问、无横向溢出、Case Study 图片完整加载。
+- axe WCAG 2 A/AA：桌面 0 violations，移动 0 violations。
+- 首次视觉检查发现 Footer 模板归属文字对比度不足；从灰色 400 提高至灰色 600 后通过。
+- 图片懒加载测试会在全页截图中拼接固定 Header；QA 在完成滚动加载后复位滚动位置，并仅在截图阶段改为绝对定位，消除测试伪影而不影响生产样式。
+
+#### 未完成事项
+
+- 将迁移分支推送并通过 PR 合并到 `main`。
+- 合并后验证 GitHub Pages 新版本与线上主要链接。
+
+---
 
 ### 2026-07-28 - M8 Portfolio 免费方案实现
 
