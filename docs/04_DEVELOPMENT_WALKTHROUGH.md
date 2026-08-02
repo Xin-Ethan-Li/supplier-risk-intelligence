@@ -27,28 +27,28 @@
 
 | 项目       | 状态                          |
 | ---------- | ----------------------------- |
-| 当前阶段   | M8.1 Portfolio 样式迁移       |
+| 当前阶段   | M8.1 Portfolio 样式迁移完成   |
 | 当前版本   | Portfolio 0.8.1               |
 | Git 仓库   | GitHub 公开仓库，main 已保护  |
 | 应用代码   | 三服务工程骨架已创建          |
 | 本地运行   | Native 与 Compose 已验证      |
 | 在线环境   | Render 与 GitHub Pages 已验收 |
-| 下一里程碑 | 合并并验证 M8.1 样式版本      |
+| 下一里程碑 | 后续 Portfolio 内容优化       |
 
 ## 4. 里程碑状态
 
-| 里程碑                | 状态        | 说明                                     |
-| --------------------- | ----------- | ---------------------------------------- |
-| M0 文档与范围基线     | Complete    | 四份基线文档已创建并完成交叉核对         |
-| M1 仓库与工程骨架     | Complete    | Web → API → Risk Engine 已验证           |
-| M2 数据与模型         | Complete    | 合成数据、XGBoost、解释与 API 已验证     |
-| M3 RAG 检索           | Complete    | 虚构语料、混合检索、引用与评估已验证     |
-| M4 API Vertical Slice | Complete    | 风险融合、契约 API、追踪与 E2E 已验证    |
-| M5 Demo UI            | Complete    | 交互、可视化、状态、响应式与 a11y 已验证 |
-| M6 质量与安全         | Complete    | 边界加固、故障测试、审计与性能基线已验证 |
-| M7 GitHub 与上线      | Complete    | 公开仓库、免费部署与生产验收完成         |
-| M8 Portfolio          | Complete    | 站点、Case Study 与 GitHub Pages 已上线  |
-| M8.1 样式迁移         | In Progress | 本地实现与验证完成，等待 PR 合并发布     |
+| 里程碑                | 状态     | 说明                                     |
+| --------------------- | -------- | ---------------------------------------- |
+| M0 文档与范围基线     | Complete | 四份基线文档已创建并完成交叉核对         |
+| M1 仓库与工程骨架     | Complete | Web → API → Risk Engine 已验证           |
+| M2 数据与模型         | Complete | 合成数据、XGBoost、解释与 API 已验证     |
+| M3 RAG 检索           | Complete | 虚构语料、混合检索、引用与评估已验证     |
+| M4 API Vertical Slice | Complete | 风险融合、契约 API、追踪与 E2E 已验证    |
+| M5 Demo UI            | Complete | 交互、可视化、状态、响应式与 a11y 已验证 |
+| M6 质量与安全         | Complete | 边界加固、故障测试、审计与性能基线已验证 |
+| M7 GitHub 与上线      | Complete | 公开仓库、免费部署与生产验收完成         |
+| M8 Portfolio          | Complete | 站点、Case Study 与 GitHub Pages 已上线  |
+| M8.1 样式迁移         | Complete | PR #11 已合并，Pages 新样式已上线验证    |
 
 ---
 
@@ -88,10 +88,12 @@
 - 首次视觉检查发现 Footer 模板归属文字对比度不足；从灰色 400 提高至灰色 600 后通过。
 - 图片懒加载测试会在全页截图中拼接固定 Header；QA 在完成滚动加载后复位滚动位置，并仅在截图阶段改为绝对定位，消除测试伪影而不影响生产样式。
 
-#### 未完成事项
+#### 发布验证
 
-- 将迁移分支推送并通过 PR 合并到 `main`。
-- 合并后验证 GitHub Pages 新版本与线上主要链接。
+- PR #11 于 2026-08-02 23:17 UTC 合并到 `main`，合并提交为 `209b5ed`。
+- Portfolio Pages run `30771947834` 在约 32 秒内完成，Build 与 Deploy 均为 `success`。
+- 公开首页返回 HTTP 200，并已验证 Experience、Education、模板归属及项目子路径链接来自新版本。
+- M8.1 至此完成；自定义域名仍是可选增强，不影响默认 GitHub Pages HTTPS 访问。
 
 ---
 
@@ -121,10 +123,10 @@
 - axe WCAG 2 A/AA 检查在桌面和移动首页均为 0 violations；首次检查发现装饰状态点错误使用 `aria-label`，修正为 `aria-hidden` 后通过。
 - 人工检查桌面与移动全页截图；发现外部 Demo 截图延迟加载不稳定后改为自包含构建资产，复查通过。
 
-#### 未完成事项
+#### 发布结果
 
-- 合并 M8 PR，在仓库 Settings → Pages 将 Source 设为 GitHub Actions，并验证首次公开 URL。
-- 自定义域名需要购买成本，因此不纳入本轮免费方案；GitHub Pages 默认域名提供 HTTPS。
+- M8 PR #8 已合并，GitHub Pages Source 使用 GitHub Actions，默认域名和 HTTPS 已完成验证。
+- 自定义域名需要购买成本，因此不纳入免费方案；该项保持为可选增强，不影响 M8 完成状态。
 
 ### 2026-07-28 - Render 部署与生产验收
 
