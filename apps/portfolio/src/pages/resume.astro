@@ -1,38 +1,37 @@
 ---
-import { profile } from "../data/portfolio";
+import { education, experience, profile, skills } from "../data/portfolio";
 import PortfolioLayout from "../layouts/PortfolioLayout.astro";
 ---
 
 <PortfolioLayout title="Resume" description="Resume and career summary for Xin (Ethan) Li, AI Software Engineer.">
-  <section class="shell page-hero">
-    <p class="kicker">RESUME · LAST REVIEWED JULY 2026</p>
-    <h1>AI engineering,<br />grounded in backend systems.</h1>
-    <p class="lede">A concise view of my experience building APIs, data workflows and applied AI capabilities.</p>
+  <section class="relative isolate overflow-hidden px-8 pb-16 pt-36 sm:px-12 md:px-16 md:pb-24 md:pt-44 lg:px-24">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_700px_700px_at_0%_0%,rgba(29,78,216,.18),transparent_70%)]"></div>
+    <p class="text-sm text-[var(--accent-color)]">RESUME · HTML EDITION</p>
+    <h1 class="mt-6 max-w-6xl text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl md:text-8xl">AI engineering, grounded in backend systems.</h1>
+    <p class="mt-8 max-w-4xl text-base leading-8 text-gray-600 sm:text-lg md:text-xl">{profile.name} is an {profile.role} based in {profile.location}, with 5+ years of software engineering experience and full-time work authorisation in Ireland.</p>
+    <div class="mt-8 flex flex-wrap gap-4"><a href={`mailto:${profile.email}`} class="rounded-lg bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--accent-color)]">Contact me</a><a href={profile.resumeRequest} class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-800 hover:border-gray-400">Request PDF</a></div>
   </section>
 
-  <section class="shell page-section">
-    <p class="kicker">PROFILE</p>
-    <div class="prose">
-      <h2>{profile.name}</h2>
-      <p>AI Software Engineer based in {profile.location}, with 5+ years of software engineering experience and full-time work authorisation in Ireland.</p>
-      <div class="resume-banner">
-        <div><h2>Need the PDF version?</h2><p>Request the current two-page PDF directly by email.</p></div>
-        <a class="button primary" href={profile.resumeRequest}>Request PDF ↗</a>
-      </div>
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24">
+    <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4"><h2 class="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl xl:text-7xl">Skills</h2><div class="mt-2 h-[5px] w-[75px] rounded-full bg-[var(--accent-color)]"></div></div>
+      <ul class="flex flex-wrap gap-3 lg:col-span-8" aria-label="Core skills">{skills.map((skill) => <li class="rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-800 sm:text-base">{skill}</li>)}</ul>
     </div>
   </section>
 
-  <section class="shell page-section">
-    <p class="kicker">CORE SKILLS</p>
-    <div class="prose">
-      <h3>AI, ML & data</h3><p>RAG, LLM API integration, vector retrieval, XGBoost, LangChain and OCR workflows.</p>
-      <h3>Backend & platform</h3><p>TypeScript, Node.js, Python, Fastify, FastAPI, PostgreSQL, Redis, RabbitMQ and REST/OpenAPI.</p>
-      <h3>Cloud & quality</h3><p>AWS, Docker, Terraform, GitHub Actions, unit/integration testing, ELK and production diagnostics.</p>
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24">
+    <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4"><h2 class="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl xl:text-7xl">Experience</h2><div class="mt-2 h-[5px] w-[75px] rounded-full bg-[var(--accent-color)]"></div></div>
+      <div class="space-y-8 lg:col-span-8">{experience.map((item) => <article class="rounded-lg border border-gray-100 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"><div class="mb-4 flex flex-col sm:flex-row sm:items-start sm:justify-between"><div><h3 class="text-xl font-semibold text-gray-900">{item.title}</h3><p class="text-[var(--accent-color)]">{item.company}</p></div><span class="mt-2 text-sm text-gray-500 sm:mt-0">{item.dateRange}</span></div><ul class="space-y-2">{item.bullets.map((bullet) => <li class="flex items-start"><span class="mt-2 mr-3 size-1.5 shrink-0 rounded-full bg-gray-400"></span><span class="text-sm leading-7 text-gray-600 sm:text-base">{bullet}</span></li>)}</ul></article>)}</div>
     </div>
   </section>
 
-  <section class="shell page-section">
-    <p class="kicker">CONTACT</p>
-    <div class="prose"><h2>Let’s build something useful.</h2><p>Email is the fastest way to reach me about AI software engineering and backend opportunities.</p><div class="button-row"><a class="button primary" href={`mailto:${profile.email}`}>{profile.email} ↗</a><a class="button secondary" href={profile.github} target="_blank" rel="noreferrer">GitHub</a></div></div>
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24">
+    <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4"><h2 class="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl xl:text-7xl">Education</h2><div class="mt-2 h-[5px] w-[75px] rounded-full bg-[var(--accent-color)]"></div></div>
+      <div class="space-y-8 lg:col-span-8">{education.map((item) => <article class="rounded-lg border border-gray-100 bg-white p-6 shadow-sm"><div class="flex flex-col sm:flex-row sm:items-start sm:justify-between"><div><h3 class="text-xl font-semibold text-gray-900">{item.degree}</h3><p class="text-[var(--accent-color)]">{item.school}</p></div><span class="mt-2 text-sm text-gray-500 sm:mt-0">{item.dateRange}</span></div></article>)}</div>
+    </div>
   </section>
+
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24"><div class="rounded-2xl border border-gray-200 bg-gray-50 p-8 sm:flex sm:items-center sm:justify-between sm:gap-8 sm:p-12"><div><h2 class="text-2xl font-bold text-gray-900">Need the full PDF?</h2><p class="mt-2 text-sm leading-6 text-gray-600">The PDF remains private because it contains a phone number. Request the current copy directly by email.</p></div><a href={profile.resumeRequest} class="mt-6 inline-block shrink-0 rounded-lg bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--accent-color)] sm:mt-0">Request PDF ↗</a></div></section>
 </PortfolioLayout>

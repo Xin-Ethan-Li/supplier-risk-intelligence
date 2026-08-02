@@ -1,68 +1,80 @@
 ---
 import ProjectCard from "../components/ProjectCard.astro";
-import { capabilities, profile, projects } from "../data/portfolio";
+import { capabilities, education, experience, profile, projects, skills } from "../data/portfolio";
 import PortfolioLayout from "../layouts/PortfolioLayout.astro";
 
 const base = import.meta.env.BASE_URL;
 ---
 
 <PortfolioLayout title={profile.name} description="AI Software Engineer in Cork, Ireland, building explainable AI products, scalable APIs and reliable data workflows.">
-  <section class="shell hero">
-    <div>
-      <p class="kicker">AI SOFTWARE ENGINEER · CORK, IRELAND</p>
-      <h1>Backend depth.<br /><em>AI leverage.</em></h1>
-      <p class="hero-intro">I build production-minded AI systems where models, retrieval, APIs and observability work as one coherent product.</p>
-      <div class="hero-actions">
-        <a class="button primary" href={`${base}projects/`}>Explore my work ↗</a>
-        <a class="button secondary" href={`mailto:${profile.email}`}>Start a conversation</a>
-      </div>
-    </div>
-    <aside class="hero-aside">
-      <div class="availability-card">
-        <p class="kicker">CURRENT STATUS</p>
-        <span aria-hidden="true"></span>
-        <strong>Available for full-time roles</strong>
-        <p>Stamp 1G · Eligible to work full-time in Ireland</p>
-      </div>
-    </aside>
-  </section>
-
-  <section class="shell section" aria-labelledby="selected-work">
-    <div class="section-head">
+  <section id="hero" class="relative isolate min-h-screen overflow-hidden bg-white py-24">
+    <div class="absolute inset-0 -z-20" style={`background: radial-gradient(ellipse 800px 1200px at 0% 0%, ${profile.accentColor}40 0%, ${profile.accentColor}25 20%, ${profile.accentColor}10 40%, rgba(255,255,255,.3) 70%, rgba(255,255,255,.8) 90%, white 100%)`}></div>
+    <svg aria-hidden="true" class="absolute inset-0 -z-10 size-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]">
+      <defs>
+        <pattern id="hero-grid" x="50%" y="-1" width="200" height="200" patternUnits="userSpaceOnUse"><path d="M.5 200V.5H200" fill="none"></path></pattern>
+        <pattern id="code-symbols" x="0" y="0" width="400" height="400" patternUnits="userSpaceOnUse">
+          <text x="50" y="50" fill={profile.accentColor} font-family="monospace" font-size="24" transform="rotate(-15)">&lt;/&gt;</text>
+          <text x="150" y="100" fill={profile.accentColor} font-family="monospace" font-size="20" transform="rotate(10)">{}</text>
+          <text x="250" y="80" fill={profile.accentColor} font-family="monospace" font-size="18" transform="rotate(-5)">=&gt;</text>
+          <text x="100" y="200" fill={profile.accentColor} font-family="monospace" font-size="22" transform="rotate(15)">[]</text>
+          <text x="300" y="180" fill={profile.accentColor} font-family="monospace" font-size="20" transform="rotate(-10)">&lt;&gt;</text>
+          <text x="200" y="250" fill={profile.accentColor} font-family="monospace" font-size="24" transform="rotate(5)">()</text>
+          <text x="50" y="320" fill={profile.accentColor} font-family="monospace" font-size="18" transform="rotate(-8)">::</text>
+          <text x="350" y="300" fill={profile.accentColor} font-family="monospace" font-size="22" transform="rotate(12)">==</text>
+          <text x="150" y="350" fill={profile.accentColor} font-family="monospace" font-size="20" transform="rotate(-15)">++</text>
+        </pattern>
+      </defs>
+      <rect fill="url(#code-symbols)" width="100%" height="100%" opacity="0.2"></rect>
+      <rect fill="url(#hero-grid)" width="100%" height="100%" stroke-width="0"></rect>
+    </svg>
+    <div class="mx-auto flex min-h-[calc(100vh-12rem)] max-w-[1600px] items-center p-8 sm:p-12 md:p-24">
       <div>
-        <p class="kicker">SELECTED WORK</p>
-        <h2 id="selected-work">Systems with a point of view.</h2>
+        <p class="animate-fade-in text-xl font-bold tracking-tight text-gray-700 sm:text-2xl md:text-5xl">Hello! <span aria-hidden="true">👋</span></p>
+        <h1 class="animation-delay-200 animate-fade-in mt-6 text-4xl font-bold tracking-tight text-gray-800 sm:mt-8 sm:text-5xl md:mt-10 md:text-6xl lg:text-8xl">I'm <span class="text-[var(--accent-color)]">{profile.name}</span></h1>
+        <p class="animation-delay-400 animate-fade-in mt-4 text-base font-medium text-gray-600 sm:mt-6 sm:text-lg md:mt-8 md:text-xl/8">{profile.role} · {profile.location}</p>
+        <p class="animation-delay-600 animate-fade-in mt-5 max-w-3xl text-sm leading-7 text-gray-600 sm:text-base md:text-lg">{profile.summary}</p>
       </div>
-      <p>Projects chosen to show how I reason about AI boundaries, distributed state and the engineering required to make software dependable.</p>
     </div>
-    <div class="project-list">
-      {projects.map((project) => <ProjectCard project={project} />)}
+    <div class="animation-delay-600 animate-fade-in absolute inset-x-0 bottom-0 mx-auto flex max-w-[1600px] gap-6 p-8 text-gray-700 sm:p-12 md:gap-8 md:p-24">
+      <a href={`mailto:${profile.email}`} aria-label="Email" class="transition-colors hover:text-[var(--accent-color)]"><svg aria-hidden="true" class="size-7 md:size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="m3 7 9 6 9-6"/></svg></a>
+      <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="transition-colors hover:text-[var(--accent-color)]"><svg aria-hidden="true" class="size-7 md:size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a>
+      <a href={`${base}resume/`} aria-label="HTML resume" class="transition-colors hover:text-[var(--accent-color)]"><svg aria-hidden="true" class="size-7 md:size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></a>
     </div>
   </section>
 
-  <section class="shell section" aria-labelledby="capabilities">
-    <div class="section-head">
-      <div>
-        <p class="kicker">HOW I CONTRIBUTE</p>
-        <h2 id="capabilities">Across the whole path to production.</h2>
+  <section id="about" class="p-8 sm:p-12 md:p-16 lg:p-24">
+    <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4"><h2 class="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl xl:text-7xl">About Me</h2><div class="mt-2 h-[5px] w-[75px] rounded-full bg-[var(--accent-color)]"></div></div>
+      <div class="space-y-8 lg:col-span-8">
+        <p class="text-lg leading-relaxed text-gray-600 sm:text-xl md:text-2xl">{profile.about}</p>
+        <ul class="flex flex-wrap gap-3" aria-label="Technical skills">{skills.map((skill) => <li class="rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 sm:text-base">{skill}</li>)}</ul>
+        <div class="grid gap-4 pt-4 md:grid-cols-3">{capabilities.map((item) => <article class="rounded-xl border border-gray-200 bg-gray-50 p-5"><span class="text-sm text-[var(--accent-color)]">{item.index}</span><h3 class="mt-3 font-bold text-gray-900">{item.title}</h3><p class="mt-2 text-sm leading-6 text-gray-600">{item.text}</p></article>)}</div>
       </div>
-      <p>My strongest work sits at the seam between backend engineering and applied AI: clear contracts, measurable quality and honest failure modes.</p>
-    </div>
-    <div class="capability-grid">
-      {capabilities.map((item) => (
-        <article class="capability-card">
-          <span>{item.index}</span>
-          <h3>{item.title}</h3>
-          <p>{item.text}</p>
-        </article>
-      ))}
     </div>
   </section>
 
-  <section class="proof-strip" aria-label="Career snapshot">
-    <div><p class="kicker">EXPERIENCE</p><strong>5+ yrs</strong><span>Backend and software delivery</span></div>
-    <div><p class="kicker">FOCUS</p><strong>AI + API</strong><span>Applied intelligence in workflows</span></div>
-    <div><p class="kicker">EDUCATION</p><strong>MSc CS</strong><span>University College Cork</span></div>
-    <div><p class="kicker">LOCATION</p><strong>Cork</strong><span>Available across Ireland</span></div>
+  <section id="projects" class="p-8 sm:p-12 md:p-16 lg:p-24">
+    <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4"><h2 class="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl xl:text-7xl">Projects</h2><div class="mt-2 h-[5px] w-[75px] rounded-full bg-[var(--accent-color)]"></div><a href={`${base}projects/`} class="mt-6 inline-block text-sm font-semibold text-gray-600 hover:text-[var(--accent-color)]">View project index ↗</a></div>
+      <div class="space-y-8 lg:col-span-8">{projects.map((project) => <ProjectCard project={project} />)}</div>
+    </div>
+  </section>
+
+  <section id="experience" class="p-8 sm:p-12 md:p-16 lg:p-24">
+    <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4"><h2 class="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl xl:text-7xl">Experience</h2><div class="mt-2 h-[5px] w-[75px] rounded-full bg-[var(--accent-color)]"></div></div>
+      <div class="lg:col-span-8"><div class="relative">{experience.map((item, index) => <article class="relative mb-12 last:mb-0"><div class="absolute left-1/2 -top-2 z-20 size-4 -translate-x-1/2 rounded-full border-2 border-[var(--accent-color)] bg-[var(--accent-color)]"></div>{index < experience.length - 1 && <div class="absolute bottom-0 left-1/2 z-10 h-12 w-0.5 -translate-x-1/2 translate-y-full bg-gray-300"></div>}<div class="rounded-lg border border-gray-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md md:p-6"><div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between"><div><h3 class="text-lg font-semibold text-gray-900 sm:text-xl">{item.title}</h3><p class="text-base text-[var(--accent-color)] sm:text-lg">{item.company}</p></div><span class="mt-2 text-xs text-gray-500 sm:mt-0 sm:text-sm">{item.dateRange}</span></div><ul class="space-y-2">{item.bullets.map((bullet) => <li class="flex items-start"><span class="mt-2 mr-3 size-1.5 shrink-0 rounded-full bg-gray-400"></span><span class="text-sm leading-6 text-gray-600 sm:text-base">{bullet}</span></li>)}</ul></div></article>)}</div></div>
+    </div>
+  </section>
+
+  <section id="education" class="p-8 sm:p-12 md:p-16 lg:p-24">
+    <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4"><h2 class="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl xl:text-7xl">Education</h2><div class="mt-2 h-[5px] w-[75px] rounded-full bg-[var(--accent-color)]"></div></div>
+      <div class="space-y-8 lg:col-span-8">{education.map((item) => <article class="rounded-lg border border-gray-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md md:p-6"><div class="mb-4 flex flex-col sm:flex-row sm:items-start sm:justify-between"><div><h3 class="text-lg font-semibold text-gray-900 sm:text-xl">{item.degree}</h3><p class="text-base text-[var(--accent-color)] sm:text-lg">{item.school}</p></div><span class="mt-2 text-xs text-gray-500 sm:mt-0 sm:text-sm">{item.dateRange}</span></div><ul class="space-y-2">{item.achievements.map((achievement) => <li class="flex items-start"><span class="mt-2 mr-3 size-1.5 shrink-0 rounded-full bg-gray-400"></span><span class="text-sm text-gray-600 sm:text-base">{achievement}</span></li>)}</ul></article>)}</div>
+    </div>
+  </section>
+
+  <section class="p-8 sm:p-12 md:p-16 lg:p-24">
+    <div class="rounded-2xl border border-gray-200 bg-gray-50 p-8 sm:p-12 md:p-16"><p class="text-sm text-[var(--accent-color)]">AVAILABLE FOR AI SOFTWARE ENGINEERING ROLES</p><h2 class="mt-4 max-w-5xl text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-6xl">Build useful systems.<br />Make the reasoning visible.</h2><div class="mt-8 flex flex-wrap gap-4"><a href={`mailto:${profile.email}`} class="rounded-lg bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-color)]">Start a conversation</a><a href={`${base}resume/`} class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-800 transition-colors hover:border-gray-400">View HTML resume</a></div></div>
   </section>
 </PortfolioLayout>

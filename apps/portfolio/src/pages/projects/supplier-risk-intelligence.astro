@@ -4,81 +4,40 @@ import PortfolioLayout from "../../layouts/PortfolioLayout.astro";
 const base = import.meta.env.BASE_URL;
 const architectureImage = `${base}case-assets/architecture.svg`;
 const demoImage = `${base}case-assets/demo-desktop.png`;
+const decisions = [
+  ["01 / EVIDENCE FIRST", "Deterministic summary", "The public path assembles conclusions only from validated structured outputs and citations. No live LLM is required to produce a credible answer."],
+  ["02 / IMBALANCED RISK", "Recall-aware evaluation", "Chronological splits and an F2-oriented threshold make the tradeoff visible. PR-AUC, recall and the confusion matrix take priority over accuracy."],
+  ["03 / HYBRID RETRIEVAL", "More than vector similarity", "Dense and BM25 relevance are combined with domain anchors, source quality, temporal decay and per-document result control."],
+  ["04 / OPERABLE BY DESIGN", "Trace the whole request", "Request IDs, correlation IDs, stage timing, typed errors, timeouts and dependency status make the AI workflow inspectable."],
+] as const;
 ---
 
 <PortfolioLayout title="Supplier Risk Intelligence" description="Case study: an explainable supplier-risk demo combining XGBoost, hybrid retrieval and evidence-bound decision support.">
-  <section class="shell case-hero">
-    <p class="kicker">CASE STUDY 01 · APPLIED AI SYSTEMS</p>
-    <h1>Supplier Risk<br />Intelligence.</h1>
-    <p class="lede">A portfolio-safe reconstruction of an enterprise AI pattern: combine quantitative risk signals with retrieved evidence, then expose the result through an observable, inspectable workflow.</p>
-    <div class="button-row"><a class="button primary" href="https://srm-supplier-risk-demo.onrender.com/demo/" target="_blank" rel="noreferrer">Run live demo ↗</a><a class="button secondary" href="https://github.com/Xin-Ethan-Li/supplier-risk-intelligence" target="_blank" rel="noreferrer">View source</a></div>
-    <dl class="case-meta">
-      <div><dt>Role</dt><dd>AI / backend engineer</dd></div>
-      <div><dt>Scope</dt><dd>End-to-end demo</dd></div>
-      <div><dt>Stack</dt><dd>Python + TypeScript</dd></div>
-      <div><dt>Delivery</dt><dd>M0 — M7</dd></div>
+  <section class="relative isolate overflow-hidden px-8 pb-16 pt-36 sm:px-12 md:px-16 md:pb-24 md:pt-44 lg:px-24">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_800px_900px_at_0%_0%,rgba(29,78,216,.2),transparent_70%)]"></div>
+    <p class="text-sm text-[var(--accent-color)]">CASE STUDY 01 · APPLIED AI SYSTEMS</p>
+    <h1 class="mt-6 max-w-6xl text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl md:text-8xl">Supplier Risk Intelligence.</h1>
+    <p class="mt-8 max-w-4xl text-base leading-8 text-gray-600 sm:text-lg md:text-xl">A portfolio-safe reconstruction of an enterprise AI pattern: combine quantitative risk signals with retrieved evidence, then expose the result through an observable, inspectable workflow.</p>
+    <div class="mt-8 flex flex-wrap gap-4"><a href="https://srm-supplier-risk-demo.onrender.com/demo/" target="_blank" rel="noopener noreferrer" class="rounded-lg bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--accent-color)]">Run live demo ↗</a><a href="https://github.com/Xin-Ethan-Li/supplier-risk-intelligence" target="_blank" rel="noopener noreferrer" class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-800 hover:border-gray-400">View source</a></div>
+    <dl class="mt-12 grid overflow-hidden rounded-xl border border-gray-200 bg-white sm:grid-cols-2 lg:grid-cols-4">
+      <div class="border-b border-gray-200 p-5 sm:border-r lg:border-b-0"><dt class="text-xs text-gray-500">ROLE</dt><dd class="mt-5 text-sm font-bold text-gray-900">AI / backend engineer</dd></div>
+      <div class="border-b border-gray-200 p-5 lg:border-b-0 lg:border-r"><dt class="text-xs text-gray-500">SCOPE</dt><dd class="mt-5 text-sm font-bold text-gray-900">End-to-end demo</dd></div>
+      <div class="border-b border-gray-200 p-5 sm:border-r sm:border-b-0"><dt class="text-xs text-gray-500">STACK</dt><dd class="mt-5 text-sm font-bold text-gray-900">Python + TypeScript</dd></div>
+      <div class="p-5"><dt class="text-xs text-gray-500">DELIVERY</dt><dd class="mt-5 text-sm font-bold text-gray-900">M0 — M8</dd></div>
     </dl>
   </section>
 
-  <section class="shell page-section">
-    <p class="kicker">THE PROBLEM</p>
-    <div class="prose">
-      <h2>A score alone is not enough.</h2>
-      <p>Supplier-risk decisions mix structured operating signals with unstructured incident, financial and logistics evidence. A useful system has to surface both—without letting an opaque generated answer outrun its sources.</p>
-      <p>The design question was therefore larger than “train a model” or “add RAG.” It was: how can a reviewer move from risk signal to evidence, understand the contributing factors and inspect the system boundary in one interaction?</p>
-    </div>
-  </section>
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24"><div class="grid gap-8 lg:grid-cols-12 lg:gap-16"><div class="lg:col-span-4"><p class="text-sm text-[var(--accent-color)]">THE PROBLEM</p></div><div class="lg:col-span-8"><h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">A score alone is not enough.</h2><div class="mt-6 space-y-5 text-base leading-8 text-gray-600 sm:text-lg"><p>Supplier-risk decisions mix structured operating signals with unstructured incident, financial and logistics evidence. A useful system has to surface both—without letting an opaque generated answer outrun its sources.</p><p>The design question was therefore larger than “train a model” or “add RAG.” It was: how can a reviewer move from risk signal to evidence, understand the contributing factors and inspect the system boundary in one interaction?</p></div></div></div></section>
 
-  <section class="shell page-section">
-    <p class="kicker">HONEST CONSTRAINTS</p>
-    <div class="prose">
-      <h2>Public, reproducible and safe to discuss.</h2>
-      <ul>
-        <li>No employer data, proprietary model artifact or confidential source document.</li>
-        <li>No paid LLM or hidden API dependency on the public request path.</li>
-        <li>All supplier records are synthetic; all retrieved documents are fictional.</li>
-        <li>Every metric is labelled as a repository regression result, not a production claim.</li>
-        <li>The entire hosted profile fits within free Render resources.</li>
-      </ul>
-    </div>
-  </section>
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24"><div class="grid gap-8 lg:grid-cols-12 lg:gap-16"><div class="lg:col-span-4"><p class="text-sm text-[var(--accent-color)]">HONEST CONSTRAINTS</p></div><div class="lg:col-span-8"><h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">Public, reproducible and safe to discuss.</h2><ul class="mt-6 space-y-3 text-base leading-7 text-gray-600 sm:text-lg"><li class="flex gap-3"><span class="text-[var(--accent-color)]">•</span>No employer data, proprietary model artifact or confidential source document.</li><li class="flex gap-3"><span class="text-[var(--accent-color)]">•</span>No paid LLM or hidden API dependency on the public request path.</li><li class="flex gap-3"><span class="text-[var(--accent-color)]">•</span>All supplier records are synthetic; all retrieved documents are fictional.</li><li class="flex gap-3"><span class="text-[var(--accent-color)]">•</span>Every metric is labelled as a repository regression result, not a production claim.</li><li class="flex gap-3"><span class="text-[var(--accent-color)]">•</span>The entire hosted profile fits within free Render resources.</li></ul></div></div></section>
 
-  <section class="shell section">
-    <div class="section-head"><div><p class="kicker">ARCHITECTURE</p><h2>Clear logical boundaries.</h2></div><p>Astro handles the experience, Fastify owns the public contract and Python owns model and retrieval execution. Free hosting combines the two backend processes physically while preserving those boundaries.</p></div>
-    <div class="architecture-frame"><img src={architectureImage} alt="Architecture from Astro web through Fastify API to the Python risk engine, model and retrieval artifacts" loading="lazy" /></div>
-  </section>
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24"><div class="grid items-start gap-8 lg:grid-cols-12 lg:gap-16"><div class="lg:col-span-4"><h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl xl:text-7xl">Clear logical boundaries.</h2><div class="mt-2 h-[5px] w-[75px] rounded-full bg-[var(--accent-color)]"></div></div><div class="lg:col-span-8"><p class="mb-8 text-base leading-8 text-gray-600 sm:text-lg">Astro handles the experience, Fastify owns the public contract and Python owns model and retrieval execution. Free hosting combines the two backend processes physically while preserving those boundaries.</p><div class="rounded-2xl border border-gray-200 bg-gray-50 p-4 shadow-sm sm:p-8"><img src={architectureImage} alt="Architecture from Astro web through Fastify API to the Python risk engine, model and retrieval artifacts" loading="lazy" class="w-full rounded-xl" /></div></div></div></section>
 
-  <section class="shell page-section">
-    <p class="kicker">KEY DECISIONS</p>
-    <div class="decision-grid">
-      <article class="decision-card"><span>01 / EVIDENCE FIRST</span><h3>Deterministic summary</h3><p>The public path assembles conclusions only from validated structured outputs and citations. No live LLM is required to produce a credible answer.</p></article>
-      <article class="decision-card"><span>02 / IMBALANCED RISK</span><h3>Recall-aware evaluation</h3><p>Chronological splits and an F2-oriented threshold make the tradeoff visible. PR-AUC, recall and the confusion matrix take priority over accuracy.</p></article>
-      <article class="decision-card"><span>03 / HYBRID RETRIEVAL</span><h3>More than vector similarity</h3><p>Dense and BM25 relevance are combined with domain anchors, source quality, temporal decay and per-document result control.</p></article>
-      <article class="decision-card"><span>04 / OPERABLE BY DESIGN</span><h3>Trace the whole request</h3><p>Request IDs, correlation IDs, stage timing, typed errors, timeouts and dependency status make the AI workflow inspectable.</p></article>
-    </div>
-  </section>
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24"><div class="grid gap-8 lg:grid-cols-12 lg:gap-16"><div class="lg:col-span-4"><p class="text-sm text-[var(--accent-color)]">KEY DECISIONS</p><h2 class="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">Engineering choices.</h2></div><div class="grid gap-4 md:grid-cols-2 lg:col-span-8">{decisions.map(([label, title, text]) => <article class="rounded-xl border border-gray-200 bg-gray-50 p-6 transition-shadow hover:shadow-md"><span class="text-xs text-[var(--accent-color)]">{label}</span><h3 class="mt-5 text-lg font-bold text-gray-900">{title}</h3><p class="mt-3 text-sm leading-7 text-gray-600">{text}</p></article>)}</div></div></section>
 
-  <section class="shell page-section">
-    <p class="kicker">REPRODUCIBLE RESULTS</p>
-    <div class="prose">
-      <h2>Measurements with boundaries attached.</h2>
-      <p>The synthetic final test contains a 2.19% positive class. The committed XGBoost artifact reaches 89.2% recall and 0.653 PR-AUC, with precision deliberately traded for recall. The small curated retrieval regression set reaches Recall@5 and MRR of 1.0; this verifies the eight committed questions, not open-domain retrieval.</p>
-      <p>The production smoke test returned complete High, Medium and Low results, each with evidence, local feature drivers and trace identifiers. Local warm-stack P95 was 34.08 ms; free-hosting cold starts are disclosed separately.</p>
-    </div>
-  </section>
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24"><div class="grid gap-8 lg:grid-cols-12 lg:gap-16"><div class="lg:col-span-4"><p class="text-sm text-[var(--accent-color)]">REPRODUCIBLE RESULTS</p></div><div class="lg:col-span-8"><h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">Measurements with boundaries attached.</h2><div class="mt-6 space-y-5 text-base leading-8 text-gray-600 sm:text-lg"><p>The synthetic final test contains a 2.19% positive class. The committed XGBoost artifact reaches 89.2% recall and 0.653 PR-AUC, with precision deliberately traded for recall. The small curated retrieval regression set reaches Recall@5 and MRR of 1.0; this verifies the eight committed questions, not open-domain retrieval.</p><p>The production smoke test returned complete High, Medium and Low results, each with evidence, local feature drivers and trace identifiers. Local warm-stack P95 was 34.08 ms; free-hosting cold starts are disclosed separately.</p></div></div></div></section>
 
-  <section class="shell section">
-    <div class="section-head"><div><p class="kicker">THE EXPERIENCE</p><h2>Signal, evidence, trace.</h2></div><p>The interface keeps the decision path in one workspace: choose a fictional scenario, adjust the metrics, evaluate and open the evidence behind the conclusion.</p></div>
-    <div class="demo-frame"><img src={demoImage} alt="Supplier Risk Intelligence desktop demo showing a medium-risk result, model signals and supporting evidence" loading="lazy" /></div>
-  </section>
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24"><div class="grid items-start gap-8 lg:grid-cols-12 lg:gap-16"><div class="lg:col-span-4"><h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl xl:text-7xl">Signal, evidence, trace.</h2><div class="mt-2 h-[5px] w-[75px] rounded-full bg-[var(--accent-color)]"></div></div><div class="lg:col-span-8"><p class="mb-8 text-base leading-8 text-gray-600 sm:text-lg">The interface keeps the decision path in one workspace: choose a fictional scenario, adjust the metrics, evaluate and open the evidence behind the conclusion.</p><div class="rounded-2xl border border-gray-200 bg-gray-50 p-4 shadow-sm sm:p-8"><img src={demoImage} alt="Supplier Risk Intelligence desktop demo showing a medium-risk result, model signals and supporting evidence" loading="lazy" class="w-full rounded-xl" /></div></div></div></section>
 
-  <section class="shell page-section">
-    <p class="kicker">WHAT I LEARNED</p>
-    <div class="prose">
-      <h2>The strongest demo is the one that shows its limits.</h2>
-      <p>Separating production inspiration from public evidence made the project stronger. The synthetic generator, fictional corpus, deterministic summary and versioned artifacts create a system that another engineer can actually run, challenge and extend.</p>
-      <p>The deployment reinforced the same principle at the infrastructure layer: logical service boundaries can remain clear even when a free-hosting constraint requires a combined physical container.</p>
-      <div class="button-row"><a class="button primary" href="https://srm-supplier-risk-demo.onrender.com/demo/" target="_blank" rel="noreferrer">Try the system ↗</a><a class="button secondary" href="https://github.com/Xin-Ethan-Li/supplier-risk-intelligence/blob/main/docs/03_TECHNICAL_ARCHITECTURE.md" target="_blank" rel="noreferrer">Read architecture</a></div>
-    </div>
-  </section>
+  <section class="px-8 py-16 sm:px-12 md:px-16 lg:px-24"><div class="grid gap-8 lg:grid-cols-12 lg:gap-16"><div class="lg:col-span-4"><p class="text-sm text-[var(--accent-color)]">WHAT I LEARNED</p></div><div class="lg:col-span-8"><h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">The strongest demo is the one that shows its limits.</h2><div class="mt-6 space-y-5 text-base leading-8 text-gray-600 sm:text-lg"><p>Separating production inspiration from public evidence made the project stronger. The synthetic generator, fictional corpus, deterministic summary and versioned artifacts create a system that another engineer can actually run, challenge and extend.</p><p>The deployment reinforced the same principle at the infrastructure layer: logical service boundaries can remain clear even when a free-hosting constraint requires a combined physical container.</p></div><div class="mt-8 flex flex-wrap gap-4"><a href="https://srm-supplier-risk-demo.onrender.com/demo/" target="_blank" rel="noopener noreferrer" class="rounded-lg bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--accent-color)]">Try the system ↗</a><a href="https://github.com/Xin-Ethan-Li/supplier-risk-intelligence/blob/main/docs/03_TECHNICAL_ARCHITECTURE.md" target="_blank" rel="noopener noreferrer" class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-800 hover:border-gray-400">Read architecture</a></div></div></div></section>
 </PortfolioLayout>

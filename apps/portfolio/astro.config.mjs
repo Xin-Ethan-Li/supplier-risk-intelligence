@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   output: "static",
@@ -6,4 +7,5 @@ export default defineConfig({
   base: process.env.PORTFOLIO_BASE ?? "/",
   server: { host: true, port: 4322 },
   build: { format: "directory" },
+  vite: { plugins: [tailwindcss()] },
 });

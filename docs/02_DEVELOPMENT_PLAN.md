@@ -230,7 +230,7 @@
 - [x] 编写 SRM Case Study。
 - [x] 连接 Live Demo、GitHub 和 HTML Resume；用户确认 PDF 保持私有并通过邮件索取。
 - [x] 配置 SEO、Open Graph、Sitemap 和可选 Analytics。
-- [ ] 通过 GitHub Pages 部署；Workflow 已完成，等待合并后首次运行。
+- [x] 通过 GitHub Pages 部署并验证首次成功运行。
 - [ ] 配置自定义域名和 HTTPS。
 
 ### 验收
@@ -239,6 +239,22 @@
 - SRM 项目有代码、在线 Demo 和架构说明入口。
 - 页面在桌面和手机上均通过视觉检查。
 - Portfolio 不依赖后端即可访问。
+
+### Phase 8.1 - Portfolio 样式迁移
+
+- [x] 以 Ryan Fitzgerald DevPortfolio 为视觉参考，保留现有内容与 Astro 7 技术基线。
+- [x] 采用“单页首页 + 详情页”结构：首页集中呈现 About、Projects、Experience 和 Education，保留 Projects、About、Resume、SRM Case Study 与 404 独立路由。
+- [x] 引入 Tailwind CSS 4，迁移字体、色彩、Hero、固定导航、项目卡片和时间线样式。
+- [x] 保留 GitHub Pages 项目子路径、SEO、Analytics、Live Demo、HTML Resume 和邮件索取 PDF 的安全边界。
+- [x] 增加模板 MIT 许可归属，并修正原模板在移动导航、子路径链接、SEO 与无障碍方面的限制。
+- [x] 完成 Astro Check、Pages Profile 构建、桌面/移动浏览器回归和 axe WCAG 2 A/AA 检查。
+
+### Phase 8.1 验收
+
+- 现有公开内容和详情路由没有因样式迁移而丢失。
+- 首页视觉语言与参考模板一致，同时适配当前内容层级。
+- 1440×1000 与 390×844 视口无横向溢出，主要路由、图片和导航可用。
+- 模板许可、改造范围和验证结果在仓库文档中可追溯。
 
 ## 5. 测试计划
 

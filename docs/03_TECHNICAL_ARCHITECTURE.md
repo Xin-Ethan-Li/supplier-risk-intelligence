@@ -580,6 +580,10 @@ GitHub Actions 在 `main` 的 Portfolio 相关文件变化后构建 `apps/portfo
 
 Case Study 使用构建期复制的本地架构图和 Demo 截图，避免页面运行时依赖 GitHub Raw 图片。用户确认 PDF 简历保持私有，因为当前版本包含电话号码；Resume 页面只提供 HTML 摘要和邮件索取入口。
 
+M8.1 在不改变发布拓扑的前提下采用 DevPortfolio 视觉体系：继续使用 Astro 7 静态输出，增加 Tailwind CSS 4 的 Vite 插件，不降级到参考模板的 Astro 5。首页作为单页索引承载 Hero、About、Projects、Experience、Education 和联系入口；Projects、About、Resume、SRM Case Study 与 404 保持独立静态路由，便于深链接、招聘人员快速浏览与技术面试官深入阅读。
+
+所有内部链接通过 Astro `base` 生成，确保本地根路径与 GitHub Pages `/supplier-risk-intelligence/` 子路径使用同一套组件。布局继续负责 Canonical、Open Graph、可选 Analytics、Skip Link、语义导航和 Reduced Motion；移动端保留完整主要导航。DevPortfolio 的 MIT 许可与设计来源记录在根目录 `THIRD_PARTY_NOTICES.md`，页面 Footer 同时提供归属链接。
+
 ```text
 supplier-risk-intelligence-demo/
 ├── apps/
