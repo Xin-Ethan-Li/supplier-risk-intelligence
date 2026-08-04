@@ -39,7 +39,7 @@ jobs:
           PORTFOLIO_SITE: https://xin-ethan-li.github.io
           PORTFOLIO_BASE: /supplier-risk-intelligence/
           PUBLIC_GA_ID: ${{ vars.PUBLIC_GA_ID }}
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: apps/portfolio/dist
 
